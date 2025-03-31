@@ -1,6 +1,6 @@
 
-import { BMICalculator } from "@/components/BMICalculator";
-import { BMIInfo } from "@/components/BMIInfo";
+import BMICalculator from "@/components/BMICalculator";
+import BMIInfo from "@/components/BMIInfo";
 
 const Index = () => {
   return (
