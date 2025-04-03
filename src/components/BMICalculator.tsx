@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -229,7 +228,8 @@ const BMICalculator = () => {
             </div>
             
             {useMetric ? (
-              <div>
+              <div className="grid w-full items-center gap-1.5">
+                <Label htmlFor="cm">Centimeters</Label>
                 <Input
                   id="cm"
                   type="number"
@@ -243,7 +243,7 @@ const BMICalculator = () => {
               </div>
             ) : (
               <div className="grid grid-cols-2 gap-4 mt-2">
-                <div>
+                <div className="grid w-full items-center gap-1.5">
                   <Label htmlFor="feet">Feet</Label>
                   <Input
                     id="feet"
@@ -255,7 +255,7 @@ const BMICalculator = () => {
                     className="mt-1"
                   />
                 </div>
-                <div>
+                <div className="grid w-full items-center gap-1.5">
                   <Label htmlFor="inches">Inches</Label>
                   <Input
                     id="inches"
@@ -287,16 +287,19 @@ const BMICalculator = () => {
                 />
               </div>
             </div>
-            <Input
-              id="weight"
-              type="number"
-              min="0"
-              max={useKg ? MAX_KG : MAX_LBS}
-              step="0.1"
-              value={weight}
-              onChange={handleWeightChange}
-              className="mt-1"
-            />
+            <div className="grid w-full items-center gap-1.5">
+              <Label htmlFor="weight">{useKg ? "Kilograms" : "Pounds"}</Label>
+              <Input
+                id="weight"
+                type="number"
+                min="0"
+                max={useKg ? MAX_KG : MAX_LBS}
+                step="0.1"
+                value={weight}
+                onChange={handleWeightChange}
+                className="mt-1"
+              />
+            </div>
           </div>
         </div>
 
