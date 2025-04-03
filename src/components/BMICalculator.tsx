@@ -132,37 +132,57 @@ const BMICalculator = () => {
 
   // Handle form input changes
   const handleFeetChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = parseInt(e.target.value);
-    if (e.target.value === '') {
+    const inputValue = e.target.value;
+    
+    // Remove leading zeros for non-zero values
+    const cleanedValue = inputValue.replace(/^0+(?!$)/, '');
+    
+    if (inputValue === '') {
       setFeet(0);
     } else {
+      const value = parseInt(cleanedValue);
       setFeet(isNaN(value) ? 0 : Math.min(value, MAX_FEET));
     }
   };
 
   const handleInchesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = parseFloat(e.target.value);
-    if (e.target.value === '') {
+    const inputValue = e.target.value;
+    
+    // Remove leading zeros for non-zero values
+    const cleanedValue = inputValue.replace(/^0+(?!$)/, '');
+    
+    if (inputValue === '') {
       setInches(0);
     } else {
+      const value = parseFloat(cleanedValue);
       setInches(isNaN(value) ? 0 : Math.min(value, MAX_INCHES));
     }
   };
 
   const handleCmChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = parseFloat(e.target.value);
-    if (e.target.value === '') {
+    const inputValue = e.target.value;
+    
+    // Remove leading zeros for non-zero values
+    const cleanedValue = inputValue.replace(/^0+(?!$)/, '');
+    
+    if (inputValue === '') {
       setCm(0);
     } else {
+      const value = parseFloat(cleanedValue);
       setCm(isNaN(value) ? 0 : Math.min(value, MAX_CM));
     }
   };
 
   const handleWeightChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = parseFloat(e.target.value);
-    if (e.target.value === '') {
+    const inputValue = e.target.value;
+    
+    // Remove leading zeros for non-zero values
+    const cleanedValue = inputValue.replace(/^0+(?!$)/, '');
+    
+    if (inputValue === '') {
       setWeight(0);
     } else {
+      const value = parseFloat(cleanedValue);
       const maxWeight = useKg ? MAX_KG : MAX_LBS;
       setWeight(isNaN(value) ? 0 : Math.min(value, maxWeight));
     }
