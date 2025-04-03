@@ -69,12 +69,12 @@ const BMICalculator = () => {
     if (!useMetric) {
       // Switching to metric (cm)
       const heightInMeters = convertHeightToMeters(feet, inches);
-      setCm(Math.round(heightInMeters * 100));
+      setCm(parseFloat((heightInMeters * 100).toFixed(1)));
     } else {
       // Switching to imperial (feet and inches)
-      const totalInches = Math.round(cm / 2.54);
+      const totalInches = parseFloat((cm / 2.54).toFixed(1));
       const calculatedFeet = Math.floor(totalInches / 12);
-      const calculatedInches = totalInches % 12;
+      const calculatedInches = parseFloat((totalInches % 12).toFixed(1));
       setFeet(calculatedFeet);
       setInches(calculatedInches);
     }
@@ -85,10 +85,10 @@ const BMICalculator = () => {
   const handleWeightUnitToggle = () => {
     if (useKg) {
       // Switching to lbs
-      setWeight(Math.round(weight * 2.20462));
+      setWeight(parseFloat((weight * 2.20462).toFixed(1)));
     } else {
       // Switching to kg
-      setWeight(Math.round(convertLbsToKg(weight)));
+      setWeight(parseFloat(convertLbsToKg(weight).toFixed(1)));
     }
     setUseKg(!useKg);
   };
@@ -100,8 +100,8 @@ const BMICalculator = () => {
   };
 
   const handleInchesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = parseInt(e.target.value);
-    setInches(isNaN(value) ? 0 : Math.min(value, 11)); // Limit inches to 0-11
+    const value = parseFloat(e.target.value);
+    setInches(isNaN(value) ? 0 : Math.min(value, 11.9)); // Limit inches to 0-11.9
   };
 
   const handleCmChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -160,6 +160,7 @@ const BMICalculator = () => {
                   id="cm"
                   type="number"
                   min="1"
+                  step="0.1"
                   value={cm}
                   onChange={handleCmChange}
                   className="mt-1"
@@ -185,7 +186,8 @@ const BMICalculator = () => {
                     id="inches"
                     type="number"
                     min="0"
-                    max="11"
+                    max="11.9"
+                    step="0.1"
                     value={inches}
                     onChange={handleInchesChange}
                     className="mt-1"
