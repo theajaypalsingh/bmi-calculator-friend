@@ -3,36 +3,95 @@ import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
-import { Slider } from "@/components/ui/slider";
+import { Switch } from "@/components/ui/switch";
 import { 
   convertHeightToMeters, 
+  convertCmToMeters,
+  convertLbsToKg,
   calculateBMI, 
   getBMICategory, 
   getBMICategoryDescription 
 } from "@/utils/bmiCalculator";
 
 const BMICalculator = () => {
+  // Height state
+  const [useMetric, setUseMetric] = useState<boolean>(false);
   const [feet, setFeet] = useState<number>(5);
   const [inches, setInches] = useState<number>(6);
+  const [cm, setCm] = useState<number>(168); // Default 5'6" in cm
+  
+  // Weight state
+  const [useKg, setUseKg] = useState<boolean>(true);
   const [weight, setWeight] = useState<number>(70);
+  
+  // Result state
   const [bmi, setBMI] = useState<number>(0);
   const [category, setCategory] = useState<string>("");
   const [description, setDescription] = useState<string>("");
 
-  // Calculate BMI whenever height or weight changes
+  // Initialize cm value based on feet and inches
   useEffect(() => {
-    if (feet > 0 || inches > 0) {
-      const heightInMeters = convertHeightToMeters(feet, inches);
-      const calculatedBMI = calculateBMI(heightInMeters, weight);
-      
-      setBMI(calculatedBMI);
-      
-      const bmiCategory = getBMICategory(calculatedBMI);
-      setCategory(bmiCategory);
-      setDescription(getBMICategoryDescription(bmiCategory));
+    const heightInMeters = convertHeightToMeters(feet, inches);
+    setCm(Math.round(heightInMeters * 100));
+  }, []);
+
+  // Calculate BMI whenever relevant values change
+  useEffect(() => {
+    let heightInMeters: number;
+    let weightInKg: number;
+
+    // Calculate height in meters based on selected unit
+    if (useMetric) {
+      heightInMeters = convertCmToMeters(cm);
+    } else {
+      heightInMeters = convertHeightToMeters(feet, inches);
     }
-  }, [feet, inches, weight]);
+
+    // Calculate weight in kg based on selected unit
+    if (useKg) {
+      weightInKg = weight;
+    } else {
+      weightInKg = convertLbsToKg(weight);
+    }
+    
+    // Calculate BMI
+    const calculatedBMI = calculateBMI(heightInMeters, weightInKg);
+    setBMI(calculatedBMI);
+    
+    // Set category and description
+    const bmiCategory = getBMICategory(calculatedBMI);
+    setCategory(bmiCategory);
+    setDescription(getBMICategoryDescription(bmiCategory));
+  }, [feet, inches, cm, weight, useMetric, useKg]);
+
+  // Handle height unit toggle
+  const handleHeightUnitToggle = () => {
+    if (!useMetric) {
+      // Switching to metric (cm)
+      const heightInMeters = convertHeightToMeters(feet, inches);
+      setCm(Math.round(heightInMeters * 100));
+    } else {
+      // Switching to imperial (feet and inches)
+      const totalInches = Math.round(cm / 2.54);
+      const calculatedFeet = Math.floor(totalInches / 12);
+      const calculatedInches = totalInches % 12;
+      setFeet(calculatedFeet);
+      setInches(calculatedInches);
+    }
+    setUseMetric(!useMetric);
+  };
+
+  // Handle weight unit toggle
+  const handleWeightUnitToggle = () => {
+    if (useKg) {
+      // Switching to lbs
+      setWeight(Math.round(weight * 2.20462));
+    } else {
+      // Switching to kg
+      setWeight(Math.round(convertLbsToKg(weight)));
+    }
+    setUseKg(!useKg);
+  };
 
   // Handle form input changes
   const handleFeetChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -43,6 +102,11 @@ const BMICalculator = () => {
   const handleInchesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(e.target.value);
     setInches(isNaN(value) ? 0 : Math.min(value, 11)); // Limit inches to 0-11
+  };
+
+  const handleCmChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = parseFloat(e.target.value);
+    setCm(isNaN(value) ? 0 : value);
   };
 
   const handleWeightChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -76,38 +140,76 @@ const BMICalculator = () => {
       </CardHeader>
       <CardContent className="pt-6 space-y-6">
         <div className="space-y-4">
+          {/* Height Section */}
           <div>
-            <Label htmlFor="height" className="text-lg font-medium">Height</Label>
-            <div className="grid grid-cols-2 gap-4 mt-2">
-              <div>
-                <Label htmlFor="feet">Feet</Label>
-                <Input
-                  id="feet"
-                  type="number"
-                  min="0"
-                  max="8"
-                  value={feet}
-                  onChange={handleFeetChange}
-                  className="mt-1"
-                />
-              </div>
-              <div>
-                <Label htmlFor="inches">Inches</Label>
-                <Input
-                  id="inches"
-                  type="number"
-                  min="0"
-                  max="11"
-                  value={inches}
-                  onChange={handleInchesChange}
-                  className="mt-1"
+            <div className="flex justify-between items-center mb-2">
+              <Label htmlFor="height" className="text-lg font-medium">Height</Label>
+              <div className="flex items-center space-x-2">
+                <span className="text-sm">{useMetric ? "Cm" : "Feet & Inches"}</span>
+                <Switch 
+                  id="height-unit-toggle" 
+                  checked={useMetric}
+                  onCheckedChange={handleHeightUnitToggle}
                 />
               </div>
             </div>
+            
+            {useMetric ? (
+              <div>
+                <Input
+                  id="cm"
+                  type="number"
+                  min="1"
+                  value={cm}
+                  onChange={handleCmChange}
+                  className="mt-1"
+                />
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 gap-4 mt-2">
+                <div>
+                  <Label htmlFor="feet">Feet</Label>
+                  <Input
+                    id="feet"
+                    type="number"
+                    min="0"
+                    max="8"
+                    value={feet}
+                    onChange={handleFeetChange}
+                    className="mt-1"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="inches">Inches</Label>
+                  <Input
+                    id="inches"
+                    type="number"
+                    min="0"
+                    max="11"
+                    value={inches}
+                    onChange={handleInchesChange}
+                    className="mt-1"
+                  />
+                </div>
+              </div>
+            )}
           </div>
 
+          {/* Weight Section */}
           <div>
-            <Label htmlFor="weight" className="text-lg font-medium">Weight (kg)</Label>
+            <div className="flex justify-between items-center mb-2">
+              <Label htmlFor="weight" className="text-lg font-medium">
+                Weight {useKg ? "(kg)" : "(lbs)"}
+              </Label>
+              <div className="flex items-center space-x-2">
+                <span className="text-sm">{useKg ? "Kg" : "Lbs"}</span>
+                <Switch 
+                  id="weight-unit-toggle" 
+                  checked={!useKg}
+                  onCheckedChange={handleWeightUnitToggle}
+                />
+              </div>
+            </div>
             <Input
               id="weight"
               type="number"

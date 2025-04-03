@@ -14,6 +14,16 @@ export const convertHeightToMeters = (feet: number, inches: number): number => {
   return meters;
 };
 
+// Convert height from centimeters to meters
+export const convertCmToMeters = (cm: number): number => {
+  return cm / 100;
+};
+
+// Convert weight from pounds to kilograms
+export const convertLbsToKg = (lbs: number): number => {
+  return lbs * 0.453592;
+};
+
 // Calculate BMI using the formula: weight (kg) / (height (m))^2
 export const calculateBMI = (heightInMeters: number, weightInKg: number): number => {
   if (heightInMeters <= 0 || weightInKg <= 0) {

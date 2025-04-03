@@ -1,5 +1,8 @@
+
 import BMICalculator from "@/components/BMICalculator";
 import BMIInfo from "@/components/BMIInfo";
+import { Linkedin } from "lucide-react";
+
 const Index = () => {
   return <div className="min-h-screen bg-gradient-to-b from-white to-health-light">
       <header className="py-6 bg-health-primary text-white">
@@ -26,6 +29,17 @@ const Index = () => {
         <div className="container mx-auto px-4 text-center">
           <p>&copy; {new Date().getFullYear()} BMI Calculator Friend. All rights reserved.</p>
           <p className="text-sm mt-2 text-health-light">This calculator provides general information and is not a substitute for professional medical advice.</p>
+          <div className="mt-4 flex justify-center">
+            <a 
+              href="https://www.linkedin.com/in/ajay-pal-singh-rajput-5956b5181/" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-health-light hover:text-white transition-colors"
+              aria-label="LinkedIn Profile"
+            >
+              <Linkedin size={24} />
+            </a>
+          </div>
         </div>
       </footer>
     </div>;
