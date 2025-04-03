@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { 
   convertHeightToMeters, 
   convertCmToMeters,
@@ -12,6 +13,13 @@ import {
   getBMICategory, 
   getBMICategoryDescription 
 } from "@/utils/bmiCalculator";
+
+// Maximum limits
+const MAX_FEET = 8;
+const MAX_INCHES = 11.9;
+const MAX_CM = 274.1; // Equivalent to 9 feet
+const MAX_KG = 250;
+const MAX_LBS = 551.2; // Equivalent to 250 kg
 
 const BMICalculator = () => {
   // Height state
@@ -29,14 +37,43 @@ const BMICalculator = () => {
   const [category, setCategory] = useState<string>("");
   const [description, setDescription] = useState<string>("");
 
+  // Error state
+  const [error, setError] = useState<string>("");
+
   // Initialize cm value based on feet and inches
   useEffect(() => {
     const heightInMeters = convertHeightToMeters(feet, inches);
-    setCm(Math.round(heightInMeters * 100));
+    setCm(parseFloat((heightInMeters * 100).toFixed(1)));
   }, []);
+
+  // Check if values exceed limits
+  const checkValuesWithinLimits = (): boolean => {
+    // Check height limits
+    if ((useMetric && cm > MAX_CM) || 
+        (!useMetric && (feet > MAX_FEET || (feet === MAX_FEET && inches > 0) || inches > MAX_INCHES))) {
+      setError("One or more values exceeds the maximum limit");
+      return false;
+    }
+
+    // Check weight limits
+    if ((useKg && weight > MAX_KG) || (!useKg && weight > MAX_LBS)) {
+      setError("One or more values exceeds the maximum limit");
+      return false;
+    }
+
+    setError("");
+    return true;
+  };
 
   // Calculate BMI whenever relevant values change
   useEffect(() => {
+    if (!checkValuesWithinLimits()) {
+      setBMI(0);
+      setCategory("");
+      setDescription("");
+      return;
+    }
+
     let heightInMeters: number;
     let weightInKg: number;
 
@@ -96,22 +133,39 @@ const BMICalculator = () => {
   // Handle form input changes
   const handleFeetChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(e.target.value);
-    setFeet(isNaN(value) ? 0 : value);
+    if (e.target.value === '') {
+      setFeet(0);
+    } else {
+      setFeet(isNaN(value) ? 0 : Math.min(value, MAX_FEET));
+    }
   };
 
   const handleInchesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseFloat(e.target.value);
-    setInches(isNaN(value) ? 0 : Math.min(value, 11.9)); // Limit inches to 0-11.9
+    if (e.target.value === '') {
+      setInches(0);
+    } else {
+      setInches(isNaN(value) ? 0 : Math.min(value, MAX_INCHES));
+    }
   };
 
   const handleCmChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseFloat(e.target.value);
-    setCm(isNaN(value) ? 0 : value);
+    if (e.target.value === '') {
+      setCm(0);
+    } else {
+      setCm(isNaN(value) ? 0 : Math.min(value, MAX_CM));
+    }
   };
 
   const handleWeightChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseFloat(e.target.value);
-    setWeight(isNaN(value) ? 0 : value);
+    if (e.target.value === '') {
+      setWeight(0);
+    } else {
+      const maxWeight = useKg ? MAX_KG : MAX_LBS;
+      setWeight(isNaN(value) ? 0 : Math.min(value, maxWeight));
+    }
   };
 
   // Get color based on BMI category
@@ -160,6 +214,7 @@ const BMICalculator = () => {
                   id="cm"
                   type="number"
                   min="1"
+                  max={MAX_CM}
                   step="0.1"
                   value={cm}
                   onChange={handleCmChange}
@@ -174,7 +229,7 @@ const BMICalculator = () => {
                     id="feet"
                     type="number"
                     min="0"
-                    max="8"
+                    max={MAX_FEET}
                     value={feet}
                     onChange={handleFeetChange}
                     className="mt-1"
@@ -186,7 +241,7 @@ const BMICalculator = () => {
                     id="inches"
                     type="number"
                     min="0"
-                    max="11.9"
+                    max={MAX_INCHES}
                     step="0.1"
                     value={inches}
                     onChange={handleInchesChange}
@@ -216,6 +271,7 @@ const BMICalculator = () => {
               id="weight"
               type="number"
               min="0"
+              max={useKg ? MAX_KG : MAX_LBS}
               step="0.1"
               value={weight}
               onChange={handleWeightChange}
@@ -224,7 +280,15 @@ const BMICalculator = () => {
           </div>
         </div>
 
-        {bmi > 0 && (
+        {/* Display error message if limits are exceeded */}
+        {error && (
+          <Alert variant="destructive" className="mt-4 bg-red-50">
+            <AlertDescription className="text-red-500">{error}</AlertDescription>
+          </Alert>
+        )}
+
+        {/* Show BMI result only if no errors and BMI is calculated */}
+        {!error && bmi > 0 && (
           <div className="mt-8 p-4 bg-health-light rounded-lg">
             <h3 className="text-lg font-bold text-center">Your BMI Result</h3>
             <div className="text-center">
