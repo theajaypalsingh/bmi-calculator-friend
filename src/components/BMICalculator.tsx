@@ -75,6 +75,7 @@ const BMICalculator = () => {
 
     let heightInMeters: number;
     let weightInKg: number;
+    let heightInCm: number = useMetric ? cm : parseFloat((convertHeightToMeters(feet, inches) * 100).toFixed(1));
 
     // Calculate height in meters based on selected unit
     if (useMetric) {
@@ -97,7 +98,7 @@ const BMICalculator = () => {
     // Set category and description
     const bmiCategory = getBMICategory(calculatedBMI);
     setCategory(bmiCategory);
-    setDescription(getBMICategoryDescription(bmiCategory));
+    setDescription(getBMICategoryDescription(bmiCategory, heightInCm));
   }, [feet, inches, cm, weight, useMetric, useKg]);
 
   // Handle height unit toggle
