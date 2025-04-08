@@ -52,7 +52,7 @@ const DietaryTips = () => {
               </div>
               
               <div className="p-4 bg-health-light/50 rounded-lg">
-                <h3 className="text-xl font-semibold mb-2">🍵 Cut Sugary Drinks & Limit Processed Foods</h3>
+                <h3 className="text-xl font-semibold mb-2">🍵 Cut Sugary Drinks &amp; Limit Processed Foods</h3>
                 <p>Switch to lemon water, coconut water, or unsweetened tea instead of sodas or packaged juices.</p>
               </div>
               
@@ -67,7 +67,7 @@ const DietaryTips = () => {
               </div>
               
               <div className="p-4 bg-health-light/50 rounded-lg">
-                <h3 className="text-xl font-semibold mb-2">🧠 Mindful Eating > Mindless Snacking</h3>
+                <h3 className="text-xl font-semibold mb-2">🧠 Mindful Eating &gt; Mindless Snacking</h3>
                 <p>Focus on what you're eating. No phones or Netflix while eating.</p>
               </div>
               
