@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Link } from "react-router-dom";
 import { 
   convertHeightToMeters, 
   convertCmToMeters,
@@ -321,6 +322,16 @@ const BMICalculator = () => {
                 {category}
               </p>
               <p className="mt-2 text-gray-600">{description}</p>
+              
+              {/* Add dietary tips link for BMI > 24.9 */}
+              {bmi > 24.9 && (
+                <Link 
+                  to="/dietary-tips" 
+                  className="mt-4 block text-health-primary hover:text-health-dark underline font-medium"
+                >
+                  Click here to get dietary tips for weightloss
+                </Link>
+              )}
             </div>
           </div>
         )}
