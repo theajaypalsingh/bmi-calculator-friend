@@ -27,7 +27,7 @@ const Index = () => {
 
       <footer className="bg-health-dark text-white py-6 mt-12">
         <div className="container mx-auto px-4 text-center">
-          <p>&copy; {new Date().getFullYear()} BMI Calculator Friend. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} BMI Calculator. All rights reserved.</p>
           <p className="text-sm mt-2 text-health-light">This calculator provides general information and is not a substitute for professional medical advice.</p>
           <div className="mt-4 flex justify-center">
             <a 

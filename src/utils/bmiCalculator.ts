@@ -34,6 +34,11 @@ export const calculateBMI = (heightInMeters: number, weightInKg: number): number
   return parseFloat(bmi.toFixed(1));
 };
 
+// Calculate ideal weight in kg using the formula: (height in cm - 100)
+export const calculateIdealWeight = (heightInCm: number): number => {
+  return parseFloat((heightInCm - 100).toFixed(1));
+};
+
 // Determine BMI category based on calculated BMI
 export const getBMICategory = (bmi: number): BMICategory => {
   if (bmi < 18.5) {
@@ -48,16 +53,20 @@ export const getBMICategory = (bmi: number): BMICategory => {
 };
 
 // Get a description of the BMI category
-export const getBMICategoryDescription = (category: BMICategory): string => {
+export const getBMICategoryDescription = (category: BMICategory, heightInCm: number): string => {
   switch (category) {
     case BMICategory.UNDERWEIGHT:
       return "You are underweight. Consider gaining some weight for better health.";
     case BMICategory.NORMAL:
       return "You have a healthy weight. Maintain your current lifestyle.";
-    case BMICategory.OVERWEIGHT:
-      return "You are overweight. Consider losing some weight for better health.";
-    case BMICategory.OBESE:
-      return "You are obese. Please consult with a healthcare professional.";
+    case BMICategory.OVERWEIGHT: {
+      const idealWeight = calculateIdealWeight(heightInCm);
+      return `You are overweight. Your ideal weight should be around ${idealWeight} kg. Consider losing some weight for better health.`;
+    }
+    case BMICategory.OBESE: {
+      const idealWeight = calculateIdealWeight(heightInCm);
+      return `You are obese. Your ideal weight should be around ${idealWeight} kg. Please consult with a healthcare professional.`;
+    }
     default:
       return "";
   }
