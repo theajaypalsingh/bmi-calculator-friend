@@ -210,8 +210,8 @@ const BMICalculator = () => {
                 <Label htmlFor="cm">Centimeters</Label>
                 <Input id="cm" type="number" min="1" max={MAX_CM} step="0.1" value={cm} onChange={handleCmChange} className="mt-1" />
               </div> : <div className="grid grid-cols-2 gap-4 mt-2">
-                <div className="grid w-full items-center gap-1.5 bg-gray-200">
-                  <Label htmlFor="feet">Feet</Label>
+                <div className="grid w-full items-center gap-1.5 bg-white">
+                  <Label htmlFor="feet" className="bg-white">Feet</Label>
                   <Input id="feet" type="number" min="0" max={MAX_FEET} value={feet} onChange={handleFeetChange} className="mt-1" />
                 </div>
                 <div className="grid w-full items-center gap-1.5">
@@ -245,7 +245,7 @@ const BMICalculator = () => {
           </Alert>}
 
         {/* Show BMI result only if no errors and BMI is calculated */}
-        {!error && bmi > 0 && <div className="mt-8 p-4 bg-health-light rounded-lg">
+        {!error && bmi > 0 && <div className="mt-8 p-4 rounded-lg bg-gray-200">
             <h3 className="text-lg font-bold text-center">Your BMI Result</h3>
             <div className="text-center">
               <p className="text-3xl font-bold mt-2">{bmi}</p>
