@@ -210,7 +210,7 @@ const BMICalculator = () => {
                 <Label htmlFor="cm">Centimeters</Label>
                 <Input id="cm" type="number" min="1" max={MAX_CM} step="0.1" value={cm} onChange={handleCmChange} className="mt-1" />
               </div> : <div className="grid grid-cols-2 gap-4 mt-2">
-                <div className="grid w-full items-center gap-1.5">
+                <div className="grid w-full items-center gap-1.5 bg-gray-200">
                   <Label htmlFor="feet">Feet</Label>
                   <Input id="feet" type="number" min="0" max={MAX_FEET} value={feet} onChange={handleFeetChange} className="mt-1" />
                 </div>
