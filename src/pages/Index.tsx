@@ -1,12 +1,9 @@
-
 import BMICalculator from "@/components/BMICalculator";
 import BMIInfo from "@/components/BMIInfo";
 import { Linkedin } from "lucide-react";
-
 const Index = () => {
-  return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-health-light">
-      <header className="py-6 text-white bg-gray-950">
+  return <div className="min-h-screen bg-gradient-to-b from-white to-health-light">
+      <header className="py-6 text-white bg-gray-700">
         <div className="container mx-auto px-4">
           <h1 className="text-3xl md:text-4xl font-bold text-center">BMI Calculator</h1>
           <p className="text-center mt-2 text-health-light">Check your Body Mass Index quickly and easily</p>
@@ -37,8 +34,6 @@ const Index = () => {
           </div>
         </div>
       </footer>
-    </div>
-  );
+    </div>;
 };
-
 export default Index;

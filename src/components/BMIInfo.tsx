@@ -2,7 +2,7 @@ import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 const BMIInfo = () => {
   return <Card className="w-full max-w-md mx-auto mt-8">
-      <CardHeader className="text-white rounded-t-lg bg-gray-700">
+      <CardHeader className="text-white rounded-t-lg bg-gray-600">
         <CardTitle className="text-xl font-bold">What is BMI?</CardTitle>
       </CardHeader>
       <CardContent className="pt-4">

@@ -1,27 +1,16 @@
-
 import React from "react";
 import { Link } from "react-router-dom";
-import {
-  NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-  NavigationMenuTrigger,
-  navigationMenuTriggerStyle,
-} from "@/components/ui/navigation-menu";
+import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger, navigationMenuTriggerStyle } from "@/components/ui/navigation-menu";
 import { Calculator, ActivitySquare, Heart, Phone } from "lucide-react";
-
 const Navigation = () => {
-  return (
-    <div className="bg-health-primary text-white py-3 shadow-md">
-      <div className="container mx-auto px-4">
-        <NavigationMenu className="max-w-none w-full justify-between">
+  return <div className="text-white py-3 shadow-md bg-gray-950">
+      <div className="container mx-auto px-[93px]">
+        <NavigationMenu className="max-w-none w-full justify-between mx-0 bg-transparent my-[5px] px-[240px]">
           <NavigationMenuList className="flex flex-wrap justify-center md:justify-start gap-1">
             <NavigationMenuItem>
               <Link to="/">
                 <NavigationMenuLink className={navigationMenuTriggerStyle() + " text-white bg-transparent hover:bg-health-dark"}>
-                  <Calculator className="mr-1" size={18} />
+                  <Calculator size={18} className="mr-1 bg-transparent" />
                   BMI Calculator
                 </NavigationMenuLink>
               </Link>
@@ -56,8 +45,6 @@ const Navigation = () => {
           </NavigationMenuList>
         </NavigationMenu>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default Navigation;
