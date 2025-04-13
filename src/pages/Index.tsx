@@ -1,6 +1,8 @@
+
 import BMICalculator from "@/components/BMICalculator";
 import BMIInfo from "@/components/BMIInfo";
 import { Linkedin } from "lucide-react";
+
 const Index = () => {
   return <div className="min-h-screen bg-gradient-to-b from-white to-health-light">
       <header className="py-6 text-white bg-gray-700">

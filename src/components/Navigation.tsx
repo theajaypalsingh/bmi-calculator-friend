@@ -1,9 +1,11 @@
+
 import React from "react";
 import { Link } from "react-router-dom";
 import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger, navigationMenuTriggerStyle } from "@/components/ui/navigation-menu";
 import { Calculator, ActivitySquare, Heart, Phone } from "lucide-react";
+
 const Navigation = () => {
-  return <div className="text-white py-3 shadow-md bg-gray-950">
+  return <div className="sticky top-0 z-50 text-white py-3 shadow-md bg-gray-950">
       <div className="container mx-auto px-[93px]">
         <NavigationMenu className="max-w-none w-full justify-between mx-0 bg-transparent my-[5px] px-[240px]">
           <NavigationMenuList className="flex flex-wrap justify-center md:justify-start gap-1">
