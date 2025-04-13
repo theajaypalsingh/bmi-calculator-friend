@@ -7,6 +7,10 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import DietaryTips from "./pages/DietaryTips";
 import NotFound from "./pages/NotFound";
+import Navigation from "./components/Navigation";
+import StepCount from "./pages/StepCount";
+import HealthScore from "./pages/HealthScore";
+import Consultation from "./pages/Consultation";
 
 const queryClient = new QueryClient();
 
@@ -16,9 +20,13 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
+        <Navigation />
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/dietary-tips" element={<DietaryTips />} />
+          <Route path="/step-count" element={<StepCount />} />
+          <Route path="/health-score" element={<HealthScore />} />
+          <Route path="/consultation" element={<Consultation />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
