@@ -1,10 +1,7 @@
-
 import React from "react";
-
 const StepCount = () => {
-  return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-health-light">
-      <header className="py-6 text-white bg-gray-950">
+  return <div className="min-h-screen bg-gradient-to-b from-white to-health-light">
+      <header className="py-6 text-white bg-gray-700">
         <div className="container mx-auto px-4">
           <h1 className="text-3xl md:text-4xl font-bold text-center">Daily Step Count Calculator</h1>
           <p className="text-center mt-2 text-health-light">Track and analyze your daily steps</p>
@@ -32,8 +29,6 @@ const StepCount = () => {
           <p>&copy; {new Date().getFullYear()} Health Calculator. All rights reserved.</p>
         </div>
       </footer>
-    </div>
-  );
+    </div>;
 };
-
 export default StepCount;
