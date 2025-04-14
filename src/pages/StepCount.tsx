@@ -222,7 +222,7 @@ const StepCount = () => {
                         <FormMessage />
                       </FormItem>} />
                   
-                  <button type="submit" className="w-full py-2 px-4 text-white font-bold rounded-md flex items-center justify-center gap-2 bg-red-800 hover:bg-red-700">
+                  <button type="submit" className="w-full text-white font-bold rounded-md flex items-center justify-center gap-2 bg-red-700 hover:bg-red-600 mx-0 py-[7px] px-0">
                     <Footprints size={18} />
                     Calculate Step Goal
                   </button>
