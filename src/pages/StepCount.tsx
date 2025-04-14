@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -11,33 +10,49 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 // Define the schema for the form
 const stepCountSchema = z.object({
-  height: z.string().transform((val) => Number(val)).refine((val) => val > 0, {
-    message: "Height must be greater than 0",
+  height: z.string().transform(val => Number(val)).refine(val => val > 0, {
+    message: "Height must be greater than 0"
   }),
-  weight: z.string().transform((val) => Number(val)).refine((val) => val > 0, {
-    message: "Weight must be greater than 0",
+  weight: z.string().transform(val => Number(val)).refine(val => val > 0, {
+    message: "Weight must be greater than 0"
   }),
-  age: z.string().transform((val) => Number(val)).refine((val) => val > 0 && val < 120, {
-    message: "Age must be between 1 and 120",
+  age: z.string().transform(val => Number(val)).refine(val => val > 0 && val < 120, {
+    message: "Age must be between 1 and 120"
   }),
   gender: z.enum(["male", "female", "other"]),
-  activityLevel: z.enum(["sedentary", "lightly", "moderately", "very", "super"]),
+  activityLevel: z.enum(["sedentary", "lightly", "moderately", "very", "super"])
 });
-
 type StepCountFormValues = z.infer<typeof stepCountSchema>;
-
 const activityLevelFactors = {
-  sedentary: { factor: 1.2, stepPercent: 0.10, label: "Sedentary" },
-  lightly: { factor: 1.375, stepPercent: 0.15, label: "Lightly Active" },
-  moderately: { factor: 1.55, stepPercent: 0.20, label: "Moderately Active" },
-  very: { factor: 1.725, stepPercent: 0.25, label: "Very Active" },
-  super: { factor: 1.9, stepPercent: 0.30, label: "Super Active" }
+  sedentary: {
+    factor: 1.2,
+    stepPercent: 0.10,
+    label: "Sedentary"
+  },
+  lightly: {
+    factor: 1.375,
+    stepPercent: 0.15,
+    label: "Lightly Active"
+  },
+  moderately: {
+    factor: 1.55,
+    stepPercent: 0.20,
+    label: "Moderately Active"
+  },
+  very: {
+    factor: 1.725,
+    stepPercent: 0.25,
+    label: "Very Active"
+  },
+  super: {
+    factor: 1.9,
+    stepPercent: 0.30,
+    label: "Super Active"
+  }
 };
-
 const calculateBMR = (height: number, weight: number, age: number, gender: string): number => {
   // Mifflin-St Jeor formula
   const baseBMR = 10 * weight + 6.25 * height - 5 * age;
-  
   if (gender === "male") {
     return baseBMR + 5;
   } else if (gender === "female") {
@@ -47,11 +62,9 @@ const calculateBMR = (height: number, weight: number, age: number, gender: strin
     return baseBMR - 78; // (5 - 161) / 2 = -78
   }
 };
-
 const calculateTDEE = (bmr: number, activityLevel: string): number => {
   return bmr * activityLevelFactors[activityLevel as keyof typeof activityLevelFactors].factor;
 };
-
 const calculateStepGoal = (tdee: number, activityLevel: string): number => {
   const stepPercent = activityLevelFactors[activityLevel as keyof typeof activityLevelFactors].stepPercent;
   const caloriesFromSteps = tdee * stepPercent;
@@ -60,7 +73,6 @@ const calculateStepGoal = (tdee: number, activityLevel: string): number => {
   // Round to nearest 100
   return Math.round(steps / 100) * 100;
 };
-
 const StepCount = () => {
   const [stepGoal, setStepGoal] = useState<number | null>(null);
 
@@ -72,10 +84,9 @@ const StepCount = () => {
       weight: "",
       age: "",
       gender: "male",
-      activityLevel: "moderately",
-    },
+      activityLevel: "moderately"
+    }
   });
-
   useEffect(() => {
     // Retrieve values from localStorage if available
     const storedHeight = localStorage.getItem("height");
@@ -88,28 +99,25 @@ const StepCount = () => {
     if (storedHeight) form.setValue("height", storedHeight);
     if (storedWeight) form.setValue("weight", storedWeight);
     if (storedAge) form.setValue("age", storedAge);
-    if (storedGender && ["male", "female", "other"].includes(storedGender)) 
-      form.setValue("gender", storedGender as "male" | "female" | "other");
-    if (storedActivityLevel && ["sedentary", "lightly", "moderately", "very", "super"].includes(storedActivityLevel)) 
-      form.setValue("activityLevel", storedActivityLevel as "sedentary" | "lightly" | "moderately" | "very" | "super");
+    if (storedGender && ["male", "female", "other"].includes(storedGender)) form.setValue("gender", storedGender as "male" | "female" | "other");
+    if (storedActivityLevel && ["sedentary", "lightly", "moderately", "very", "super"].includes(storedActivityLevel)) form.setValue("activityLevel", storedActivityLevel as "sedentary" | "lightly" | "moderately" | "very" | "super");
   }, [form]);
-
   const onSubmit = (data: StepCountFormValues) => {
     // Convert string values to numbers
     const height = Number(data.height);
     const weight = Number(data.weight);
     const age = Number(data.age);
-    
+
     // Calculate BMR
     const bmr = calculateBMR(height, weight, age, data.gender);
-    
+
     // Calculate TDEE
     const tdee = calculateTDEE(bmr, data.activityLevel);
-    
+
     // Calculate step goal
     const calculatedStepGoal = calculateStepGoal(tdee, data.activityLevel);
     setStepGoal(calculatedStepGoal);
-    
+
     // Store input values in localStorage
     localStorage.setItem("height", data.height.toString());
     localStorage.setItem("weight", data.weight.toString());
@@ -117,9 +125,7 @@ const StepCount = () => {
     localStorage.setItem("gender", data.gender);
     localStorage.setItem("activityLevel", data.activityLevel);
   };
-
-  return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-health-light">
+  return <div className="min-h-screen bg-gradient-to-b from-white to-health-light">
       <header className="py-6 text-white bg-gray-700">
         <div className="container mx-auto px-4">
           <h1 className="text-3xl md:text-4xl font-bold text-center">Daily Step Count Calculator</h1>
@@ -140,55 +146,41 @@ const StepCount = () => {
               <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <FormField
-                      control={form.control}
-                      name="height"
-                      render={({ field }) => (
-                        <FormItem>
+                    <FormField control={form.control} name="height" render={({
+                    field
+                  }) => <FormItem>
                           <FormLabel>Height (cm)</FormLabel>
                           <FormControl>
                             <Input type="number" placeholder="Enter height in cm" {...field} />
                           </FormControl>
                           <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                        </FormItem>} />
                     
-                    <FormField
-                      control={form.control}
-                      name="weight"
-                      render={({ field }) => (
-                        <FormItem>
+                    <FormField control={form.control} name="weight" render={({
+                    field
+                  }) => <FormItem>
                           <FormLabel>Weight (kg)</FormLabel>
                           <FormControl>
                             <Input type="number" placeholder="Enter weight in kg" {...field} />
                           </FormControl>
                           <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                        </FormItem>} />
                   </div>
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <FormField
-                      control={form.control}
-                      name="age"
-                      render={({ field }) => (
-                        <FormItem>
+                    <FormField control={form.control} name="age" render={({
+                    field
+                  }) => <FormItem>
                           <FormLabel>Age (years)</FormLabel>
                           <FormControl>
                             <Input type="number" placeholder="Enter age" {...field} />
                           </FormControl>
                           <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                        </FormItem>} />
                     
-                    <FormField
-                      control={form.control}
-                      name="gender"
-                      render={({ field }) => (
-                        <FormItem>
+                    <FormField control={form.control} name="gender" render={({
+                    field
+                  }) => <FormItem>
                           <FormLabel>Gender</FormLabel>
                           <Select onValueChange={field.onChange} defaultValue={field.value}>
                             <FormControl>
@@ -203,16 +195,12 @@ const StepCount = () => {
                             </SelectContent>
                           </Select>
                           <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                        </FormItem>} />
                   </div>
                   
-                  <FormField
-                    control={form.control}
-                    name="activityLevel"
-                    render={({ field }) => (
-                      <FormItem>
+                  <FormField control={form.control} name="activityLevel" render={({
+                  field
+                }) => <FormItem>
                         <FormLabel>Physical Activity Level</FormLabel>
                         <Select onValueChange={field.onChange} defaultValue={field.value}>
                           <FormControl>
@@ -232,14 +220,9 @@ const StepCount = () => {
                           Choose the activity level that best describes your lifestyle
                         </FormDescription>
                         <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                      </FormItem>} />
                   
-                  <button
-                    type="submit"
-                    className="w-full py-2 px-4 bg-blue-600 text-white font-bold rounded-md hover:bg-blue-700 flex items-center justify-center gap-2"
-                  >
+                  <button type="submit" className="w-full py-2 px-4 text-white font-bold rounded-md flex items-center justify-center gap-2 bg-red-800 hover:bg-red-700">
                     <Footprints size={18} />
                     Calculate Step Goal
                   </button>
@@ -248,8 +231,7 @@ const StepCount = () => {
             </CardContent>
           </Card>
           
-          {stepGoal && (
-            <Card className="border-green-200 bg-green-50">
+          {stepGoal && <Card className="border-green-200 bg-green-50">
               <CardHeader className="text-green-800">
                 <CardTitle className="flex items-center text-2xl">
                   <Footprints size={24} className="mr-2" />
@@ -269,8 +251,7 @@ const StepCount = () => {
                   This calculation uses the Mifflin-St Jeor formula and takes into account your height, weight, age, gender, and activity level.
                 </p>
               </CardFooter>
-            </Card>
-          )}
+            </Card>}
         </div>
       </main>
 
@@ -279,8 +260,6 @@ const StepCount = () => {
           <p>&copy; {new Date().getFullYear()} Health Calculator. All rights reserved.</p>
         </div>
       </footer>
-    </div>
-  );
+    </div>;
 };
-
 export default StepCount;
