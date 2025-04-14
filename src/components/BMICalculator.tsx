@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { convertHeightToMeters, convertCmToMeters, convertLbsToKg, calculateBMI, getBMICategory, getBMICategoryDescription } from "@/utils/bmiCalculator";
 
@@ -33,6 +34,9 @@ const BMICalculator = () => {
   // Error state
   const [error, setError] = useState<string>("");
 
+  // New state to control BMI calculation trigger
+  const [calculateTrigger, setCalculateTrigger] = useState(false);
+
   // Initialize cm value based on feet and inches
   useEffect(() => {
     const heightInMeters = convertHeightToMeters(feet, inches);
@@ -56,14 +60,18 @@ const BMICalculator = () => {
     return true;
   };
 
-  // Calculate BMI whenever relevant values change
+  // Modify existing BMI calculation useEffect to work with manual calculation trigger
   useEffect(() => {
+    if (!calculateTrigger) return;
+
     if (!checkValuesWithinLimits()) {
       setBMI(0);
       setCategory("");
       setDescription("");
+      setCalculateTrigger(false);
       return;
     }
+
     let heightInMeters: number;
     let weightInKg: number;
     let heightInCm: number = useMetric ? cm : parseFloat((convertHeightToMeters(feet, inches) * 100).toFixed(1));
@@ -90,7 +98,9 @@ const BMICalculator = () => {
     const bmiCategory = getBMICategory(calculatedBMI);
     setCategory(bmiCategory);
     setDescription(getBMICategoryDescription(bmiCategory, heightInCm));
-  }, [feet, inches, cm, weight, useMetric, useKg]);
+
+    setCalculateTrigger(false);
+  }, [calculateTrigger, feet, inches, cm, weight, useMetric, useKg]);
 
   // Handle height unit toggle
   const handleHeightUnitToggle = () => {
@@ -187,6 +197,12 @@ const BMICalculator = () => {
         return "text-gray-500";
     }
   };
+
+  // Handler for manual BMI calculation
+  const handleCalculateBMI = () => {
+    setCalculateTrigger(true);
+  };
+
   return <Card className="w-full max-w-md mx-auto shadow-lg">
       <CardHeader className="text-white rounded-t-lg bg-red-700">
         <CardTitle className="text-2xl font-bold text-center">BMI Calculator</CardTitle>
@@ -260,6 +276,16 @@ const BMICalculator = () => {
                 </Link>}
             </div>
           </div>}
+
+        {/* Add Calculate BMI Button */}
+        <div className="flex justify-center mt-4">
+          <Button 
+            onClick={handleCalculateBMI} 
+            className="w-auto px-6"
+          >
+            Calculate BMI
+          </Button>
+        </div>
       </CardContent>
       <CardFooter className="flex justify-center border-t p-4">
         <p className="text-sm text-gray-500 text-center">
