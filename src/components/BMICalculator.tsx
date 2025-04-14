@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
@@ -8,59 +8,56 @@ import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { convertHeightToMeters, convertCmToMeters, convertLbsToKg, calculateBMI, getBMICategory, getBMICategoryDescription } from "@/utils/bmiCalculator";
 
-// Maximum limits
-const MAX_FEET = 8;
-const MAX_INCHES = 11.9;
-const MAX_CM = 274.1; // Equivalent to 9 feet
-const MAX_KG = 250;
-const MAX_LBS = 551.2; // Equivalent to 250 kg
+interface BMICalculatorProps { }
 
-const BMICalculator = () => {
-  // Height state
-  const [useMetric, setUseMetric] = useState<boolean>(false);
+const BMICalculator: React.FC<BMICalculatorProps> = () => {
   const [feet, setFeet] = useState<number>(5);
-  const [inches, setInches] = useState<number>(6);
-  const [cm, setCm] = useState<number>(168); // Default 5'6" in cm
-
-  // Weight state
-  const [useKg, setUseKg] = useState<boolean>(true);
+  const [inches, setInches] = useState<number>(10);
+  const [cm, setCm] = useState<number>(177.8);
   const [weight, setWeight] = useState<number>(70);
 
-  // Result state
+  const [useMetric, setUseMetric] = useState<boolean>(true);
+  const [useKg, setUseKg] = useState<boolean>(true);
+
   const [bmi, setBMI] = useState<number>(0);
   const [category, setCategory] = useState<string>("");
   const [description, setDescription] = useState<string>("");
 
-  // Error state
   const [error, setError] = useState<string>("");
 
-  // New state to control BMI calculation trigger
   const [calculateTrigger, setCalculateTrigger] = useState(false);
+  const [showResults, setShowResults] = useState(false);
 
-  // Initialize cm value based on feet and inches
   useEffect(() => {
-    const heightInMeters = convertHeightToMeters(feet, inches);
-    setCm(parseFloat((heightInMeters * 100).toFixed(1)));
-  }, []);
+    setCm(convertHeightToMeters(feet, inches) * 100);
+  }, [feet, inches]);
 
-  // Check if values exceed limits
-  const checkValuesWithinLimits = (): boolean => {
-    // Check height limits
-    if (useMetric && cm > MAX_CM || !useMetric && (feet > MAX_FEET || feet === MAX_FEET && inches > 0 || inches > MAX_INCHES)) {
-      setError("One or more values exceeds the maximum limit");
+  const checkValuesWithinLimits = () => {
+    if (useMetric) {
+      if (cm < 50 || cm > 300) {
+        setError("Please enter a height between 50cm and 300cm.");
+        return false;
+      }
+    } else {
+      if (feet < 1 || feet > 8) {
+        setError("Please enter a valid height in feet (1-8).");
+        return false;
+      }
+      if (inches < 0 || inches > 11) {
+        setError("Please enter valid inches (0-11).");
+        return false;
+      }
+    }
+
+    if (weight < 20 || weight > 500) {
+      setError("Please enter a weight between 20kg and 500kg.");
       return false;
     }
 
-    // Check weight limits
-    if (useKg && weight > MAX_KG || !useKg && weight > MAX_LBS) {
-      setError("One or more values exceeds the maximum limit");
-      return false;
-    }
     setError("");
     return true;
   };
 
-  // Modify existing BMI calculation useEffect to work with manual calculation trigger
   useEffect(() => {
     if (!calculateTrigger) return;
 
@@ -76,129 +73,71 @@ const BMICalculator = () => {
     let weightInKg: number;
     let heightInCm: number = useMetric ? cm : parseFloat((convertHeightToMeters(feet, inches) * 100).toFixed(1));
 
-    // Calculate height in meters based on selected unit
     if (useMetric) {
       heightInMeters = convertCmToMeters(cm);
     } else {
       heightInMeters = convertHeightToMeters(feet, inches);
     }
 
-    // Calculate weight in kg based on selected unit
     if (useKg) {
       weightInKg = weight;
     } else {
       weightInKg = convertLbsToKg(weight);
     }
 
-    // Calculate BMI
-    const calculatedBMI = calculateBMI(heightInMeters, weightInKg);
+    const calculatedBMI = calculateBMI(weightInKg, heightInMeters);
     setBMI(calculatedBMI);
 
-    // Set category and description
     const bmiCategory = getBMICategory(calculatedBMI);
     setCategory(bmiCategory);
     setDescription(getBMICategoryDescription(bmiCategory, heightInCm));
 
+    setShowResults(true);
     setCalculateTrigger(false);
   }, [calculateTrigger, feet, inches, cm, weight, useMetric, useKg]);
 
-  // Handle height unit toggle
   const handleHeightUnitToggle = () => {
-    if (!useMetric) {
-      // Switching to metric (cm)
-      const heightInMeters = convertHeightToMeters(feet, inches);
-      setCm(parseFloat((heightInMeters * 100).toFixed(1)));
-    } else {
-      // Switching to imperial (feet and inches)
-      const totalInches = parseFloat((cm / 2.54).toFixed(1));
-      const calculatedFeet = Math.floor(totalInches / 12);
-      const calculatedInches = parseFloat((totalInches % 12).toFixed(1));
-      setFeet(calculatedFeet);
-      setInches(calculatedInches);
-    }
     setUseMetric(!useMetric);
   };
 
-  // Handle weight unit toggle
   const handleWeightUnitToggle = () => {
-    if (useKg) {
-      // Switching to lbs
-      setWeight(parseFloat((weight * 2.20462).toFixed(1)));
-    } else {
-      // Switching to kg
-      setWeight(parseFloat(convertLbsToKg(weight).toFixed(1)));
-    }
     setUseKg(!useKg);
   };
 
-  // Handle form input changes
   const handleFeetChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const inputValue = e.target.value;
-
-    // Remove leading zeros for non-zero values
-    const cleanedValue = inputValue.replace(/^0+(?!$)/, '');
-    if (inputValue === '') {
-      setFeet(0);
-    } else {
-      const value = parseInt(cleanedValue);
-      setFeet(isNaN(value) ? 0 : Math.min(value, MAX_FEET));
-    }
+    const value = parseFloat(e.target.value);
+    setFeet(value);
+    setCm(convertHeightToMeters(value, inches) * 100);
   };
+
   const handleInchesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const inputValue = e.target.value;
-
-    // Remove leading zeros for non-zero values
-    const cleanedValue = inputValue.replace(/^0+(?!$)/, '');
-    if (inputValue === '') {
-      setInches(0);
-    } else {
-      const value = parseFloat(cleanedValue);
-      setInches(isNaN(value) ? 0 : Math.min(value, MAX_INCHES));
-    }
+    const value = parseFloat(e.target.value);
+    setInches(value);
+    setCm(convertHeightToMeters(feet, value) * 100);
   };
+
   const handleCmChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const inputValue = e.target.value;
-
-    // Remove leading zeros for non-zero values
-    const cleanedValue = inputValue.replace(/^0+(?!$)/, '');
-    if (inputValue === '') {
-      setCm(0);
-    } else {
-      const value = parseFloat(cleanedValue);
-      setCm(isNaN(value) ? 0 : Math.min(value, MAX_CM));
-    }
+    const value = parseFloat(e.target.value);
+    setCm(value);
   };
+
   const handleWeightChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const inputValue = e.target.value;
+    const value = parseFloat(e.target.value);
+    setWeight(value);
+  };
 
-    // Remove leading zeros for non-zero values
-    const cleanedValue = inputValue.replace(/^0+(?!$)/, '');
-    if (inputValue === '') {
-      setWeight(0);
+  const getBMIColor = () => {
+    if (bmi < 18.5) {
+      return "#facc15"; // Underweight - Yellow
+    } else if (bmi < 25) {
+      return "#34d399"; // Normal - Green
+    } else if (bmi < 30) {
+      return "#fca5a5"; // Overweight - Light Red
     } else {
-      const value = parseFloat(cleanedValue);
-      const maxWeight = useKg ? MAX_KG : MAX_LBS;
-      setWeight(isNaN(value) ? 0 : Math.min(value, maxWeight));
+      return "#ef4444"; // Obese - Red
     }
   };
 
-  // Get color based on BMI category
-  const getCategoryColor = () => {
-    switch (category) {
-      case "Underweight":
-        return "text-blue-500";
-      case "Normal weight":
-        return "text-green-500";
-      case "Overweight":
-        return "text-yellow-500";
-      case "Obese":
-        return "text-red-500";
-      default:
-        return "text-gray-500";
-    }
-  };
-
-  // Handler for manual BMI calculation
   const handleCalculateBMI = () => {
     setCalculateTrigger(true);
   };
@@ -206,78 +145,94 @@ const BMICalculator = () => {
   return <Card className="w-full max-w-md mx-auto shadow-lg">
       <CardHeader className="text-white rounded-t-lg bg-red-700">
         <CardTitle className="text-2xl font-bold text-center">BMI Calculator</CardTitle>
-        <CardDescription className="text-health-light text-center">
-          Calculate your Body Mass Index
-        </CardDescription>
       </CardHeader>
-      <CardContent className="pt-6 space-y-6">
-        <div className="space-y-4">
-          {/* Height Section */}
-          <div>
-            <div className="flex justify-between items-center mb-2">
-              <Label htmlFor="height" className="text-lg font-medium">Height</Label>
-              <div className="flex items-center space-x-2">
-                <span className="text-sm">{useMetric ? "Cm" : "Feet & Inches"}</span>
-                <Switch id="height-unit-toggle" checked={useMetric} onCheckedChange={handleHeightUnitToggle} />
-              </div>
-            </div>
-            
-            {useMetric ? <div className="grid w-full items-center gap-1.5">
-                <Label htmlFor="cm">Centimeters</Label>
-                <Input id="cm" type="number" min="1" max={MAX_CM} step="0.1" value={cm} onChange={handleCmChange} className="mt-1" />
-              </div> : <div className="grid grid-cols-2 gap-4 mt-2">
-                <div className="grid w-full items-center gap-1.5 bg-white">
-                  <Label htmlFor="feet" className="bg-white">Feet</Label>
-                  <Input id="feet" type="number" min="0" max={MAX_FEET} value={feet} onChange={handleFeetChange} className="mt-1" />
-                </div>
-                <div className="grid w-full items-center gap-1.5">
-                  <Label htmlFor="inches">Inches</Label>
-                  <Input id="inches" type="number" min="0" max={MAX_INCHES} step="0.1" value={inches} onChange={handleInchesChange} className="mt-1" />
-                </div>
-              </div>}
-          </div>
-
-          {/* Weight Section */}
-          <div>
-            <div className="flex justify-between items-center mb-2">
-              <Label htmlFor="weight" className="text-lg font-medium">
-                Weight {useKg ? "(kg)" : "(lbs)"}
-              </Label>
-              <div className="flex items-center space-x-2">
-                <span className="text-sm">{useKg ? "Kg" : "Lbs"}</span>
-                <Switch id="weight-unit-toggle" checked={!useKg} onCheckedChange={handleWeightUnitToggle} />
-              </div>
-            </div>
-            <div className="grid w-full items-center gap-1.5">
-              <Label htmlFor="weight">{useKg ? "Kilograms" : "Pounds"}</Label>
-              <Input id="weight" type="number" min="0" max={useKg ? MAX_KG : MAX_LBS} step="0.1" value={weight} onChange={handleWeightChange} className="mt-1" />
+      <CardContent className="p-6">
+        {/* Height Section */}
+        <div className="mb-4">
+          <div className="flex justify-between items-center mb-2">
+            <Label htmlFor="height-toggle" className="text-base font-medium">Height</Label>
+            <div className="flex items-center">
+              <span className={`mr-2 text-sm ${!useMetric ? "font-medium" : "text-gray-500"}`}>ft/in</span>
+              <Switch id="height-toggle" checked={useMetric} onCheckedChange={handleHeightUnitToggle} />
+              <span className={`ml-2 text-sm ${useMetric ? "font-medium" : "text-gray-500"}`}>cm</span>
             </div>
           </div>
+          
+          {useMetric ? (
+            <div>
+              <Input 
+                type="number"
+                id="height-cm"
+                value={cm}
+                onChange={handleCmChange}
+                className="w-full"
+                step="0.1"
+                min="50"
+                max="300"
+              />
+            </div>
+          ) : (
+            <div className="flex gap-2">
+              <div className="w-1/2">
+                <Input
+                  type="number"
+                  id="height-feet"
+                  value={feet}
+                  onChange={handleFeetChange}
+                  className="w-full"
+                  min="1"
+                  max="8"
+                />
+                <Label htmlFor="height-feet" className="text-xs text-gray-500">Feet</Label>
+              </div>
+              <div className="w-1/2">
+                <Input
+                  type="number"
+                  id="height-inches"
+                  value={inches}
+                  onChange={handleInchesChange}
+                  className="w-full"
+                  min="0"
+                  max="11"
+                  step="0.1"
+                />
+                <Label htmlFor="height-inches" className="text-xs text-gray-500">Inches</Label>
+              </div>
+            </div>
+          )}
         </div>
 
-        {/* Display error message if limits are exceeded */}
-        {error && <Alert variant="destructive" className="mt-4 bg-red-50">
-            <AlertDescription className="text-red-500">{error}</AlertDescription>
-          </Alert>}
-
-        {/* Show BMI result only if no errors and BMI is calculated */}
-        {!error && bmi > 0 && <div className="mt-8 p-4 rounded-lg bg-gray-200">
-            <h3 className="text-lg font-bold text-center">Your BMI Result</h3>
-            <div className="text-center">
-              <p className="text-3xl font-bold mt-2">{bmi}</p>
-              <p className={`text-xl font-semibold mt-1 ${getCategoryColor()}`}>
-                {category}
-              </p>
-              <p className="mt-2 text-gray-600">{description}</p>
-              
-              {/* Add dietary tips link for BMI > 24.9 */}
-              {bmi > 24.9 && <Link to="/dietary-tips" className="mt-4 block text-health-primary hover:text-health-dark underline font-medium">
-                  Click here to get dietary tips for weightloss
-                </Link>}
+        {/* Weight Section */}
+        <div className="mb-4">
+          <div className="flex justify-between items-center mb-2">
+            <Label htmlFor="weight-toggle" className="text-base font-medium">Weight</Label>
+            <div className="flex items-center">
+              <span className={`mr-2 text-sm ${!useKg ? "font-medium" : "text-gray-500"}`}>lbs</span>
+              <Switch id="weight-toggle" checked={useKg} onCheckedChange={handleWeightUnitToggle} />
+              <span className={`ml-2 text-sm ${useKg ? "font-medium" : "text-gray-500"}`}>kg</span>
             </div>
-          </div>}
+          </div>
+          
+          <Input
+            type="number"
+            id="weight"
+            value={weight}
+            onChange={handleWeightChange}
+            className="w-full"
+            step="0.1"
+            min="20"
+            max="500"
+          />
+        </div>
 
-        {/* Add Calculate BMI Button */}
+        {/* Error Message */}
+        {error && (
+          <Alert variant="destructive" className="mt-4">
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        )}
+        
+        {/* Calculate BMI Button */}
         <div className="flex justify-center mt-4">
           <Button 
             onClick={handleCalculateBMI} 
@@ -286,13 +241,35 @@ const BMICalculator = () => {
             Calculate BMI
           </Button>
         </div>
+
+        {/* BMI Result Box - Now shown below the button */}
+        {showResults && bmi > 0 && (
+          <div className="mt-4 p-4 rounded-lg border bg-gray-50">
+            <h3 className="text-center font-medium mb-2">Your BMI Result</h3>
+            <p className="text-center text-2xl font-bold" style={{color: getBMIColor()}}>
+              {bmi.toFixed(1)}
+            </p>
+            <p className="text-center font-medium mb-1" style={{color: getBMIColor()}}>
+              {category}
+            </p>
+            <p className="text-center text-sm text-gray-600">
+              {description}
+            </p>
+            {category === "Underweight" && (
+              <Link to="/dietary-tips" className="block mt-2 text-center text-blue-600 hover:text-blue-800 text-sm">
+                Get dietary tips
+              </Link>
+            )}
+          </div>
+        )}
       </CardContent>
       <CardFooter className="flex justify-center border-t p-4">
         <p className="text-sm text-gray-500 text-center">
-          BMI is a screening tool, not a diagnostic of body fatness or health.
-          Consult with a healthcare provider for more information.
+          BMI is a measure of body fat based on height and weight.<br />
+          <span className="font-medium">BMI Categories:</span> Underweight (&lt;18.5), Normal (18.5-24.9), Overweight (25-29.9), Obese (≥30)
         </p>
       </CardFooter>
     </Card>;
 };
+
 export default BMICalculator;
