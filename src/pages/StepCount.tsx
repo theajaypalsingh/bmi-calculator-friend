@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -7,6 +8,7 @@ import { Footprints, Save } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Button } from "@/components/ui/button";
 
 // Define the schema for the form
 const stepCountSchema = z.object({
@@ -103,7 +105,7 @@ const StepCount = () => {
     if (storedActivityLevel && ["sedentary", "lightly", "moderately", "very", "super"].includes(storedActivityLevel)) form.setValue("activityLevel", storedActivityLevel as "sedentary" | "lightly" | "moderately" | "very" | "super");
   }, [form]);
   const onSubmit = (data: StepCountFormValues) => {
-    // Convert string values to numbers
+    // Convert string values to numbers (these are now numbers from the zod transform)
     const height = Number(data.height);
     const weight = Number(data.weight);
     const age = Number(data.age);
@@ -222,10 +224,13 @@ const StepCount = () => {
                         <FormMessage />
                       </FormItem>} />
                   
-                  <button type="submit" className="w-full text-white font-bold rounded-md flex items-center justify-center gap-2 bg-red-700 hover:bg-red-600 mx-0 py-[7px] px-0">
-                    <Footprints size={18} />
+                  <Button 
+                    type="submit" 
+                    className="bg-red-700 hover:bg-red-600 text-white font-bold inline-flex items-center justify-center px-4 py-2 mx-auto"
+                  >
+                    <Footprints size={18} className="mr-2" />
                     Calculate Step Goal
-                  </button>
+                  </Button>
                 </form>
               </Form>
             </CardContent>

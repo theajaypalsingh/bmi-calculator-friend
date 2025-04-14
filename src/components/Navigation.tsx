@@ -15,7 +15,7 @@ const Navigation = () => {
             <NavigationMenuItem>
               <Link to="/">
                 <NavigationMenuLink 
-                  className={`${navigationMenuTriggerStyle()} text-white bg-transparent hover:bg-gray-800 hover:text-white ${currentPath === "/" ? "bg-gray-800" : ""}`}>
+                  className={`${navigationMenuTriggerStyle()} bg-transparent hover:bg-gray-800 hover:text-white ${currentPath === "/" ? "bg-gray-800 text-white" : "text-white"}`}>
                   <Calculator size={18} className="mr-1 bg-transparent" />
                   BMI Calculator
                 </NavigationMenuLink>
@@ -25,7 +25,7 @@ const Navigation = () => {
             <NavigationMenuItem>
               <Link to="/step-count">
                 <NavigationMenuLink 
-                  className={`${navigationMenuTriggerStyle()} text-white bg-transparent hover:bg-gray-800 hover:text-white ${currentPath === "/step-count" ? "bg-gray-800" : ""}`}>
+                  className={`${navigationMenuTriggerStyle()} bg-transparent hover:bg-gray-800 hover:text-white ${currentPath === "/step-count" ? "bg-gray-800 text-white" : "text-white"}`}>
                   <ActivitySquare className="mr-1" size={18} />
                   Daily Step Count
                 </NavigationMenuLink>
@@ -35,7 +35,7 @@ const Navigation = () => {
             <NavigationMenuItem>
               <Link to="/health-score">
                 <NavigationMenuLink 
-                  className={`${navigationMenuTriggerStyle()} text-white bg-transparent hover:bg-gray-800 hover:text-white ${currentPath === "/health-score" ? "bg-gray-800" : ""}`}>
+                  className={`${navigationMenuTriggerStyle()} bg-transparent hover:bg-gray-800 hover:text-white ${currentPath === "/health-score" ? "bg-gray-800 text-white" : "text-white"}`}>
                   <Heart className="mr-1" size={18} />
                   Health Score
                 </NavigationMenuLink>
@@ -45,7 +45,7 @@ const Navigation = () => {
             <NavigationMenuItem>
               <Link to="/consultation">
                 <NavigationMenuLink 
-                  className={`${navigationMenuTriggerStyle()} text-white bg-transparent hover:bg-gray-800 hover:text-white ${currentPath === "/consultation" ? "bg-gray-800" : ""}`}>
+                  className={`${navigationMenuTriggerStyle()} bg-transparent hover:bg-gray-800 hover:text-white ${currentPath === "/consultation" ? "bg-gray-800 text-white" : "text-white"}`}>
                   <Phone className="mr-1" size={18} />
                   Free Consultation
                 </NavigationMenuLink>
