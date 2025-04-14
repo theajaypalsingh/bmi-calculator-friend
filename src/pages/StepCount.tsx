@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -10,7 +9,6 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 
-// Define the schema for the form
 const stepCountSchema = z.object({
   height: z.string().transform(val => Number(val)).refine(val => val > 0, {
     message: "Height must be greater than 0"
@@ -24,7 +22,9 @@ const stepCountSchema = z.object({
   gender: z.enum(["male", "female", "other"]),
   activityLevel: z.enum(["sedentary", "lightly", "moderately", "very", "super"])
 });
+
 type StepCountFormValues = z.infer<typeof stepCountSchema>;
+
 const activityLevelFactors = {
   sedentary: {
     factor: 1.2,
@@ -52,33 +52,32 @@ const activityLevelFactors = {
     label: "Super Active"
   }
 };
+
 const calculateBMR = (height: number, weight: number, age: number, gender: string): number => {
-  // Mifflin-St Jeor formula
   const baseBMR = 10 * weight + 6.25 * height - 5 * age;
   if (gender === "male") {
     return baseBMR + 5;
   } else if (gender === "female") {
     return baseBMR - 161;
   } else {
-    // For "other", take an average of male and female BMR
-    return baseBMR - 78; // (5 - 161) / 2 = -78
+    return baseBMR - 78;
   }
 };
+
 const calculateTDEE = (bmr: number, activityLevel: string): number => {
   return bmr * activityLevelFactors[activityLevel as keyof typeof activityLevelFactors].factor;
 };
+
 const calculateStepGoal = (tdee: number, activityLevel: string): number => {
   const stepPercent = activityLevelFactors[activityLevel as keyof typeof activityLevelFactors].stepPercent;
   const caloriesFromSteps = tdee * stepPercent;
-  // Calories burned per step = 0.05
   const steps = caloriesFromSteps / 0.05;
-  // Round to nearest 100
   return Math.round(steps / 100) * 100;
 };
+
 const StepCount = () => {
   const [stepGoal, setStepGoal] = useState<number | null>(null);
 
-  // Initialize form with default values or values from localStorage
   const form = useForm<StepCountFormValues>({
     resolver: zodResolver(stepCountSchema),
     defaultValues: {
@@ -89,44 +88,38 @@ const StepCount = () => {
       activityLevel: "moderately"
     }
   });
+
   useEffect(() => {
-    // Retrieve values from localStorage if available
     const storedHeight = localStorage.getItem("height");
     const storedWeight = localStorage.getItem("weight");
     const storedAge = localStorage.getItem("age");
     const storedGender = localStorage.getItem("gender");
     const storedActivityLevel = localStorage.getItem("activityLevel");
 
-    // Set form values from localStorage
     if (storedHeight) form.setValue("height", storedHeight);
     if (storedWeight) form.setValue("weight", storedWeight);
     if (storedAge) form.setValue("age", storedAge);
     if (storedGender && ["male", "female", "other"].includes(storedGender)) form.setValue("gender", storedGender as "male" | "female" | "other");
     if (storedActivityLevel && ["sedentary", "lightly", "moderately", "very", "super"].includes(storedActivityLevel)) form.setValue("activityLevel", storedActivityLevel as "sedentary" | "lightly" | "moderately" | "very" | "super");
   }, [form]);
+
   const onSubmit = (data: StepCountFormValues) => {
-    // Convert string values to numbers (these are now numbers from the zod transform)
-    const height = Number(data.height);
-    const weight = Number(data.weight);
-    const age = Number(data.age);
+    const height = data.height;
+    const weight = data.weight;
+    const age = data.age;
 
-    // Calculate BMR
     const bmr = calculateBMR(height, weight, age, data.gender);
-
-    // Calculate TDEE
     const tdee = calculateTDEE(bmr, data.activityLevel);
-
-    // Calculate step goal
     const calculatedStepGoal = calculateStepGoal(tdee, data.activityLevel);
     setStepGoal(calculatedStepGoal);
 
-    // Store input values in localStorage
-    localStorage.setItem("height", data.height.toString());
-    localStorage.setItem("weight", data.weight.toString());
-    localStorage.setItem("age", data.age.toString());
+    localStorage.setItem("height", height.toString());
+    localStorage.setItem("weight", weight.toString());
+    localStorage.setItem("age", age.toString());
     localStorage.setItem("gender", data.gender);
     localStorage.setItem("activityLevel", data.activityLevel);
   };
+
   return <div className="min-h-screen bg-gradient-to-b from-white to-health-light">
       <header className="py-6 text-white bg-gray-700">
         <div className="container mx-auto px-4">
@@ -224,13 +217,15 @@ const StepCount = () => {
                         <FormMessage />
                       </FormItem>} />
                   
-                  <Button 
-                    type="submit" 
-                    className="bg-red-700 hover:bg-red-600 text-white font-bold inline-flex items-center justify-center px-4 py-2 mx-auto"
-                  >
-                    <Footprints size={18} className="mr-2" />
-                    Calculate Step Goal
-                  </Button>
+                  <div className="flex justify-center">
+                    <Button 
+                      type="submit" 
+                      className="bg-red-700 hover:bg-red-600 text-white font-bold px-4 py-2"
+                    >
+                      <Footprints size={18} className="mr-2" />
+                      Calculate Step Goal
+                    </Button>
+                  </div>
                 </form>
               </Form>
             </CardContent>
@@ -267,4 +262,5 @@ const StepCount = () => {
       </footer>
     </div>;
 };
+
 export default StepCount;
