@@ -62,6 +62,7 @@ const BMICalculator: React.FC<BMICalculatorProps> = () => {
       setBMI(0);
       setCategory("");
       setDescription("");
+      setShowResults(false);
       return;
     }
 
@@ -81,6 +82,7 @@ const BMICalculator: React.FC<BMICalculatorProps> = () => {
       weightInKg = convertLbsToKg(weight);
     }
 
+    // Fix: calculateBMI expects weight first, height second according to implementation
     const calculatedBMI = calculateBMI(weightInKg, heightInMeters);
     setBMI(calculatedBMI);
 
@@ -135,6 +137,11 @@ const BMICalculator: React.FC<BMICalculatorProps> = () => {
     } else {
       return "#ef4444"; // Obese - Red
     }
+  };
+
+  // Function to determine if dietary tips link should be shown
+  const shouldShowDietaryTips = () => {
+    return bmi >= 25; // Show dietary tips link for overweight and obese
   };
 
   return <Card className="w-full max-w-md mx-auto shadow-lg">
@@ -250,9 +257,9 @@ const BMICalculator: React.FC<BMICalculatorProps> = () => {
             <p className="text-center text-sm text-gray-600">
               {description}
             </p>
-            {category === "Underweight" && (
+            {shouldShowDietaryTips() && (
               <Link to="/dietary-tips" className="block mt-2 text-center text-blue-600 hover:text-blue-800 text-sm">
-                Get dietary tips
+                Get dietary tips for weight loss
               </Link>
             )}
           </div>

@@ -25,7 +25,7 @@ export const convertLbsToKg = (lbs: number): number => {
 };
 
 // Calculate BMI using the formula: weight (kg) / (height (m))^2
-export const calculateBMI = (heightInMeters: number, weightInKg: number): number => {
+export const calculateBMI = (weightInKg: number, heightInMeters: number): number => {
   if (heightInMeters <= 0 || weightInKg <= 0) {
     return 0;
   }
