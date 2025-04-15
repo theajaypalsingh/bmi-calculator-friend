@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
@@ -8,7 +7,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Form, FormControl, FormField, FormItem, FormLabel } from '@/components/ui/form';
 import { useForm } from 'react-hook-form';
 import { ActivitySquare } from 'lucide-react';
-
 type FormData = {
   age: number;
   weight: number;
@@ -37,11 +35,9 @@ const stepPercentages = {
 
 // Calories burned per step
 const CALORIES_PER_STEP = 0.05;
-
 const StepCount = () => {
   const [stepGoal, setStepGoal] = useState<number>(0);
   const [showResults, setShowResults] = useState<boolean>(false);
-
   const form = useForm<FormData>({
     defaultValues: {
       age: 30,
@@ -51,7 +47,6 @@ const StepCount = () => {
       activityLevel: 'lightlyActive'
     }
   });
-
   const calculateStepGoal = (data: FormData) => {
     // Step 1: Calculate BMR using Mifflin-St Jeor formula
     let bmr = 0;
@@ -72,12 +67,11 @@ const StepCount = () => {
 
     // Step 3: Estimate Step Goal
     const stepPercentage = stepPercentages[data.activityLevel as keyof typeof stepPercentages];
-    const steps = (tdee * stepPercentage) / CALORIES_PER_STEP;
-    
+    const steps = tdee * stepPercentage / CALORIES_PER_STEP;
+
     // Round to nearest 100
     return Math.round(steps / 100) * 100;
   };
-
   const onSubmit = (data: FormData) => {
     const calculatedStepGoal = calculateStepGoal(data);
     setStepGoal(calculatedStepGoal);
@@ -87,19 +81,23 @@ const StepCount = () => {
   // Updated activity level labels with descriptions
   const getActivityLabel = (key: string): string => {
     switch (key) {
-      case 'sedentary': return 'Sedentary – Little or no exercise';
-      case 'lightlyActive': return 'Lightly Active – Light exercise 1–3 days/week';
-      case 'moderatelyActive': return 'Moderately Active – Moderate exercise 3–5 days/week';
-      case 'veryActive': return 'Very Active – Hard exercise 6–7 days/week';
-      case 'superActive': return 'Super Active – Intense training or physical job daily';
-      default: return key;
+      case 'sedentary':
+        return 'Sedentary – Little or no exercise';
+      case 'lightlyActive':
+        return 'Lightly Active – Light exercise 1–3 days/week';
+      case 'moderatelyActive':
+        return 'Moderately Active – Moderate exercise 3–5 days/week';
+      case 'veryActive':
+        return 'Very Active – Hard exercise 6–7 days/week';
+      case 'superActive':
+        return 'Super Active – Intense training or physical job daily';
+      default:
+        return key;
     }
   };
-
-  return (
-    <div className="container mx-auto px-4 py-8">
+  return <div className="container mx-auto px-4 py-8">
       <Card className="max-w-md mx-auto">
-        <CardHeader className="bg-health-primary text-white rounded-t-lg">
+        <CardHeader className="text-white rounded-t-lg bg-gray-800">
           <CardTitle className="text-xl font-bold text-center">Daily Step Goal Calculator</CardTitle>
           <CardDescription className="text-center text-white/90">Find your optimal daily step target</CardDescription>
         </CardHeader>
@@ -107,73 +105,38 @@ const StepCount = () => {
         <CardContent className="pt-6 pb-4">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-              <FormField
-                control={form.control}
-                name="age"
-                render={({ field }) => (
-                  <FormItem>
+              <FormField control={form.control} name="age" render={({
+              field
+            }) => <FormItem>
                     <FormLabel>Age (years)</FormLabel>
                     <FormControl>
-                      <Input 
-                        type="number" 
-                        min="10" 
-                        max="100" 
-                        {...field}
-                        onChange={(e) => field.onChange(parseInt(e.target.value) || 0)} 
-                      />
+                      <Input type="number" min="10" max="100" {...field} onChange={e => field.onChange(parseInt(e.target.value) || 0)} />
                     </FormControl>
-                  </FormItem>
-                )}
-              />
+                  </FormItem>} />
 
-              <FormField
-                control={form.control}
-                name="height"
-                render={({ field }) => (
-                  <FormItem>
+              <FormField control={form.control} name="height" render={({
+              field
+            }) => <FormItem>
                     <FormLabel>Height (cm)</FormLabel>
                     <FormControl>
-                      <Input 
-                        type="number" 
-                        min="100" 
-                        max="250" 
-                        {...field}
-                        onChange={(e) => field.onChange(parseInt(e.target.value) || 0)} 
-                      />
+                      <Input type="number" min="100" max="250" {...field} onChange={e => field.onChange(parseInt(e.target.value) || 0)} />
                     </FormControl>
-                  </FormItem>
-                )}
-              />
+                  </FormItem>} />
 
-              <FormField
-                control={form.control}
-                name="weight"
-                render={({ field }) => (
-                  <FormItem>
+              <FormField control={form.control} name="weight" render={({
+              field
+            }) => <FormItem>
                     <FormLabel>Weight (kg)</FormLabel>
                     <FormControl>
-                      <Input 
-                        type="number" 
-                        min="30" 
-                        max="200" 
-                        {...field}
-                        onChange={(e) => field.onChange(parseInt(e.target.value) || 0)} 
-                      />
+                      <Input type="number" min="30" max="200" {...field} onChange={e => field.onChange(parseInt(e.target.value) || 0)} />
                     </FormControl>
-                  </FormItem>
-                )}
-              />
+                  </FormItem>} />
 
-              <FormField
-                control={form.control}
-                name="gender"
-                render={({ field }) => (
-                  <FormItem>
+              <FormField control={form.control} name="gender" render={({
+              field
+            }) => <FormItem>
                     <FormLabel>Gender</FormLabel>
-                    <Select 
-                      onValueChange={field.onChange} 
-                      defaultValue={field.value}
-                    >
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="Select your gender" />
@@ -185,20 +148,13 @@ const StepCount = () => {
                         <SelectItem value="other">Other</SelectItem>
                       </SelectContent>
                     </Select>
-                  </FormItem>
-                )}
-              />
+                  </FormItem>} />
 
-              <FormField
-                control={form.control}
-                name="activityLevel"
-                render={({ field }) => (
-                  <FormItem>
+              <FormField control={form.control} name="activityLevel" render={({
+              field
+            }) => <FormItem>
                     <FormLabel>Physical Activity Level</FormLabel>
-                    <Select 
-                      onValueChange={field.onChange} 
-                      defaultValue={field.value}
-                    >
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="Select your activity level" />
@@ -212,12 +168,10 @@ const StepCount = () => {
                         <SelectItem value="superActive">Super Active – Intense training or physical job daily</SelectItem>
                       </SelectContent>
                     </Select>
-                  </FormItem>
-                )}
-              />
+                  </FormItem>} />
 
               <div className="flex justify-center mt-6">
-                <Button type="submit" className="px-6">
+                <Button type="submit" className="px-6 bg-red-800 hover:bg-red-700">
                   <ActivitySquare className="mr-2 h-4 w-4" />
                   Calculate Step Goal
                 </Button>
@@ -225,8 +179,7 @@ const StepCount = () => {
             </form>
           </Form>
           
-          {showResults && (
-            <div className="mt-6 p-4 bg-green-50 border border-green-200 rounded-md">
+          {showResults && <div className="mt-6 p-4 bg-green-50 border border-green-200 rounded-md">
               <p className="text-center font-medium">Your recommended daily step goal:</p>
               <p className="text-center text-2xl font-bold text-green-600">
                 {stepGoal.toLocaleString()} steps/day
@@ -234,8 +187,7 @@ const StepCount = () => {
               <p className="text-center text-sm text-gray-600 mt-2">
                 {stepGoal.toLocaleString()} steps/day is recommended based on your profile to maintain/improve your health.
               </p>
-            </div>
-          )}
+            </div>}
         </CardContent>
         
         <CardFooter className="border-t px-6 py-4">
@@ -245,8 +197,6 @@ const StepCount = () => {
           </div>
         </CardFooter>
       </Card>
-    </div>
-  );
+    </div>;
 };
-
 export default StepCount;
