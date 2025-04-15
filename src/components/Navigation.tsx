@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { NavigationMenu, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, navigationMenuTriggerStyle } from "@/components/ui/navigation-menu";
@@ -5,6 +6,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Calculator, ActivitySquare, Heart, Phone, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
+
 const Navigation = () => {
   const location = useLocation();
   const currentPath = location.pathname;
@@ -74,9 +76,9 @@ const Navigation = () => {
 
   // Desktop navigation
   return <div className="sticky top-0 z-50 text-white py-3 shadow-md bg-gray-950 px-[157px]">
-      <div className="container mx-auto px-4">
-        <NavigationMenu className="max-w-none w-full justify-between mx-0 bg-transparent my-[5px]">
-          <NavigationMenuList className="flex flex-wrap justify-center md:justify-start gap-1">
+      <div className="container mx-auto px-4 flex justify-center">
+        <NavigationMenu className="max-w-none w-full justify-center mx-0 bg-transparent my-[5px]">
+          <NavigationMenuList className="flex flex-wrap justify-center gap-1">
             {renderNavigationItems()}
           </NavigationMenuList>
         </NavigationMenu>

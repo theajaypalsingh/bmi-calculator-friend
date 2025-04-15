@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Form, FormControl, FormField, FormItem, FormLabel } from '@/components/ui/form';
 import { useForm } from 'react-hook-form';
 import { ActivitySquare } from 'lucide-react';
+
 type FormData = {
   age: number;
   weight: number;
@@ -15,7 +16,6 @@ type FormData = {
   activityLevel: string;
 };
 
-// Activity level multipliers
 const activityMultipliers = {
   sedentary: 1.2,
   lightlyActive: 1.375,
@@ -24,7 +24,6 @@ const activityMultipliers = {
   superActive: 1.9
 };
 
-// Step percentage by activity level
 const stepPercentages = {
   sedentary: 0.10,
   lightlyActive: 0.15,
@@ -33,8 +32,8 @@ const stepPercentages = {
   superActive: 0.30
 };
 
-// Calories burned per step
 const CALORIES_PER_STEP = 0.05;
+
 const StepCount = () => {
   const [stepGoal, setStepGoal] = useState<number>(0);
   const [showResults, setShowResults] = useState<boolean>(false);
@@ -47,38 +46,34 @@ const StepCount = () => {
       activityLevel: 'lightlyActive'
     }
   });
+
   const calculateStepGoal = (data: FormData) => {
-    // Step 1: Calculate BMR using Mifflin-St Jeor formula
     let bmr = 0;
     if (data.gender === 'male') {
       bmr = 10 * data.weight + 6.25 * data.height - 5 * data.age + 5;
     } else if (data.gender === 'female') {
       bmr = 10 * data.weight + 6.25 * data.height - 5 * data.age - 161;
     } else {
-      // For "other" gender, use average of male and female formulas
       const maleBmr = 10 * data.weight + 6.25 * data.height - 5 * data.age + 5;
       const femaleBmr = 10 * data.weight + 6.25 * data.height - 5 * data.age - 161;
       bmr = (maleBmr + femaleBmr) / 2;
     }
 
-    // Step 2: Calculate TDEE (Total Daily Energy Expenditure)
     const activityMultiplier = activityMultipliers[data.activityLevel as keyof typeof activityMultipliers];
     const tdee = bmr * activityMultiplier;
 
-    // Step 3: Estimate Step Goal
     const stepPercentage = stepPercentages[data.activityLevel as keyof typeof stepPercentages];
     const steps = tdee * stepPercentage / CALORIES_PER_STEP;
 
-    // Round to nearest 100
     return Math.round(steps / 100) * 100;
   };
+
   const onSubmit = (data: FormData) => {
     const calculatedStepGoal = calculateStepGoal(data);
     setStepGoal(calculatedStepGoal);
     setShowResults(true);
   };
 
-  // Updated activity level labels with descriptions
   const getActivityLabel = (key: string): string => {
     switch (key) {
       case 'sedentary':
@@ -95,6 +90,7 @@ const StepCount = () => {
         return key;
     }
   };
+
   return <div className="container mx-auto px-4 py-8">
       <Card className="max-w-md mx-auto">
         <CardHeader className="text-white rounded-t-lg bg-gray-800">
@@ -185,7 +181,7 @@ const StepCount = () => {
                 {stepGoal.toLocaleString()} steps/day
               </p>
               <p className="text-center text-sm text-gray-600 mt-2">
-                {stepGoal.toLocaleString()} steps/day is recommended based on your profile to maintain/improve your health.
+                {stepGoal.toLocaleString()} steps/day is recommended based on your profile to improve your health.
               </p>
             </div>}
         </CardContent>
@@ -201,4 +197,5 @@ Note - There's no single universal formula to calculate “Ideal daily step coun
       </Card>
     </div>;
 };
+
 export default StepCount;
