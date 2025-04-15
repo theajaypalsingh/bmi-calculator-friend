@@ -84,13 +84,14 @@ const StepCount = () => {
     setShowResults(true);
   };
 
+  // Updated activity level labels with descriptions
   const getActivityLabel = (key: string): string => {
     switch (key) {
-      case 'sedentary': return 'Sedentary';
-      case 'lightlyActive': return 'Lightly Active';
-      case 'moderatelyActive': return 'Moderately Active';
-      case 'veryActive': return 'Very Active';
-      case 'superActive': return 'Super Active';
+      case 'sedentary': return 'Sedentary – Little or no exercise';
+      case 'lightlyActive': return 'Lightly Active – Light exercise 1–3 days/week';
+      case 'moderatelyActive': return 'Moderately Active – Moderate exercise 3–5 days/week';
+      case 'veryActive': return 'Very Active – Hard exercise 6–7 days/week';
+      case 'superActive': return 'Super Active – Intense training or physical job daily';
       default: return key;
     }
   };
@@ -204,11 +205,11 @@ const StepCount = () => {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="sedentary">Sedentary</SelectItem>
-                        <SelectItem value="lightlyActive">Lightly Active</SelectItem>
-                        <SelectItem value="moderatelyActive">Moderately Active</SelectItem>
-                        <SelectItem value="veryActive">Very Active</SelectItem>
-                        <SelectItem value="superActive">Super Active</SelectItem>
+                        <SelectItem value="sedentary">Sedentary – Little or no exercise</SelectItem>
+                        <SelectItem value="lightlyActive">Lightly Active – Light exercise 1–3 days/week</SelectItem>
+                        <SelectItem value="moderatelyActive">Moderately Active – Moderate exercise 3–5 days/week</SelectItem>
+                        <SelectItem value="veryActive">Very Active – Hard exercise 6–7 days/week</SelectItem>
+                        <SelectItem value="superActive">Super Active – Intense training or physical job daily</SelectItem>
                       </SelectContent>
                     </Select>
                   </FormItem>
