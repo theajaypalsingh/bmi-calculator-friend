@@ -4,7 +4,7 @@ import { ArrowLeft, Linkedin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 const DietaryTips = () => {
   return <div className="min-h-screen bg-gradient-to-b from-white to-health-light">
-      <header className="py-6 text-white bg-gray-950">
+      <header className="py-6 text-white bg-gray-700">
         <div className="container mx-auto px-4">
           <h1 className="text-3xl md:text-4xl font-bold text-center">Dietary Tips for Weight Loss</h1>
           <p className="text-center mt-2 text-health-light">Simple and effective tips to help with your weight loss journey</p>
