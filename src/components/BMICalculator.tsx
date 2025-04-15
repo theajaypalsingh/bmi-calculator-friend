@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -24,8 +25,6 @@ const BMICalculator: React.FC<BMICalculatorProps> = () => {
   const [description, setDescription] = useState<string>("");
 
   const [error, setError] = useState<string>("");
-
-  const [calculateTrigger, setCalculateTrigger] = useState(false);
   const [showResults, setShowResults] = useState(false);
 
   useEffect(() => {
@@ -58,14 +57,11 @@ const BMICalculator: React.FC<BMICalculatorProps> = () => {
     return true;
   };
 
-  useEffect(() => {
-    if (!calculateTrigger) return;
-
+  const calculateResult = () => {
     if (!checkValuesWithinLimits()) {
       setBMI(0);
       setCategory("");
       setDescription("");
-      setCalculateTrigger(false);
       return;
     }
 
@@ -93,8 +89,7 @@ const BMICalculator: React.FC<BMICalculatorProps> = () => {
     setDescription(getBMICategoryDescription(bmiCategory, heightInCm));
 
     setShowResults(true);
-    setCalculateTrigger(false);
-  }, [calculateTrigger, feet, inches, cm, weight, useMetric, useKg]);
+  };
 
   const handleHeightUnitToggle = () => {
     setUseMetric(!useMetric);
@@ -126,6 +121,10 @@ const BMICalculator: React.FC<BMICalculatorProps> = () => {
     setWeight(value);
   };
 
+  const handleCalculateBMI = () => {
+    calculateResult();
+  };
+
   const getBMIColor = () => {
     if (bmi < 18.5) {
       return "#facc15"; // Underweight - Yellow
@@ -136,10 +135,6 @@ const BMICalculator: React.FC<BMICalculatorProps> = () => {
     } else {
       return "#ef4444"; // Obese - Red
     }
-  };
-
-  const handleCalculateBMI = () => {
-    setCalculateTrigger(true);
   };
 
   return <Card className="w-full max-w-md mx-auto shadow-lg">
