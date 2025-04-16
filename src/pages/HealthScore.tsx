@@ -12,7 +12,6 @@ import { toast } from "sonner";
 import { Progress } from "@/components/ui/progress";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { CheckCircle, AlertCircle, CircleAlert, XCircle } from "lucide-react";
-
 const formSchema = z.object({
   age: z.number().min(1).max(120),
   gender: z.enum(["male", "female", "other"]),
@@ -24,13 +23,11 @@ const formSchema = z.object({
   alcoholConsumption: z.enum(["never", "occasionally", "weekly", "frequently", "daily"]),
   stressLevel: z.enum(["low", "moderate", "high"]),
   eatingOutside: z.enum(["rarely", "onceWeek", "twoToFourWeek", "daily"]),
-  waterIntake: z.number().min(0).max(10),
+  waterIntake: z.number().min(0).max(10)
 });
-
 const HealthScore = () => {
   const [score, setScore] = React.useState<number | null>(null);
   const [recommendations, setRecommendations] = React.useState<string[]>([]);
-
   const form = useForm<HealthScoreInputs>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -44,66 +41,68 @@ const HealthScore = () => {
       alcoholConsumption: "never",
       stressLevel: "low",
       eatingOutside: "rarely",
-      waterIntake: 2.5,
-    },
+      waterIntake: 2.5
+    }
   });
-
   const generateRecommendations = (data: HealthScoreInputs): string[] => {
     const recommendations: string[] = [];
-    
     if (data.sleepHours < 7 || data.sleepHours > 9) {
       recommendations.push("Try improving your sleep routine to 7–9 hrs/day.");
     }
-    
     if (data.smokingHabit === "occasionalSmoker" || data.smokingHabit === "regularSmoker") {
       recommendations.push("Consider quitting smoking to drastically improve your long-term health.");
     }
-    
     const bmi = calculateBMI(data.weight, data.height);
     if (bmi >= 25) {
       recommendations.push("Your BMI is above ideal range — work on balanced nutrition and daily movement.");
     }
-    
     if (data.waterIntake < 2.5) {
       recommendations.push("Try to increase your water intake to at least 2.5 liters per day.");
     }
-    
     if (data.stressLevel === "high") {
       recommendations.push("Consider stress management techniques like meditation or yoga.");
     }
-    
     if (data.alcoholConsumption === "daily" || data.alcoholConsumption === "frequently") {
       recommendations.push("Reducing alcohol consumption will significantly improve your health score.");
     }
-    
     if (data.activityLevel === "sedentary" || data.activityLevel === "lightlyActive") {
       recommendations.push("Increasing your physical activity to at least 3-5 days a week can greatly improve your health.");
     }
-    
     if (data.eatingOutside === "daily" || data.eatingOutside === "twoToFourWeek") {
       recommendations.push("Try to reduce eating outside and prepare more home-cooked meals.");
     }
-    
     return recommendations;
   };
-
   const getScoreCategory = (score: number) => {
-    if (score >= 80) return { label: "Excellent", color: "bg-green-500", icon: <CheckCircle className="h-6 w-6 text-green-500" /> };
-    if (score >= 60) return { label: "Good, can be Improved", color: "bg-blue-500", icon: <CircleAlert className="h-6 w-6 text-blue-500" /> };
-    if (score >= 40) return { label: "Average", color: "bg-yellow-500", icon: <AlertCircle className="h-6 w-6 text-yellow-500" /> };
-    return { label: "Poor", color: "bg-red-500", icon: <XCircle className="h-6 w-6 text-red-500" /> };
+    if (score >= 80) return {
+      label: "Excellent",
+      color: "bg-green-500",
+      icon: <CheckCircle className="h-6 w-6 text-green-500" />
+    };
+    if (score >= 60) return {
+      label: "Good, can be Improved",
+      color: "bg-blue-500",
+      icon: <CircleAlert className="h-6 w-6 text-blue-500" />
+    };
+    if (score >= 40) return {
+      label: "Average",
+      color: "bg-yellow-500",
+      icon: <AlertCircle className="h-6 w-6 text-yellow-500" />
+    };
+    return {
+      label: "Poor",
+      color: "bg-red-500",
+      icon: <XCircle className="h-6 w-6 text-red-500" />
+    };
   };
-
   const onSubmit = (data: HealthScoreInputs) => {
     const healthScore = calculateHealthScore(data);
     setScore(healthScore);
     setRecommendations(generateRecommendations(data));
     toast.success("Health score calculated successfully!");
   };
-
-  return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-health-light">
-      <header className="py-6 text-white bg-gray-700">
+  return <div className="min-h-screen bg-gradient-to-b from-white to-health-light">
+      <header className="py-6 text-white bg-gray-800">
         <div className="container mx-auto px-4">
           <h1 className="text-3xl md:text-4xl font-bold text-center">Health Score</h1>
           <p className="text-center mt-2 text-health-light">Calculate your overall health score</p>
@@ -120,28 +119,18 @@ const HealthScore = () => {
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <FormField
-                    control={form.control}
-                    name="age"
-                    render={({ field }) => (
-                      <FormItem>
+                  <FormField control={form.control} name="age" render={({
+                  field
+                }) => <FormItem>
                         <FormLabel>Age (years)</FormLabel>
                         <FormControl>
-                          <Input
-                            type="number"
-                            {...field}
-                            onChange={(e) => field.onChange(Number(e.target.value))}
-                          />
+                          <Input type="number" {...field} onChange={e => field.onChange(Number(e.target.value))} />
                         </FormControl>
-                      </FormItem>
-                    )}
-                  />
+                      </FormItem>} />
 
-                  <FormField
-                    control={form.control}
-                    name="gender"
-                    render={({ field }) => (
-                      <FormItem>
+                  <FormField control={form.control} name="gender" render={({
+                  field
+                }) => <FormItem>
                         <FormLabel>Gender</FormLabel>
                         <Select onValueChange={field.onChange} defaultValue={field.value}>
                           <FormControl>
@@ -155,49 +144,29 @@ const HealthScore = () => {
                             <SelectItem value="other">Other</SelectItem>
                           </SelectContent>
                         </Select>
-                      </FormItem>
-                    )}
-                  />
+                      </FormItem>} />
 
-                  <FormField
-                    control={form.control}
-                    name="height"
-                    render={({ field }) => (
-                      <FormItem>
+                  <FormField control={form.control} name="height" render={({
+                  field
+                }) => <FormItem>
                         <FormLabel>Height (cm)</FormLabel>
                         <FormControl>
-                          <Input
-                            type="number"
-                            {...field}
-                            onChange={(e) => field.onChange(Number(e.target.value))}
-                          />
+                          <Input type="number" {...field} onChange={e => field.onChange(Number(e.target.value))} />
                         </FormControl>
-                      </FormItem>
-                    )}
-                  />
+                      </FormItem>} />
 
-                  <FormField
-                    control={form.control}
-                    name="weight"
-                    render={({ field }) => (
-                      <FormItem>
+                  <FormField control={form.control} name="weight" render={({
+                  field
+                }) => <FormItem>
                         <FormLabel>Weight (kg)</FormLabel>
                         <FormControl>
-                          <Input
-                            type="number"
-                            {...field}
-                            onChange={(e) => field.onChange(Number(e.target.value))}
-                          />
+                          <Input type="number" {...field} onChange={e => field.onChange(Number(e.target.value))} />
                         </FormControl>
-                      </FormItem>
-                    )}
-                  />
+                      </FormItem>} />
 
-                  <FormField
-                    control={form.control}
-                    name="activityLevel"
-                    render={({ field }) => (
-                      <FormItem>
+                  <FormField control={form.control} name="activityLevel" render={({
+                  field
+                }) => <FormItem>
                         <FormLabel>Physical Activity Level</FormLabel>
                         <Select onValueChange={field.onChange} defaultValue={field.value}>
                           <FormControl>
@@ -213,32 +182,20 @@ const HealthScore = () => {
                             <SelectItem value="superActive">Super Active (Daily intense training)</SelectItem>
                           </SelectContent>
                         </Select>
-                      </FormItem>
-                    )}
-                  />
+                      </FormItem>} />
 
-                  <FormField
-                    control={form.control}
-                    name="sleepHours"
-                    render={({ field }) => (
-                      <FormItem>
+                  <FormField control={form.control} name="sleepHours" render={({
+                  field
+                }) => <FormItem>
                         <FormLabel>Sleep Hours (0-12)</FormLabel>
                         <FormControl>
-                          <Input
-                            type="number"
-                            {...field}
-                            onChange={(e) => field.onChange(Number(e.target.value))}
-                          />
+                          <Input type="number" {...field} onChange={e => field.onChange(Number(e.target.value))} />
                         </FormControl>
-                      </FormItem>
-                    )}
-                  />
+                      </FormItem>} />
 
-                  <FormField
-                    control={form.control}
-                    name="smokingHabit"
-                    render={({ field }) => (
-                      <FormItem>
+                  <FormField control={form.control} name="smokingHabit" render={({
+                  field
+                }) => <FormItem>
                         <FormLabel>Smoking Habit</FormLabel>
                         <Select onValueChange={field.onChange} defaultValue={field.value}>
                           <FormControl>
@@ -252,15 +209,11 @@ const HealthScore = () => {
                             <SelectItem value="regularSmoker">Regular smoker</SelectItem>
                           </SelectContent>
                         </Select>
-                      </FormItem>
-                    )}
-                  />
+                      </FormItem>} />
 
-                  <FormField
-                    control={form.control}
-                    name="alcoholConsumption"
-                    render={({ field }) => (
-                      <FormItem>
+                  <FormField control={form.control} name="alcoholConsumption" render={({
+                  field
+                }) => <FormItem>
                         <FormLabel>Alcohol Consumption</FormLabel>
                         <Select onValueChange={field.onChange} defaultValue={field.value}>
                           <FormControl>
@@ -276,15 +229,11 @@ const HealthScore = () => {
                             <SelectItem value="daily">Daily</SelectItem>
                           </SelectContent>
                         </Select>
-                      </FormItem>
-                    )}
-                  />
+                      </FormItem>} />
 
-                  <FormField
-                    control={form.control}
-                    name="stressLevel"
-                    render={({ field }) => (
-                      <FormItem>
+                  <FormField control={form.control} name="stressLevel" render={({
+                  field
+                }) => <FormItem>
                         <FormLabel>Stress Level</FormLabel>
                         <Select onValueChange={field.onChange} defaultValue={field.value}>
                           <FormControl>
@@ -298,15 +247,11 @@ const HealthScore = () => {
                             <SelectItem value="high">High</SelectItem>
                           </SelectContent>
                         </Select>
-                      </FormItem>
-                    )}
-                  />
+                      </FormItem>} />
 
-                  <FormField
-                    control={form.control}
-                    name="eatingOutside"
-                    render={({ field }) => (
-                      <FormItem>
+                  <FormField control={form.control} name="eatingOutside" render={({
+                  field
+                }) => <FormItem>
                         <FormLabel>Eating Outside Frequency</FormLabel>
                         <Select onValueChange={field.onChange} defaultValue={field.value}>
                           <FormControl>
@@ -321,33 +266,21 @@ const HealthScore = () => {
                             <SelectItem value="daily">Daily</SelectItem>
                           </SelectContent>
                         </Select>
-                      </FormItem>
-                    )}
-                  />
+                      </FormItem>} />
 
-                  <FormField
-                    control={form.control}
-                    name="waterIntake"
-                    render={({ field }) => (
-                      <FormItem>
+                  <FormField control={form.control} name="waterIntake" render={({
+                  field
+                }) => <FormItem>
                         <FormLabel>Water Intake (liters/day)</FormLabel>
                         <FormControl>
-                          <Input
-                            type="number"
-                            step="0.1"
-                            {...field}
-                            onChange={(e) => field.onChange(Number(e.target.value))}
-                          />
+                          <Input type="number" step="0.1" {...field} onChange={e => field.onChange(Number(e.target.value))} />
                         </FormControl>
-                      </FormItem>
-                    )}
-                  />
+                      </FormItem>} />
                 </div>
 
                 <Button type="submit" className="w-full md:w-1/2 mx-auto block">Calculate Health Score</Button>
 
-                {score !== null && (
-                  <div className="mt-6 p-4 bg-gray-50 rounded-lg">
+                {score !== null && <div className="mt-6 p-4 bg-gray-50 rounded-lg">
                     <h3 className="text-xl font-semibold text-center">Your Health Score</h3>
                     <div className="flex items-center justify-center gap-2 mt-2">
                       {getScoreCategory(score).icon}
@@ -358,34 +291,23 @@ const HealthScore = () => {
                     </p>
                     
                     <div className="mt-4">
-                      <Progress 
-                        value={score} 
-                        className="h-3 w-full" 
-                        indicatorClassName={getScoreCategory(score).color}
-                      />
+                      <Progress value={score} className="h-3 w-full" indicatorClassName={getScoreCategory(score).color} />
                     </div>
                     
-                    {recommendations.length > 0 && (
-                      <Alert className="mt-4">
+                    {recommendations.length > 0 && <Alert className="mt-4">
                         <AlertTitle>Personalized Recommendations</AlertTitle>
                         <AlertDescription>
                           <ul className="list-disc pl-5 mt-2 space-y-1">
-                            {recommendations.map((rec, index) => (
-                              <li key={index} className="text-sm">{rec}</li>
-                            ))}
+                            {recommendations.map((rec, index) => <li key={index} className="text-sm">{rec}</li>)}
                           </ul>
                         </AlertDescription>
-                      </Alert>
-                    )}
-                  </div>
-                )}
+                      </Alert>}
+                  </div>}
               </form>
             </Form>
           </CardContent>
         </Card>
       </main>
-    </div>
-  );
+    </div>;
 };
-
 export default HealthScore;
