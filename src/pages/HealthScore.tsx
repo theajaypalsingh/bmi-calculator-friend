@@ -1,4 +1,3 @@
-
 import React from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -52,43 +51,35 @@ const HealthScore = () => {
   const generateRecommendations = (data: HealthScoreInputs): string[] => {
     const recommendations: string[] = [];
     
-    // Sleep recommendation
     if (data.sleepHours < 7 || data.sleepHours > 9) {
       recommendations.push("Try improving your sleep routine to 7–9 hrs/day.");
     }
     
-    // Smoking recommendation
     if (data.smokingHabit === "occasionalSmoker" || data.smokingHabit === "regularSmoker") {
       recommendations.push("Consider quitting smoking to drastically improve your long-term health.");
     }
     
-    // Weight recommendation
     const bmi = calculateBMI(data.weight, data.height);
     if (bmi >= 25) {
       recommendations.push("Your BMI is above ideal range — work on balanced nutrition and daily movement.");
     }
     
-    // Water intake recommendation
     if (data.waterIntake < 2.5) {
       recommendations.push("Try to increase your water intake to at least 2.5 liters per day.");
     }
     
-    // Stress recommendation
     if (data.stressLevel === "high") {
       recommendations.push("Consider stress management techniques like meditation or yoga.");
     }
     
-    // Alcohol recommendation
     if (data.alcoholConsumption === "daily" || data.alcoholConsumption === "frequently") {
       recommendations.push("Reducing alcohol consumption will significantly improve your health score.");
     }
     
-    // Activity level recommendation
     if (data.activityLevel === "sedentary" || data.activityLevel === "lightlyActive") {
       recommendations.push("Increasing your physical activity to at least 3-5 days a week can greatly improve your health.");
     }
     
-    // Eating outside recommendation
     if (data.eatingOutside === "daily" || data.eatingOutside === "twoToFourWeek") {
       recommendations.push("Try to reduce eating outside and prepare more home-cooked meals.");
     }
@@ -353,7 +344,7 @@ const HealthScore = () => {
                   />
                 </div>
 
-                <Button type="submit" className="w-full">Calculate Health Score</Button>
+                <Button type="submit" className="w-full md:w-1/2 mx-auto block">Calculate Health Score</Button>
 
                 {score !== null && (
                   <div className="mt-6 p-4 bg-gray-50 rounded-lg">
