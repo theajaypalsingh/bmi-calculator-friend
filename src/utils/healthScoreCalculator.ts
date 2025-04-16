@@ -19,17 +19,17 @@ const calculateBMI = (weight: number, height: number): number => {
 };
 
 const calculateBMIScore = (bmi: number): number => {
-  if (bmi >= 18.5 && bmi <= 24.9) return 15;
-  if ((bmi >= 25 && bmi <= 29.9) || (bmi >= 17 && bmi <= 18.4)) return 10;
-  return 5;
+  if (bmi >= 18.5 && bmi <= 24.9) return 20;
+  if ((bmi >= 25 && bmi <= 29.9) || (bmi >= 17 && bmi <= 18.4)) return 14;
+  return 8;
 };
 
 const getActivityScore = (level: HealthScoreInputs['activityLevel']): number => {
   const scores = {
     sedentary: 2,
-    lightlyActive: 5,
+    lightlyActive: 7,
     moderatelyActive: 10,
-    veryActive: 13,
+    veryActive: 12,
     superActive: 15
   };
   return scores[level];
@@ -37,8 +37,8 @@ const getActivityScore = (level: HealthScoreInputs['activityLevel']): number => 
 
 const getSleepScore = (hours: number): number => {
   if (hours >= 7 && hours <= 9) return 12;
-  if (hours === 6 || hours === 10) return 9;
-  return 5;
+  if (hours === 6 || hours === 10) return 7;
+  return 4;
 };
 
 const getSmokingScore = (habit: HealthScoreInputs['smokingHabit']): number => {
@@ -63,16 +63,16 @@ const getAlcoholScore = (consumption: HealthScoreInputs['alcoholConsumption']): 
 
 const getStressScore = (level: HealthScoreInputs['stressLevel']): number => {
   const scores = {
-    low: 12,
-    moderate: 8,
-    high: 4
+    low: 10,
+    moderate: 6,
+    high: 2
   };
   return scores[level];
 };
 
 const getEatingOutsideScore = (frequency: HealthScoreInputs['eatingOutside']): number => {
   const scores = {
-    rarely: 10,
+    rarely: 13,
     onceWeek: 8,
     twoToFourWeek: 5,
     daily: 2
@@ -81,7 +81,7 @@ const getEatingOutsideScore = (frequency: HealthScoreInputs['eatingOutside']): n
 };
 
 const getWaterIntakeScore = (liters: number): number => {
-  if (liters >= 2.5 && liters <= 3.5) return 6;
+  if (liters >= 2.5 && liters <= 3.5) return 5;
   if (liters >= 1.5 && liters < 2.5) return 3;
   return 1;
 };
