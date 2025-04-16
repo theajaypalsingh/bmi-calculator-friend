@@ -278,7 +278,7 @@ const HealthScore = () => {
                       </FormItem>} />
                 </div>
 
-                <Button type="submit" className="w-full md:w-1/2 block text-center bg-red-900 hover:bg-red-800 px-0 mx-0">Calculate Health Score</Button>
+                <Button type="submit" className="w-full md:w-1/2 block text-center bg-red-900 hover:bg-red-800 px-[14px] mx-px">Calculate Health Score</Button>
 
                 {score !== null && <div className="mt-6 p-4 bg-gray-50 rounded-lg">
                     <h3 className="text-xl font-semibold text-center">Your Health Score</h3>
