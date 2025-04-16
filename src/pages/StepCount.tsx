@@ -7,7 +7,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Form, FormControl, FormField, FormItem, FormLabel } from '@/components/ui/form';
 import { useForm } from 'react-hook-form';
 import { ActivitySquare } from 'lucide-react';
-
 type FormData = {
   age: number;
   weight: number;
@@ -15,7 +14,6 @@ type FormData = {
   gender: string;
   activityLevel: string;
 };
-
 const activityMultipliers = {
   sedentary: 1.2,
   lightlyActive: 1.375,
@@ -23,7 +21,6 @@ const activityMultipliers = {
   veryActive: 1.725,
   superActive: 1.9
 };
-
 const stepPercentages = {
   sedentary: 0.10,
   lightlyActive: 0.15,
@@ -31,9 +28,7 @@ const stepPercentages = {
   veryActive: 0.25,
   superActive: 0.30
 };
-
 const CALORIES_PER_STEP = 0.05;
-
 const StepCount = () => {
   const [stepGoal, setStepGoal] = useState<number>(0);
   const [showResults, setShowResults] = useState<boolean>(false);
@@ -46,7 +41,6 @@ const StepCount = () => {
       activityLevel: 'lightlyActive'
     }
   });
-
   const calculateStepGoal = (data: FormData) => {
     let bmr = 0;
     if (data.gender === 'male') {
@@ -58,22 +52,17 @@ const StepCount = () => {
       const femaleBmr = 10 * data.weight + 6.25 * data.height - 5 * data.age - 161;
       bmr = (maleBmr + femaleBmr) / 2;
     }
-
     const activityMultiplier = activityMultipliers[data.activityLevel as keyof typeof activityMultipliers];
     const tdee = bmr * activityMultiplier;
-
     const stepPercentage = stepPercentages[data.activityLevel as keyof typeof stepPercentages];
     const steps = tdee * stepPercentage / CALORIES_PER_STEP;
-
     return Math.round(steps / 100) * 100;
   };
-
   const onSubmit = (data: FormData) => {
     const calculatedStepGoal = calculateStepGoal(data);
     setStepGoal(calculatedStepGoal);
     setShowResults(true);
   };
-
   const getActivityLabel = (key: string): string => {
     switch (key) {
       case 'sedentary':
@@ -90,10 +79,9 @@ const StepCount = () => {
         return key;
     }
   };
-
   return <div className="container mx-auto px-4 py-8">
       <Card className="max-w-md mx-auto">
-        <CardHeader className="text-white rounded-t-lg bg-gray-800">
+        <CardHeader className="text-white rounded-t-lg bg-gray-700">
           <CardTitle className="text-xl font-bold text-center">Daily Step Goal Calculator</CardTitle>
           <CardDescription className="text-center text-white/90">Find your optimal daily step target</CardDescription>
         </CardHeader>
@@ -197,5 +185,4 @@ Note - There's no single universal formula to calculate “Ideal daily step coun
       </Card>
     </div>;
 };
-
 export default StepCount;
