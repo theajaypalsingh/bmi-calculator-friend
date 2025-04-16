@@ -36,8 +36,8 @@ const getActivityScore = (level: HealthScoreInputs['activityLevel']): number => 
 };
 
 const getSleepScore = (hours: number): number => {
-  if (hours >= 7 && hours <= 9) return 10;
-  if (hours === 6 || hours === 10) return 8;
+  if (hours >= 7 && hours <= 9) return 12;
+  if (hours === 6 || hours === 10) return 9;
   return 5;
 };
 
@@ -63,9 +63,9 @@ const getAlcoholScore = (consumption: HealthScoreInputs['alcoholConsumption']): 
 
 const getStressScore = (level: HealthScoreInputs['stressLevel']): number => {
   const scores = {
-    low: 10,
-    moderate: 7,
-    high: 3
+    low: 12,
+    moderate: 8,
+    high: 4
   };
   return scores[level];
 };
@@ -81,7 +81,7 @@ const getEatingOutsideScore = (frequency: HealthScoreInputs['eatingOutside']): n
 };
 
 const getWaterIntakeScore = (liters: number): number => {
-  if (liters >= 2.5 && liters <= 3.5) return 5;
+  if (liters >= 2.5 && liters <= 3.5) return 6;
   if (liters >= 1.5 && liters < 2.5) return 3;
   return 1;
 };
