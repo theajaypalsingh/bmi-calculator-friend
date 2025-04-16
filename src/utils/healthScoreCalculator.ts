@@ -108,3 +108,4 @@ export const calculateHealthScore = (inputs: HealthScoreInputs): number => {
   return Object.values(scores).reduce((sum, score) => sum + score, 0);
 };
 
+export { calculateBMI };

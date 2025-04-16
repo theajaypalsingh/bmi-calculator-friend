@@ -8,8 +8,11 @@ import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { calculateHealthScore, type HealthScoreInputs } from "@/utils/healthScoreCalculator";
+import { calculateHealthScore, type HealthScoreInputs, calculateBMI } from "@/utils/healthScoreCalculator";
 import { toast } from "sonner";
+import { Progress } from "@/components/ui/progress";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
+import { CheckCircle, AlertCircle, CircleAlert, XCircle } from "lucide-react";
 
 const formSchema = z.object({
   age: z.number().min(1).max(120),
@@ -27,6 +30,7 @@ const formSchema = z.object({
 
 const HealthScore = () => {
   const [score, setScore] = React.useState<number | null>(null);
+  const [recommendations, setRecommendations] = React.useState<string[]>([]);
 
   const form = useForm<HealthScoreInputs>({
     resolver: zodResolver(formSchema),
@@ -45,9 +49,64 @@ const HealthScore = () => {
     },
   });
 
+  const generateRecommendations = (data: HealthScoreInputs): string[] => {
+    const recommendations: string[] = [];
+    
+    // Sleep recommendation
+    if (data.sleepHours < 7 || data.sleepHours > 9) {
+      recommendations.push("Try improving your sleep routine to 7–9 hrs/day.");
+    }
+    
+    // Smoking recommendation
+    if (data.smokingHabit === "occasionalSmoker" || data.smokingHabit === "regularSmoker") {
+      recommendations.push("Consider quitting smoking to drastically improve your long-term health.");
+    }
+    
+    // Weight recommendation
+    const bmi = calculateBMI(data.weight, data.height);
+    if (bmi >= 25) {
+      recommendations.push("Your BMI is above ideal range — work on balanced nutrition and daily movement.");
+    }
+    
+    // Water intake recommendation
+    if (data.waterIntake < 2.5) {
+      recommendations.push("Try to increase your water intake to at least 2.5 liters per day.");
+    }
+    
+    // Stress recommendation
+    if (data.stressLevel === "high") {
+      recommendations.push("Consider stress management techniques like meditation or yoga.");
+    }
+    
+    // Alcohol recommendation
+    if (data.alcoholConsumption === "daily" || data.alcoholConsumption === "frequently") {
+      recommendations.push("Reducing alcohol consumption will significantly improve your health score.");
+    }
+    
+    // Activity level recommendation
+    if (data.activityLevel === "sedentary" || data.activityLevel === "lightlyActive") {
+      recommendations.push("Increasing your physical activity to at least 3-5 days a week can greatly improve your health.");
+    }
+    
+    // Eating outside recommendation
+    if (data.eatingOutside === "daily" || data.eatingOutside === "twoToFourWeek") {
+      recommendations.push("Try to reduce eating outside and prepare more home-cooked meals.");
+    }
+    
+    return recommendations;
+  };
+
+  const getScoreCategory = (score: number) => {
+    if (score >= 80) return { label: "Excellent", color: "bg-green-500", icon: <CheckCircle className="h-6 w-6 text-green-500" /> };
+    if (score >= 60) return { label: "Good, can be Improved", color: "bg-blue-500", icon: <CircleAlert className="h-6 w-6 text-blue-500" /> };
+    if (score >= 40) return { label: "Average", color: "bg-yellow-500", icon: <AlertCircle className="h-6 w-6 text-yellow-500" /> };
+    return { label: "Poor", color: "bg-red-500", icon: <XCircle className="h-6 w-6 text-red-500" /> };
+  };
+
   const onSubmit = (data: HealthScoreInputs) => {
     const healthScore = calculateHealthScore(data);
     setScore(healthScore);
+    setRecommendations(generateRecommendations(data));
     toast.success("Health score calculated successfully!");
   };
 
@@ -299,12 +358,34 @@ const HealthScore = () => {
                 {score !== null && (
                   <div className="mt-6 p-4 bg-gray-50 rounded-lg">
                     <h3 className="text-xl font-semibold text-center">Your Health Score</h3>
-                    <p className="text-3xl font-bold text-center text-green-600 mt-2">{score}/90</p>
+                    <div className="flex items-center justify-center gap-2 mt-2">
+                      {getScoreCategory(score).icon}
+                      <p className="text-3xl font-bold text-center">{score}/100</p>
+                    </div>
                     <p className="text-center text-gray-600 mt-2">
-                      {score >= 80 ? "Excellent health! Keep it up!" :
-                       score >= 60 ? "Good health. Room for improvement." :
-                       "Consider making lifestyle changes for better health."}
+                      {getScoreCategory(score).label}
                     </p>
+                    
+                    <div className="mt-4">
+                      <Progress 
+                        value={score} 
+                        className="h-3 w-full" 
+                        indicatorClassName={getScoreCategory(score).color}
+                      />
+                    </div>
+                    
+                    {recommendations.length > 0 && (
+                      <Alert className="mt-4">
+                        <AlertTitle>Personalized Recommendations</AlertTitle>
+                        <AlertDescription>
+                          <ul className="list-disc pl-5 mt-2 space-y-1">
+                            {recommendations.map((rec, index) => (
+                              <li key={index} className="text-sm">{rec}</li>
+                            ))}
+                          </ul>
+                        </AlertDescription>
+                      </Alert>
+                    )}
                   </div>
                 )}
               </form>
