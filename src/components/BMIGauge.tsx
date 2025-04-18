@@ -10,27 +10,23 @@ interface BMIGaugeProps {
 const BMIGauge: React.FC<BMIGaugeProps> = ({ bmi, category }) => {
   const [animationComplete, setAnimationComplete] = useState(false);
 
-  // Define BMI ranges and colors to match the reference image
+  // Simplified BMI ranges with clear color coding
   const ranges = [
-    { min: 0, max: 16, category: 'Underweight', color: '#ea384c' },
-    { min: 16, max: 17, category: 'Slightly underweight', color: '#ea384c' },
-    { min: 17, max: 18.5, category: 'Normal', color: '#facc15' },
-    { min: 18.5, max: 25, category: 'Healthy', color: '#22c55e' },
+    { min: 0, max: 18.5, category: 'Underweight', color: '#ea384c' },
+    { min: 18.5, max: 25, category: 'Normal', color: '#22c55e' },
     { min: 25, max: 30, category: 'Overweight', color: '#facc15' },
-    { min: 30, max: 35, category: 'Obesity', color: '#f97316' },
-    { min: 35, max: 40, category: 'High Obesity', color: '#ea384c' },
+    { min: 30, max: 40, category: 'Obese', color: '#f97316' }
   ];
 
-  // Calculate needle rotation based on BMI value with improved accuracy
+  // Calculate needle rotation based on BMI value
   const getNeedleRotation = () => {
     const minBMI = 0;
     const maxBMI = 40;
-    // Calculate angle (0-180 degrees) based on BMI
     const degrees = ((Math.min(Math.max(bmi, minBMI), maxBMI) - minBMI) / (maxBMI - minBMI)) * 180;
     return degrees;
   };
 
-  // Get color for BMI value
+  // Get color for current BMI value
   const getBMIColor = () => {
     const range = ranges.find(r => bmi >= r.min && bmi < r.max) || ranges[ranges.length - 1];
     return range.color;
@@ -47,19 +43,17 @@ const BMIGauge: React.FC<BMIGaugeProps> = ({ bmi, category }) => {
     <div className="relative w-full max-w-md mx-auto mt-6">
       <div className="relative">
         {/* Semi-circular gauge */}
-        <svg width="300" height="180" viewBox="0 0 300 180" className="mx-auto">
-          <g transform="translate(150, 150)">
+        <svg viewBox="0 0 200 120" className="w-full max-w-[300px] mx-auto">
+          <g transform="translate(100, 100)">
             {/* Draw gauge segments */}
-            {ranges.map((entry, index, arr) => {
-              const totalValue = arr.reduce((sum, item) => sum + (item.max - item.min), 0);
-              const startAngle = arr.slice(0, index).reduce((sum, item) => sum + ((item.max - item.min) / totalValue) * 180, 0);
-              const endAngle = startAngle + ((entry.max - entry.min) / totalValue) * 180;
+            {ranges.map((range, index) => {
+              const totalRange = 40; // Maximum BMI value
+              const startAngle = (range.min / totalRange) * 180;
+              const endAngle = (range.max / totalRange) * 180;
               
-              // Convert angles to radians for calculations
               const startRad = ((180 - startAngle) * Math.PI) / 180;
               const endRad = ((180 - endAngle) * Math.PI) / 180;
               
-              // Calculate path for the arc
               const outerRadius = 80;
               const innerRadius = 60;
               
@@ -72,7 +66,6 @@ const BMIGauge: React.FC<BMIGaugeProps> = ({ bmi, category }) => {
               const x4 = Math.cos(startRad) * innerRadius;
               const y4 = -Math.sin(startRad) * innerRadius;
               
-              // Path for the arc segment
               const path = [
                 `M ${x1} ${y1}`,
                 `A ${outerRadius} ${outerRadius} 0 0 0 ${x2} ${y2}`,
@@ -81,82 +74,96 @@ const BMIGauge: React.FC<BMIGaugeProps> = ({ bmi, category }) => {
                 'Z'
               ].join(' ');
 
-              // Calculate positions for category labels and value markers
-              const midAngle = ((startAngle + endAngle) / 2);
+              // Calculate label position
+              const midAngle = (startAngle + endAngle) / 2;
               const midRad = ((180 - midAngle) * Math.PI) / 180;
-              const labelRadius = 95;
+              const labelRadius = 90;
               const labelX = Math.cos(midRad) * labelRadius;
               const labelY = -Math.sin(midRad) * labelRadius;
               
-              const valuePos = (180 - startAngle) * Math.PI / 180;
-              const valueX = Math.cos(valuePos) * 82;
-              const valueY = -Math.sin(valuePos) * 82;
-              
               return (
-                <g key={`segment-${index}`}>
-                  {/* Arc segment */}
-                  <path d={path} fill={entry.color} stroke="#fff" strokeWidth="0.5" />
-                  
-                  {/* Category label */}
+                <g key={range.category}>
+                  <path
+                    d={path}
+                    fill={range.color}
+                    stroke="#fff"
+                    strokeWidth="0.5"
+                  />
+                  {/* Range labels */}
                   <text
                     x={labelX}
                     y={labelY}
                     textAnchor="middle"
-                    dominantBaseline="middle"
-                    className="text-xs font-medium fill-zinc-700"
+                    fill="#374151"
+                    fontSize="8"
                     transform={`rotate(${midAngle < 90 ? midAngle - 180 : midAngle}, ${labelX}, ${labelY})`}
                   >
-                    {entry.category}
+                    {range.category}
                   </text>
-                  
-                  {/* Value marker (if not the first segment) */}
+                  {/* Range value */}
                   {index > 0 && (
                     <text
-                      x={valueX}
-                      y={valueY}
+                      x={x1}
+                      y={y1}
                       textAnchor="middle"
-                      dominantBaseline="middle"
-                      className="text-[10px] font-bold fill-zinc-600"
+                      fill="#374151"
+                      fontSize="6"
+                      dy="2"
                     >
-                      {entry.min}
+                      {range.min}
                     </text>
                   )}
                 </g>
               );
             })}
-            
+
             {/* Needle */}
             <g 
-              transform={`rotate(${getNeedleRotation()})`} 
-              style={{ transition: 'transform 1s cubic-bezier(0.34, 1.56, 0.64, 1)' }}
+              transform={`rotate(${getNeedleRotation()})`}
+              style={{ transition: 'transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)' }}
             >
-              <line x1="0" y1="0" x2="0" y2="-60" stroke="#000" strokeWidth="2" />
-              <circle cx="0" cy="0" r="6" fill="#000" />
+              <line
+                x1="0"
+                y1="0"
+                x2="0"
+                y2="-65"
+                stroke="#000"
+                strokeWidth="2"
+              />
+              <circle
+                cx="0"
+                cy="0"
+                r="4"
+                fill="#000"
+              />
             </g>
           </g>
         </svg>
 
-        {/* Center BMI value - positioned at the bottom of the gauge */}
-        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-center">
-          <h2 className="text-2xl font-bold">
+        {/* BMI value and category */}
+        <div className="absolute left-1/2 bottom-0 -translate-x-1/2 translate-y-8 text-center">
+          <p className="text-xl font-semibold">
             BMI = {bmi.toFixed(1)}
-            <span style={{ color: getBMIColor() }} className="ml-2">({category})</span>
-          </h2>
+            <span className="ml-2" style={{ color: getBMIColor() }}>
+              ({category})
+            </span>
+          </p>
         </div>
       </div>
 
-      {/* Legend section - appears with fade-in animation */}
+      {/* Legend */}
       <div className={cn(
-        "text-center transition-opacity duration-500 mt-4",
+        "mt-16 transition-opacity duration-500",
         animationComplete ? "opacity-100" : "opacity-0"
       )}>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs mt-4 px-4">
-          {ranges.map((range, index) => (
-            <div key={index} className="flex items-center gap-1">
-              <div className="w-3 h-3 rounded-full" style={{ backgroundColor: range.color }} />
-              <span className="truncate">
-                {range.category} ({range.min}-{range.max})
-              </span>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-sm justify-center">
+          {ranges.map((range) => (
+            <div key={range.category} className="flex items-center gap-2 justify-center">
+              <div
+                className="w-3 h-3 rounded-full"
+                style={{ backgroundColor: range.color }}
+              />
+              <span>{range.category}</span>
             </div>
           ))}
         </div>
