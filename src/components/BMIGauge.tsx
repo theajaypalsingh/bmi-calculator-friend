@@ -102,9 +102,9 @@ const BMIGauge: React.FC<BMIGaugeProps> = ({ bmi, category }) => {
                       x={x1}
                       y={y1 - 2}
                       textAnchor="middle"
+                      alignmentBaseline="central"
                       fill="#374151"
                       fontSize="6"
-                      alignmentBaseline="bottom"
                     >
                       {range.min}
                     </text>
@@ -115,9 +115,9 @@ const BMIGauge: React.FC<BMIGaugeProps> = ({ bmi, category }) => {
                       x={x2}
                       y={y2 - 2}
                       textAnchor="middle"
+                      alignmentBaseline="central"
                       fill="#374151"
                       fontSize="6"
-                      alignmentBaseline="bottom"
                     >
                       {range.max}
                     </text>
