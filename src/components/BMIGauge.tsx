@@ -22,6 +22,7 @@ const BMIGauge: React.FC<BMIGaugeProps> = ({ bmi, category }) => {
   const getNeedleRotation = () => {
     const minBMI = 0;
     const maxBMI = 40;
+    // Calculate degrees (0 to 180) based on BMI value
     const degrees = ((Math.min(Math.max(bmi, minBMI), maxBMI) - minBMI) / (maxBMI - minBMI)) * 180;
     return degrees;
   };
@@ -41,22 +42,26 @@ const BMIGauge: React.FC<BMIGaugeProps> = ({ bmi, category }) => {
 
   return (
     <div className="relative w-full max-w-md mx-auto mt-6">
+      {/* SVG Gauge */}
       <div className="relative">
-        {/* Semi-circular gauge */}
-        <svg viewBox="0 0 200 120" className="w-full max-w-[300px] mx-auto">
-          <g transform="translate(100, 100)">
+        <svg viewBox="0 0 210 120" className="w-full max-w-[300px] mx-auto">
+          {/* Semi-circular gauge */}
+          <g transform="translate(105, 100)">
             {/* Draw gauge segments */}
             {ranges.map((range, index) => {
-              const totalRange = 40; // Maximum BMI value
-              const startAngle = (range.min / totalRange) * 180;
-              const endAngle = (range.max / totalRange) * 180;
+              // Calculate the angle for this segment
+              const startAngle = (range.min / 40) * 180;
+              const endAngle = (range.max / 40) * 180;
               
+              // Convert to radians for path calculation
               const startRad = ((180 - startAngle) * Math.PI) / 180;
               const endRad = ((180 - endAngle) * Math.PI) / 180;
               
+              // Radius values for outer and inner arcs
               const outerRadius = 80;
               const innerRadius = 60;
               
+              // Calculate path coordinates
               const x1 = Math.cos(startRad) * outerRadius;
               const y1 = -Math.sin(startRad) * outerRadius;
               const x2 = Math.cos(endRad) * outerRadius;
@@ -66,6 +71,7 @@ const BMIGauge: React.FC<BMIGaugeProps> = ({ bmi, category }) => {
               const x4 = Math.cos(startRad) * innerRadius;
               const y4 = -Math.sin(startRad) * innerRadius;
               
+              // SVG path for the segment
               const path = [
                 `M ${x1} ${y1}`,
                 `A ${outerRadius} ${outerRadius} 0 0 0 ${x2} ${y2}`,
@@ -74,43 +80,46 @@ const BMIGauge: React.FC<BMIGaugeProps> = ({ bmi, category }) => {
                 'Z'
               ].join(' ');
 
-              // Calculate label position
+              // Calculate position for segment label
               const midAngle = (startAngle + endAngle) / 2;
               const midRad = ((180 - midAngle) * Math.PI) / 180;
-              const labelRadius = 90;
+              const labelRadius = outerRadius + 15;
               const labelX = Math.cos(midRad) * labelRadius;
               const labelY = -Math.sin(midRad) * labelRadius;
               
               return (
                 <g key={range.category}>
+                  {/* Segment path */}
                   <path
                     d={path}
                     fill={range.color}
                     stroke="#fff"
                     strokeWidth="0.5"
                   />
-                  {/* Range labels */}
-                  <text
-                    x={labelX}
-                    y={labelY}
-                    textAnchor="middle"
-                    fill="#374151"
-                    fontSize="8"
-                    transform={`rotate(${midAngle < 90 ? midAngle - 180 : midAngle}, ${labelX}, ${labelY})`}
-                  >
-                    {range.category}
-                  </text>
-                  {/* Range value */}
+                  {/* Value at segment boundary */}
                   {index > 0 && (
                     <text
                       x={x1}
-                      y={y1}
+                      y={y1 - 2}
                       textAnchor="middle"
                       fill="#374151"
                       fontSize="6"
-                      dy="2"
+                      alignmentBaseline="bottom"
                     >
                       {range.min}
+                    </text>
+                  )}
+                  {/* Final value at last segment boundary */}
+                  {index === ranges.length - 1 && (
+                    <text
+                      x={x2}
+                      y={y2 - 2}
+                      textAnchor="middle"
+                      fill="#374151"
+                      fontSize="6"
+                      alignmentBaseline="bottom"
+                    >
+                      {range.max}
                     </text>
                   )}
                 </g>
@@ -129,6 +138,7 @@ const BMIGauge: React.FC<BMIGaugeProps> = ({ bmi, category }) => {
                 y2="-65"
                 stroke="#000"
                 strokeWidth="2"
+                strokeLinecap="round"
               />
               <circle
                 cx="0"
@@ -151,19 +161,19 @@ const BMIGauge: React.FC<BMIGaugeProps> = ({ bmi, category }) => {
         </div>
       </div>
 
-      {/* Legend */}
+      {/* Category labels */}
       <div className={cn(
         "mt-16 transition-opacity duration-500",
         animationComplete ? "opacity-100" : "opacity-0"
       )}>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-sm justify-center">
+        <div className="grid grid-cols-4 gap-2 text-sm justify-center">
           {ranges.map((range) => (
             <div key={range.category} className="flex items-center gap-2 justify-center">
               <div
                 className="w-3 h-3 rounded-full"
                 style={{ backgroundColor: range.color }}
               />
-              <span>{range.category}</span>
+              <span className="text-xs sm:text-sm">{range.category}</span>
             </div>
           ))}
         </div>
