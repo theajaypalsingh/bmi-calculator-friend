@@ -1,6 +1,5 @@
 
 import React, { useEffect, useState } from 'react';
-import { PieChart, Pie, Cell } from 'recharts';
 import { cn } from '@/lib/utils';
 
 interface BMIGaugeProps {
@@ -37,14 +36,6 @@ const BMIGauge: React.FC<BMIGaugeProps> = ({ bmi, category }) => {
     return range.color;
   };
 
-  // Calculate segment sizes proportionally to their BMI range
-  const gaugeData = ranges.map(range => ({
-    value: range.max - range.min,
-    category: range.category,
-    min: range.min,
-    max: range.max,
-  }));
-
   useEffect(() => {
     const timer = setTimeout(() => {
       setAnimationComplete(true);
@@ -59,10 +50,10 @@ const BMIGauge: React.FC<BMIGaugeProps> = ({ bmi, category }) => {
         <svg width="300" height="180" viewBox="0 0 300 180" className="mx-auto">
           <g transform="translate(150, 150)">
             {/* Draw gauge segments */}
-            {gaugeData.map((entry, index, arr) => {
-              const totalValue = arr.reduce((sum, item) => sum + item.value, 0);
-              const startAngle = arr.slice(0, index).reduce((sum, item) => sum + (item.value / totalValue) * 180, 0);
-              const endAngle = startAngle + (entry.value / totalValue) * 180;
+            {ranges.map((entry, index, arr) => {
+              const totalValue = arr.reduce((sum, item) => sum + (item.max - item.min), 0);
+              const startAngle = arr.slice(0, index).reduce((sum, item) => sum + ((item.max - item.min) / totalValue) * 180, 0);
+              const endAngle = startAngle + ((entry.max - entry.min) / totalValue) * 180;
               
               // Convert angles to radians for calculations
               const startRad = ((180 - startAngle) * Math.PI) / 180;
