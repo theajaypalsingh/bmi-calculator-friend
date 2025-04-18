@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -6,12 +6,9 @@ import { Switch } from "@/components/ui/switch";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import BMIGauge from "@/components/BMIGauge";
 import { convertHeightToMeters, convertCmToMeters, convertLbsToKg, calculateBMI, getBMICategory, getBMICategoryDescription } from "@/utils/bmiCalculator";
 
-interface BMICalculatorProps {}
-
-const BMICalculator: React.FC<BMICalculatorProps> = () => {
+const BMICalculator: React.FC = () => {
   const [feet, setFeet] = useState<number>(5);
   const [inches, setInches] = useState<number>(10);
   const [cm, setCm] = useState<number>(177.8);
@@ -188,19 +185,20 @@ const BMICalculator: React.FC<BMICalculatorProps> = () => {
           </Button>
         </div>
 
-        {/* BMI Result with Gauge */}
+        {/* BMI Result */}
         {showResults && bmi > 0 && (
-          <>
-            <BMIGauge bmi={bmi} category={category} />
-            <div className="mt-4 text-center text-sm text-gray-600">
-              {description}
-            </div>
-            {shouldShowDietaryTips() && (
-              <Link to="/dietary-tips" className="block mt-2 text-center text-blue-600 hover:text-blue-800 text-sm">
+          <div className="mt-8 text-center">
+            <h3 className="text-2xl font-semibold mb-2">
+              BMI = {bmi.toFixed(1)} 
+              <span className="ml-2 text-gray-600">({category})</span>
+            </h3>
+            <p className="text-sm text-gray-600 mt-2">{description}</p>
+            {bmi >= 25 && (
+              <Link to="/dietary-tips" className="block mt-2 text-blue-600 hover:text-blue-800 text-sm">
                 Get dietary tips for weight loss
               </Link>
             )}
-          </>
+          </div>
         )}
       </CardContent>
       <CardFooter className="flex justify-center border-t p-4">
