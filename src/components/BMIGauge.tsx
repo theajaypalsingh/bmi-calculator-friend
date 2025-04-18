@@ -11,7 +11,7 @@ interface BMIGaugeProps {
 const BMIGauge: React.FC<BMIGaugeProps> = ({ bmi, category }) => {
   const [animationComplete, setAnimationComplete] = useState(false);
 
-  // Define BMI ranges and colors
+  // Define BMI ranges and colors with more precise segments
   const ranges = [
     { min: 0, max: 16, category: 'Underweight', color: '#ef4444' },
     { min: 16, max: 17, category: 'Slightly underweight', color: '#f97316' },
@@ -36,9 +36,12 @@ const BMIGauge: React.FC<BMIGaugeProps> = ({ bmi, category }) => {
     return range.color;
   };
 
-  // Create gauge segments data
+  // Create gauge segments data with adjusted values for better visualization
   const gaugeData = ranges.map(range => ({
     value: range.max - range.min,
+    category: range.category,
+    min: range.min,
+    max: range.max,
   }));
 
   useEffect(() => {
@@ -50,6 +53,13 @@ const BMIGauge: React.FC<BMIGaugeProps> = ({ bmi, category }) => {
 
   return (
     <div className="relative w-full max-w-md mx-auto mt-6">
+      <div className="text-center mb-4">
+        <h2 className="text-2xl font-bold">
+          BMI = {bmi.toFixed(1)} kg/m<sup>2</sup>{' '}
+          <span style={{ color: getBMIColor() }}>({category})</span>
+        </h2>
+      </div>
+
       <div className="relative">
         <PieChart width={300} height={200}>
           <Pie
@@ -67,7 +77,54 @@ const BMIGauge: React.FC<BMIGaugeProps> = ({ bmi, category }) => {
               <Cell key={`cell-${index}`} fill={range.color} />
             ))}
           </Pie>
+          
+          {/* Add labels for each segment */}
+          {gaugeData.map((entry, index) => {
+            const angle = 180 - (index + 0.5) * (180 / gaugeData.length);
+            const x = 150 + Math.cos((angle * Math.PI) / 180) * 95;
+            const y = 150 - Math.sin((angle * Math.PI) / 180) * 95;
+            return (
+              <text
+                key={`label-${index}`}
+                x={x}
+                y={y}
+                textAnchor="middle"
+                dominantBaseline="middle"
+                className="text-xs font-medium fill-zinc-700"
+                transform={`rotate(${angle < 90 ? angle - 180 : angle}, ${x}, ${y})`}
+              >
+                {entry.category}
+              </text>
+            );
+          })}
+
+          {/* Add BMI value numbers */}
+          {gaugeData.map((entry, index) => {
+            if (index === 0) return null;
+            const angle = 180 - (index) * (180 / gaugeData.length);
+            const x = 150 + Math.cos((angle * Math.PI) / 180) * 82;
+            const y = 150 - Math.sin((angle * Math.PI) / 180) * 82;
+            return (
+              <text
+                key={`value-${index}`}
+                x={x}
+                y={y}
+                textAnchor="middle"
+                dominantBaseline="middle"
+                className="text-[10px] fill-zinc-600"
+              >
+                {entry.min}
+              </text>
+            );
+          })}
         </PieChart>
+
+        {/* Center BMI value */}
+        <div className="absolute left-1/2 bottom-[85px] -translate-x-1/2 text-xl font-bold">
+          BMI = {bmi.toFixed(1)}
+        </div>
+
+        {/* Needle */}
         <div
           className="absolute left-1/2 bottom-[70px] w-1 h-[60px] bg-zinc-800 origin-bottom transition-transform duration-1000"
           style={{
@@ -76,28 +133,21 @@ const BMIGauge: React.FC<BMIGaugeProps> = ({ bmi, category }) => {
         />
         <div className="absolute left-1/2 bottom-[65px] w-4 h-4 rounded-full bg-zinc-800 -translate-x-1/2" />
       </div>
-      
+
       <div className={cn(
-        "text-center transition-opacity duration-500",
+        "text-center transition-opacity duration-500 mt-4",
         animationComplete ? "opacity-100" : "opacity-0"
       )}>
-        <p className="text-2xl font-bold" style={{ color: getBMIColor() }}>
-          BMI = {bmi.toFixed(1)}
-        </p>
-        <p className="text-lg font-semibold mt-1" style={{ color: getBMIColor() }}>
-          {category}
-        </p>
-      </div>
-
-      <div className="grid grid-cols-2 gap-2 text-xs mt-4 px-4">
-        {ranges.map((range, index) => (
-          <div key={index} className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded-full" style={{ backgroundColor: range.color }} />
-            <span>
-              {range.category} ({range.min}-{range.max})
-            </span>
-          </div>
-        ))}
+        <div className="grid grid-cols-2 gap-2 text-xs mt-4 px-4">
+          {ranges.map((range, index) => (
+            <div key={index} className="flex items-center gap-2">
+              <div className="w-3 h-3 rounded-full" style={{ backgroundColor: range.color }} />
+              <span>
+                {range.category} ({range.min}-{range.max})
+              </span>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
