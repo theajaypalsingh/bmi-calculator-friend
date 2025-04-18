@@ -6,8 +6,11 @@ import { Switch } from "@/components/ui/switch";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import BMIGauge from "@/components/BMIGauge";
 import { convertHeightToMeters, convertCmToMeters, convertLbsToKg, calculateBMI, getBMICategory, getBMICategoryDescription } from "@/utils/bmiCalculator";
+
 interface BMICalculatorProps {}
+
 const BMICalculator: React.FC<BMICalculatorProps> = () => {
   const [feet, setFeet] = useState<number>(5);
   const [inches, setInches] = useState<number>(10);
@@ -20,9 +23,11 @@ const BMICalculator: React.FC<BMICalculatorProps> = () => {
   const [description, setDescription] = useState<string>("");
   const [error, setError] = useState<string>("");
   const [showResults, setShowResults] = useState(false);
+
   useEffect(() => {
     setCm(convertHeightToMeters(feet, inches) * 100);
   }, [feet, inches]);
+
   const checkValuesWithinLimits = () => {
     if (useMetric) {
       if (cm < 50 || cm > 300) {
@@ -46,6 +51,7 @@ const BMICalculator: React.FC<BMICalculatorProps> = () => {
     setError("");
     return true;
   };
+
   const calculateResult = () => {
     if (!checkValuesWithinLimits()) {
       setBMI(0);
@@ -68,7 +74,6 @@ const BMICalculator: React.FC<BMICalculatorProps> = () => {
       weightInKg = convertLbsToKg(weight);
     }
 
-    // Fix: calculateBMI expects weight first, height second according to implementation
     const calculatedBMI = calculateBMI(weightInKg, heightInMeters);
     setBMI(calculatedBMI);
     const bmiCategory = getBMICategory(calculatedBMI);
@@ -76,33 +81,41 @@ const BMICalculator: React.FC<BMICalculatorProps> = () => {
     setDescription(getBMICategoryDescription(bmiCategory, heightInCm));
     setShowResults(true);
   };
+
   const handleHeightUnitToggle = () => {
     setUseMetric(!useMetric);
   };
+
   const handleWeightUnitToggle = () => {
     setUseKg(!useKg);
   };
+
   const handleFeetChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseFloat(e.target.value);
     setFeet(value);
     setCm(convertHeightToMeters(value, inches) * 100);
   };
+
   const handleInchesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseFloat(e.target.value);
     setInches(value);
     setCm(convertHeightToMeters(feet, value) * 100);
   };
+
   const handleCmChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseFloat(e.target.value);
     setCm(value);
   };
+
   const handleWeightChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseFloat(e.target.value);
     setWeight(value);
   };
+
   const handleCalculateBMI = () => {
     calculateResult();
   };
+
   const getBMIColor = () => {
     if (bmi < 18.5) {
       return "#facc15"; // Underweight - Yellow
@@ -115,10 +128,10 @@ const BMICalculator: React.FC<BMICalculatorProps> = () => {
     }
   };
 
-  // Function to determine if dietary tips link should be shown
   const shouldShowDietaryTips = () => {
     return bmi >= 25; // Show dietary tips link for overweight and obese
   };
+
   return <Card className="w-full max-w-md mx-auto shadow-lg">
       <CardHeader className="text-white rounded-t-lg bg-gray-800">
         <CardTitle className="text-2xl font-bold text-center">BMI Calculator</CardTitle>
@@ -175,26 +188,20 @@ const BMICalculator: React.FC<BMICalculatorProps> = () => {
           </Button>
         </div>
 
-        {/* BMI Result Box - Now shown below the button */}
-        {showResults && bmi > 0 && <div className="mt-4 p-4 rounded-lg border bg-gray-50">
-            <h3 className="text-center font-medium mb-2">Your BMI Result</h3>
-            <p className="text-center text-2xl font-bold" style={{
-          color: getBMIColor()
-        }}>
-              {bmi.toFixed(1)}
-            </p>
-            <p className="text-center font-medium mb-1" style={{
-          color: getBMIColor()
-        }}>
-              {category}
-            </p>
-            <p className="text-center text-sm text-gray-600">
+        {/* BMI Result with Gauge */}
+        {showResults && bmi > 0 && (
+          <>
+            <BMIGauge bmi={bmi} category={category} />
+            <div className="mt-4 text-center text-sm text-gray-600">
               {description}
-            </p>
-            {shouldShowDietaryTips() && <Link to="/dietary-tips" className="block mt-2 text-center text-blue-600 hover:text-blue-800 text-sm">
+            </div>
+            {shouldShowDietaryTips() && (
+              <Link to="/dietary-tips" className="block mt-2 text-center text-blue-600 hover:text-blue-800 text-sm">
                 Get dietary tips for weight loss
-              </Link>}
-          </div>}
+              </Link>
+            )}
+          </>
+        )}
       </CardContent>
       <CardFooter className="flex justify-center border-t p-4">
         <p className="text-sm text-gray-500 text-center">
@@ -204,4 +211,5 @@ const BMICalculator: React.FC<BMICalculatorProps> = () => {
       </CardFooter>
     </Card>;
 };
+
 export default BMICalculator;
