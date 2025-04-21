@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -86,7 +87,21 @@ const BMICalculator: React.FC = () => {
     setBMI(calculatedBMI);
     const bmiCategory = getBMICategory(calculatedBMI);
     setCategory(bmiCategory);
+
+    // Generate description including recommendation with ideal weight (height - 100)
+    let idealWeight = 0;
+    if (calculatedHeightInCm > 0) {
+      idealWeight = calculatedHeightInCm - 100;
+    }
+    let recommendation = "";
+    if (calculatedBMI < 18.5) {
+      recommendation = `You should consider gaining weight until you reach ${idealWeight.toFixed(1)} Kgs.`;
+    } else if (calculatedBMI > 24.9) {
+      recommendation = `You should consider losing weight until you reach ${idealWeight.toFixed(1)} Kgs.`;
+    }
     setDescription(getBMICategoryDescription(bmiCategory, calculatedHeightInCm));
+    setDescription(desc => desc + (recommendation ? ` ${recommendation}` : ""));
+
     setShowResults(true);
   };
 
@@ -205,6 +220,10 @@ const BMICalculator: React.FC = () => {
             visible={showResults}
             heightInCm={heightInCm}
           />
+          {/* Show recommendation text below BMI result line in black color */}
+          <div className="w-[90%] max-w-lg text-center mt-1 text-black font-medium">
+            {description}
+          </div>
           <div className="mt-2 text-center">
             {bmi >= 25 && (
               <Link to="/dietary-tips" className="block mt-2 text-blue-600 hover:text-blue-800 text-sm">
@@ -225,3 +244,4 @@ const BMICalculator: React.FC = () => {
 };
 
 export default BMICalculator;
+
