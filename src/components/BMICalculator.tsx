@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -9,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { convertHeightToMeters, convertCmToMeters, convertLbsToKg, calculateBMI, getBMICategory, getBMICategoryDescription } from "@/utils/bmiCalculator";
 import BMIResultBar from "./BMIResultBar";
+
 const BMICalculator: React.FC = () => {
   const [feet, setFeet] = useState<number>(5);
   const [inches, setInches] = useState<number>(10);
@@ -23,9 +23,6 @@ const BMICalculator: React.FC = () => {
   const [showResults, setShowResults] = useState(false);
   const [heightInCm, setHeightInCm] = useState<number>(177.8);
 
-  // NEW: Track recommendation line separately
-  const [recommendation, setRecommendation] = useState<string>("");
-
   useEffect(() => {
     const calculatedCm = convertHeightToMeters(feet, inches) * 100;
     setCm(calculatedCm);
@@ -34,6 +31,7 @@ const BMICalculator: React.FC = () => {
   useEffect(() => {
     setHeightInCm(cm);
   }, [cm]);
+
   const checkValuesWithinLimits = () => {
     if (useMetric) {
       if (cm < 50 || cm > 300) {
@@ -57,13 +55,13 @@ const BMICalculator: React.FC = () => {
     setError("");
     return true;
   };
+
   const calculateResult = () => {
     if (!checkValuesWithinLimits()) {
       setBMI(0);
       setCategory("");
       setDescription("");
       setShowResults(false);
-      setRecommendation("");
       return;
     }
     let heightInMeters: number;
@@ -85,50 +83,45 @@ const BMICalculator: React.FC = () => {
     const bmiCategory = getBMICategory(calculatedBMI);
     setCategory(bmiCategory);
 
-    // Basic BMI category description (without recommendation)
     setDescription(getBMICategoryDescription(bmiCategory, calculatedHeightInCm));
-
-    // Show recommendation line ONLY if BMI < 18.5 or BMI > 24.9
-    let rec = "";
-    let idealWeight = 0;
-    if (calculatedHeightInCm > 0) {
-      idealWeight = calculatedHeightInCm - 100;
-    }
-    if (calculatedBMI < 18.5) {
-      rec = `You should consider gaining weight until you reach ${idealWeight.toFixed(1)} Kgs.`;
-    } else if (calculatedBMI > 24.9) {
-      rec = `You should consider losing weight until you reach ${idealWeight.toFixed(1)} Kgs.`;
-    }
-    setRecommendation(rec);
+    
     setShowResults(true);
   };
+
   const handleHeightUnitToggle = () => {
     setUseMetric(!useMetric);
   };
+
   const handleWeightUnitToggle = () => {
     setUseKg(!useKg);
   };
+
   const handleFeetChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseFloat(e.target.value);
     setFeet(value);
     setCm(convertHeightToMeters(value, inches) * 100);
   };
+
   const handleInchesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseFloat(e.target.value);
     setInches(value);
     setCm(convertHeightToMeters(feet, value) * 100);
   };
+
   const handleCmChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseFloat(e.target.value);
     setCm(value);
   };
+
   const handleWeightChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseFloat(e.target.value);
     setWeight(value);
   };
+
   const handleCalculateBMI = () => {
     calculateResult();
   };
+
   const getBMIColor = () => {
     if (bmi < 18.5) {
       return "#facc15"; // Underweight - Yellow
@@ -140,15 +133,16 @@ const BMICalculator: React.FC = () => {
       return "#ef4444"; // Obese - Red
     }
   };
+
   const shouldShowDietaryTips = () => {
     return bmi >= 25; // Show dietary tips link for overweight and obese
   };
+
   return <Card className="w-full max-w-md mx-auto shadow-lg">
     <CardHeader className="text-white rounded-t-lg bg-gray-800">
       <CardTitle className="text-2xl font-bold text-center">BMI Calculator</CardTitle>
     </CardHeader>
     <CardContent className="p-6">
-      {/* Height Section */}
       <div className="mb-4">
         <div className="flex justify-between items-center mb-2">
           <Label htmlFor="height-toggle" className="text-base font-medium">Height</Label>
@@ -173,7 +167,6 @@ const BMICalculator: React.FC = () => {
           </div>}
       </div>
 
-      {/* Weight Section */}
       <div className="mb-4">
         <div className="flex justify-between items-center mb-2">
           <Label htmlFor="weight-toggle" className="text-base font-medium">Weight</Label>
@@ -187,29 +180,19 @@ const BMICalculator: React.FC = () => {
         <Input type="number" id="weight" value={weight} onChange={handleWeightChange} className="w-full" step="0.1" min="20" max="500" />
       </div>
 
-      {/* Error Message */}
       {error && <Alert variant="destructive" className="mt-4">
           <AlertDescription>{error}</AlertDescription>
         </Alert>}
       
-      {/* Calculate BMI Button */}
       <div className="flex justify-center mt-4">
         <Button onClick={handleCalculateBMI} className="w-auto px-6 bg-red-800 hover:bg-red-700">
           Calculate BMI
         </Button>
       </div>
 
-      {/* BMI Result */}
       {showResults && bmi > 0 && <>
           <BMIResultBar bmi={bmi} category={category} visible={showResults} heightInCm={heightInCm} />
           
-          {/* Recommendation line below BMI result ONLY for BMI < 18.5 or > 24.9 */}
-          {recommendation && (
-            <div className="w-[90%] max-w-lg text-center mt-1 text-black font-medium mx-[23px]">
-              {recommendation}
-            </div>
-          )}
-          {/* Removed the prior text rendering for the description with extra recommendation */}
           <div className="mt-2 text-center">
             {bmi >= 25 && <Link to="/dietary-tips" className="block mt-2 text-blue-600 hover:text-blue-800 text-sm">
                 Get dietary tips for weight loss
@@ -225,4 +208,5 @@ const BMICalculator: React.FC = () => {
     </CardFooter>
   </Card>;
 };
+
 export default BMICalculator;

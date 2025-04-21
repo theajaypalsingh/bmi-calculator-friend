@@ -1,3 +1,4 @@
+
 import React, { useEffect, useRef, useState } from "react";
 type BMICategory = "Underweight" | "Normal weight" | "Overweight" | "Obese" | "Severely Obese";
 interface BMIResultBarProps {
@@ -159,7 +160,11 @@ const BMIResultBar: React.FC<BMIResultBarProps> = ({
             Your BMI is <span className="font-bold">{bmi.toFixed(1)}</span>{" "}
             ({displayCategory})
           </div>
-          {recommendation}
+          {recommendation && (
+            <div className="text-sm text-gray-500">
+              {recommendation}
+            </div>
+          )}
         </div>}
     </div>;
 };
