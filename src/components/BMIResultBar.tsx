@@ -12,6 +12,7 @@ interface BMIResultBarProps {
   bmi: number;
   category: string;
   visible: boolean;
+  heightInCm: number;
 }
 
 type BMIRange = {
@@ -47,9 +48,8 @@ const getBMIPositionPercent = (bmi: number) => {
   return (norm / 50) * 100;
 };
 
-const BMIResultBar: React.FC<BMIResultBarProps> = ({ bmi, category, visible }) => {
+const BMIResultBar: React.FC<BMIResultBarProps> = ({ bmi, category, visible, heightInCm }) => {
   const [progress, setProgress] = useState(0);
-  const barRef = useRef<HTMLDivElement>(null);
 
   // Animate needle position to BMI value
   useEffect(() => {
@@ -89,6 +89,18 @@ const BMIResultBar: React.FC<BMIResultBarProps> = ({ bmi, category, visible }) =
   let displayCategory = category;
   if (bmi >= 35) displayCategory = "Severely Obese";
 
+  // Calculate ideal weight (height in cm - 100)
+  const idealWeight = heightInCm > 0 ? (heightInCm - 100).toFixed(1) : "";
+
+  let recommendation: string | null = null;
+  if (bmi > 0 && heightInCm > 0) {
+    if (bmi < 18.5) {
+      recommendation = `You should consider gaining weight until you reach ${idealWeight} Kgs.`;
+    } else if (bmi > 24.9) {
+      recommendation = `You should consider losing weight until you reach ${idealWeight} Kgs.`;
+    }
+  }
+
   return (
     <div className="w-full flex flex-col items-center mt-8 space-y-2 animate-fade-in">
       <div className="relative w-[90%] max-w-lg h-6 rounded-full overflow-hidden glass card-gradient shadow">
@@ -109,15 +121,18 @@ const BMIResultBar: React.FC<BMIResultBarProps> = ({ bmi, category, visible }) =
         {/* Enhanced needle marker */}
         {bmi > 0 && (
           <div
-            className="absolute z-20 transition-all duration-700"
+            className="absolute z-20 transition-all duration-700 flex items-center"
             style={{
               left: `calc(${pointerLeft} - 4px)`,
-              top: "-8px",
-              height: "calc(100% + 16px)",
+              top: "-12px",
+              height: "calc(100% + 24px)",
             }}
           >
-            {/* Needle with shadow effect */}
-            <div className="h-full w-2 bg-black shadow-[0_0_5px_rgba(0,0,0,0.8)] rounded-full" />
+            {/* Improved needle: a dark needle with a circle and subtle glow */}
+            <div className="relative flex flex-col items-center">
+              <div className="w-1.5 h-[32px] bg-black shadow-[0_0_7px_rgba(0,0,0,0.8)] rounded-full" />
+              <div className="w-4 h-4 rounded-full bg-yellow-400 border-2 border-black shadow-lg mt-[-12px]" />
+            </div>
           </div>
         )}
         
@@ -138,6 +153,11 @@ const BMIResultBar: React.FC<BMIResultBarProps> = ({ bmi, category, visible }) =
             Your BMI is <span className="font-bold">{bmi.toFixed(1)}</span>{" "}
             ({displayCategory})
           </div>
+          {recommendation && (
+            <div className="mt-1 text-[15px] text-blue-700 font-medium">
+              {recommendation}
+            </div>
+          )}
         </div>
       )}
     </div>
@@ -145,3 +165,4 @@ const BMIResultBar: React.FC<BMIResultBarProps> = ({ bmi, category, visible }) =
 };
 
 export default BMIResultBar;
+

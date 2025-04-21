@@ -189,7 +189,12 @@ const BMICalculator: React.FC = () => {
       {/* BMI Result */}
       {showResults && bmi > 0 && (
         <>
-          <BMIResultBar bmi={bmi} category={category} visible={showResults} />
+          <BMIResultBar
+            bmi={bmi}
+            category={category}
+            visible={showResults}
+            heightInCm={heightInCm}
+          />
           <div className="mt-2 text-center">
             {bmi >= 25 && (
               <Link to="/dietary-tips" className="block mt-2 text-blue-600 hover:text-blue-800 text-sm">
