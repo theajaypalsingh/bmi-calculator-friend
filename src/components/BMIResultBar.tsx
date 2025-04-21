@@ -51,7 +51,7 @@ const BMIResultBar: React.FC<BMIResultBarProps> = ({ bmi, category, visible }) =
   const [progress, setProgress] = useState(0);
   const barRef = useRef<HTMLDivElement>(null);
 
-  // Animate bar fill to BMI value
+  // Animate needle position to BMI value
   useEffect(() => {
     if (visible && bmi > 0) {
       setProgress(0);
@@ -92,6 +92,7 @@ const BMIResultBar: React.FC<BMIResultBarProps> = ({ bmi, category, visible }) =
   return (
     <div className="w-full flex flex-col items-center mt-8 space-y-2 animate-fade-in">
       <div className="relative w-[90%] max-w-lg h-6 rounded-full overflow-hidden glass card-gradient shadow">
+        {/* Fixed color segments - always visible */}
         <div className="absolute left-0 top-0 w-full h-full flex z-0">
           {BMI_RANGES.map((range, i) => (
             <div
@@ -104,37 +105,23 @@ const BMIResultBar: React.FC<BMIResultBarProps> = ({ bmi, category, visible }) =
             />
           ))}
         </div>
-        <div
-          className="absolute left-0 top-0 h-full z-10 transition-all duration-700"
-          style={{
-            width: `${progress}%`,
-            background:
-              getBMIRange(bmi)?.color || "#ddd",
-            opacity: 0.7,
-            borderRadius: "9999px",
-          }}
-        />
-        {/* Marker */}
+        
+        {/* Enhanced needle marker */}
         {bmi > 0 && (
           <div
+            className="absolute z-20 transition-all duration-700"
             style={{
-              left: `calc(${pointerLeft} - 10px)`,
-              top: "-14px",
+              left: `calc(${pointerLeft} - 4px)`,
+              top: "-8px",
+              height: "calc(100% + 16px)",
             }}
-            className="absolute"
           >
-            {/* Triangle marker */}
-            <svg width="20" height="16" viewBox="0 0 20 16">
-              <polygon
-                points="10,0 20,16 0,16"
-                fill={getBMIRange(bmi).color}
-                stroke="#555"
-                strokeWidth="1"
-              />
-            </svg>
+            {/* Needle with shadow effect */}
+            <div className="h-full w-2 bg-black shadow-[0_0_5px_rgba(0,0,0,0.8)] rounded-full" />
           </div>
         )}
-        {/* Range ticks/labels */}
+        
+        {/* Tick marks */}
         <div className="absolute top-full left-0 w-full flex justify-between mt-2 text-[11px] text-gray-700 font-medium select-none pointer-events-none">
           <span>0</span>
           <span>18.5</span>
