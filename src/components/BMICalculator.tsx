@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -8,6 +7,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { convertHeightToMeters, convertCmToMeters, convertLbsToKg, calculateBMI, getBMICategory, getBMICategoryDescription } from "@/utils/bmiCalculator";
+import BMIResultBar from "./BMIResultBar";
 
 const BMICalculator: React.FC = () => {
   const [feet, setFeet] = useState<number>(5);
@@ -131,84 +131,82 @@ const BMICalculator: React.FC = () => {
   };
 
   return <Card className="w-full max-w-md mx-auto shadow-lg">
-      <CardHeader className="text-white rounded-t-lg bg-gray-800">
-        <CardTitle className="text-2xl font-bold text-center">BMI Calculator</CardTitle>
-      </CardHeader>
-      <CardContent className="p-6">
-        {/* Height Section */}
-        <div className="mb-4">
-          <div className="flex justify-between items-center mb-2">
-            <Label htmlFor="height-toggle" className="text-base font-medium">Height</Label>
-            <div className="flex items-center">
-              <span className={`mr-2 text-sm ${!useMetric ? "font-medium" : "text-gray-500"}`}>ft/in</span>
-              <Switch id="height-toggle" checked={useMetric} onCheckedChange={handleHeightUnitToggle} />
-              <span className={`ml-2 text-sm ${useMetric ? "font-medium" : "text-gray-500"}`}>cm</span>
-            </div>
+    <CardHeader className="text-white rounded-t-lg bg-gray-800">
+      <CardTitle className="text-2xl font-bold text-center">BMI Calculator</CardTitle>
+    </CardHeader>
+    <CardContent className="p-6">
+      {/* Height Section */}
+      <div className="mb-4">
+        <div className="flex justify-between items-center mb-2">
+          <Label htmlFor="height-toggle" className="text-base font-medium">Height</Label>
+          <div className="flex items-center">
+            <span className={`mr-2 text-sm ${!useMetric ? "font-medium" : "text-gray-500"}`}>ft/in</span>
+            <Switch id="height-toggle" checked={useMetric} onCheckedChange={handleHeightUnitToggle} />
+            <span className={`ml-2 text-sm ${useMetric ? "font-medium" : "text-gray-500"}`}>cm</span>
           </div>
-          
-          {useMetric ? <div>
-              <Input type="number" id="height-cm" value={cm} onChange={handleCmChange} className="w-full" step="0.1" min="50" max="300" />
-            </div> : <div className="flex gap-2">
-              <div className="w-1/2">
-                <Input type="number" id="height-feet" value={feet} onChange={handleFeetChange} className="w-full" min="1" max="8" />
-                <Label htmlFor="height-feet" className="text-xs text-gray-500">Feet</Label>
-              </div>
-              <div className="w-1/2">
-                <Input type="number" id="height-inches" value={inches} onChange={handleInchesChange} className="w-full" min="0" max="11" step="0.1" />
-                <Label htmlFor="height-inches" className="text-xs text-gray-500">Inches</Label>
-              </div>
-            </div>}
         </div>
-
-        {/* Weight Section */}
-        <div className="mb-4">
-          <div className="flex justify-between items-center mb-2">
-            <Label htmlFor="weight-toggle" className="text-base font-medium">Weight</Label>
-            <div className="flex items-center">
-              <span className={`mr-2 text-sm ${!useKg ? "font-medium" : "text-gray-500"}`}>lbs</span>
-              <Switch id="weight-toggle" checked={useKg} onCheckedChange={handleWeightUnitToggle} />
-              <span className={`ml-2 text-sm ${useKg ? "font-medium" : "text-gray-500"}`}>kg</span>
-            </div>
-          </div>
-          
-          <Input type="number" id="weight" value={weight} onChange={handleWeightChange} className="w-full" step="0.1" min="20" max="500" />
-        </div>
-
-        {/* Error Message */}
-        {error && <Alert variant="destructive" className="mt-4">
-            <AlertDescription>{error}</AlertDescription>
-          </Alert>}
         
-        {/* Calculate BMI Button */}
-        <div className="flex justify-center mt-4">
-          <Button onClick={handleCalculateBMI} className="w-auto px-6 bg-red-800 hover:bg-red-700">
-            Calculate BMI
-          </Button>
-        </div>
+        {useMetric ? <div>
+            <Input type="number" id="height-cm" value={cm} onChange={handleCmChange} className="w-full" step="0.1" min="50" max="300" />
+          </div> : <div className="flex gap-2">
+            <div className="w-1/2">
+              <Input type="number" id="height-feet" value={feet} onChange={handleFeetChange} className="w-full" min="1" max="8" />
+              <Label htmlFor="height-feet" className="text-xs text-gray-500">Feet</Label>
+            </div>
+            <div className="w-1/2">
+              <Input type="number" id="height-inches" value={inches} onChange={handleInchesChange} className="w-full" min="0" max="11" step="0.1" />
+              <Label htmlFor="height-inches" className="text-xs text-gray-500">Inches</Label>
+            </div>
+          </div>}
+      </div>
 
-        {/* BMI Result */}
-        {showResults && bmi > 0 && (
-          <div className="mt-8 text-center">
-            <h3 className="text-2xl font-semibold mb-2">
-              BMI = {bmi.toFixed(1)} 
-              <span className="ml-2 text-gray-600">({category})</span>
-            </h3>
-            <p className="text-sm text-gray-600 mt-2">{description}</p>
+      {/* Weight Section */}
+      <div className="mb-4">
+        <div className="flex justify-between items-center mb-2">
+          <Label htmlFor="weight-toggle" className="text-base font-medium">Weight</Label>
+          <div className="flex items-center">
+            <span className={`mr-2 text-sm ${!useKg ? "font-medium" : "text-gray-500"}`}>lbs</span>
+            <Switch id="weight-toggle" checked={useKg} onCheckedChange={handleWeightUnitToggle} />
+            <span className={`ml-2 text-sm ${useKg ? "font-medium" : "text-gray-500"}`}>kg</span>
+          </div>
+        </div>
+        
+        <Input type="number" id="weight" value={weight} onChange={handleWeightChange} className="w-full" step="0.1" min="20" max="500" />
+      </div>
+
+      {/* Error Message */}
+      {error && <Alert variant="destructive" className="mt-4">
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>}
+      
+      {/* Calculate BMI Button */}
+      <div className="flex justify-center mt-4">
+        <Button onClick={handleCalculateBMI} className="w-auto px-6 bg-red-800 hover:bg-red-700">
+          Calculate BMI
+        </Button>
+      </div>
+
+      {/* BMI Result */}
+      {showResults && bmi > 0 && (
+        <>
+          <BMIResultBar bmi={bmi} category={category} visible={showResults} />
+          <div className="mt-2 text-center">
             {bmi >= 25 && (
               <Link to="/dietary-tips" className="block mt-2 text-blue-600 hover:text-blue-800 text-sm">
                 Get dietary tips for weight loss
               </Link>
             )}
           </div>
-        )}
-      </CardContent>
-      <CardFooter className="flex justify-center border-t p-4">
-        <p className="text-sm text-gray-500 text-center">
-          BMI is a measure of body fat based on height and weight.<br />
-          <span className="font-medium">BMI Categories:</span> Underweight (&lt;18.5), Normal (18.5-24.9), Overweight (25-29.9), Obese (≥30)
-        </p>
-      </CardFooter>
-    </Card>;
+        </>
+      )}
+    </CardContent>
+    <CardFooter className="flex justify-center border-t p-4">
+      <p className="text-sm text-gray-500 text-center">
+        BMI is a measure of body fat based on height and weight.<br />
+        <span className="font-medium">BMI Categories:</span> Underweight (&lt;18.5), Normal (18.5-24.9), Overweight (25-29.9), Obese (≥30)
+      </p>
+    </CardFooter>
+  </Card>;
 };
 
 export default BMICalculator;
