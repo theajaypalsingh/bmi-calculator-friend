@@ -159,9 +159,7 @@ const BMIResultBar: React.FC<BMIResultBarProps> = ({
             Your BMI is <span className="font-bold">{bmi.toFixed(1)}</span>{" "}
             ({displayCategory})
           </div>
-          {recommendation && <div className="mt-1 text-[15px] text-blue-700 font-medium">
-              {recommendation}
-            </div>}
+          {recommendation}
         </div>}
     </div>;
 };
