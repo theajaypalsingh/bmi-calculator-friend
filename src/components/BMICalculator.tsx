@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -21,6 +22,10 @@ const BMICalculator: React.FC = () => {
   const [error, setError] = useState<string>("");
   const [showResults, setShowResults] = useState(false);
   const [heightInCm, setHeightInCm] = useState<number>(177.8);
+
+  // NEW: Track recommendation line separately
+  const [recommendation, setRecommendation] = useState<string>("");
+
   useEffect(() => {
     const calculatedCm = convertHeightToMeters(feet, inches) * 100;
     setCm(calculatedCm);
@@ -58,6 +63,7 @@ const BMICalculator: React.FC = () => {
       setCategory("");
       setDescription("");
       setShowResults(false);
+      setRecommendation("");
       return;
     }
     let heightInMeters: number;
@@ -79,19 +85,21 @@ const BMICalculator: React.FC = () => {
     const bmiCategory = getBMICategory(calculatedBMI);
     setCategory(bmiCategory);
 
-    // Generate description including recommendation with ideal weight (height - 100)
+    // Basic BMI category description (without recommendation)
+    setDescription(getBMICategoryDescription(bmiCategory, calculatedHeightInCm));
+
+    // Show recommendation line ONLY if BMI < 18.5 or BMI > 24.9
+    let rec = "";
     let idealWeight = 0;
     if (calculatedHeightInCm > 0) {
       idealWeight = calculatedHeightInCm - 100;
     }
-    let recommendation = "";
     if (calculatedBMI < 18.5) {
-      recommendation = `You should consider gaining weight until you reach ${idealWeight.toFixed(1)} Kgs.`;
+      rec = `You should consider gaining weight until you reach ${idealWeight.toFixed(1)} Kgs.`;
     } else if (calculatedBMI > 24.9) {
-      recommendation = `You should consider losing weight until you reach ${idealWeight.toFixed(1)} Kgs.`;
+      rec = `You should consider losing weight until you reach ${idealWeight.toFixed(1)} Kgs.`;
     }
-    setDescription(getBMICategoryDescription(bmiCategory, calculatedHeightInCm));
-    setDescription(desc => desc + (recommendation ? ` ${recommendation}` : ""));
+    setRecommendation(rec);
     setShowResults(true);
   };
   const handleHeightUnitToggle = () => {
@@ -194,10 +202,14 @@ const BMICalculator: React.FC = () => {
       {/* BMI Result */}
       {showResults && bmi > 0 && <>
           <BMIResultBar bmi={bmi} category={category} visible={showResults} heightInCm={heightInCm} />
-          {/* Show recommendation text below BMI result line in black color */}
-          <div className="w-[90%] max-w-lg text-center mt-1 text-black font-medium mx-[23px]">
-            {description}
-          </div>
+          
+          {/* Recommendation line below BMI result ONLY for BMI < 18.5 or > 24.9 */}
+          {recommendation && (
+            <div className="w-[90%] max-w-lg text-center mt-1 text-black font-medium mx-[23px]">
+              {recommendation}
+            </div>
+          )}
+          {/* Removed the prior text rendering for the description with extra recommendation */}
           <div className="mt-2 text-center">
             {bmi >= 25 && <Link to="/dietary-tips" className="block mt-2 text-blue-600 hover:text-blue-800 text-sm">
                 Get dietary tips for weight loss
