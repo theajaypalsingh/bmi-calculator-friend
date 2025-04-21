@@ -21,10 +21,17 @@ const BMICalculator: React.FC = () => {
   const [description, setDescription] = useState<string>("");
   const [error, setError] = useState<string>("");
   const [showResults, setShowResults] = useState(false);
+  const [heightInCm, setHeightInCm] = useState<number>(177.8);
 
   useEffect(() => {
-    setCm(convertHeightToMeters(feet, inches) * 100);
+    const calculatedCm = convertHeightToMeters(feet, inches) * 100;
+    setCm(calculatedCm);
+    setHeightInCm(calculatedCm);
   }, [feet, inches]);
+
+  useEffect(() => {
+    setHeightInCm(cm);
+  }, [cm]);
 
   const checkValuesWithinLimits = () => {
     if (useMetric) {
@@ -60,7 +67,10 @@ const BMICalculator: React.FC = () => {
     }
     let heightInMeters: number;
     let weightInKg: number;
-    let heightInCm: number = useMetric ? cm : parseFloat((convertHeightToMeters(feet, inches) * 100).toFixed(1));
+    
+    const calculatedHeightInCm = useMetric ? cm : parseFloat((convertHeightToMeters(feet, inches) * 100).toFixed(1));
+    setHeightInCm(calculatedHeightInCm);
+    
     if (useMetric) {
       heightInMeters = convertCmToMeters(cm);
     } else {
@@ -76,7 +86,7 @@ const BMICalculator: React.FC = () => {
     setBMI(calculatedBMI);
     const bmiCategory = getBMICategory(calculatedBMI);
     setCategory(bmiCategory);
-    setDescription(getBMICategoryDescription(bmiCategory, heightInCm));
+    setDescription(getBMICategoryDescription(bmiCategory, calculatedHeightInCm));
     setShowResults(true);
   };
 
