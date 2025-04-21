@@ -12,9 +12,10 @@ import { toast } from "sonner";
 import { Progress } from "@/components/ui/progress";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { CheckCircle, AlertCircle, CircleAlert, XCircle } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
+
 const formSchema = z.object({
   age: z.number().min(1).max(120),
-  gender: z.enum(["male", "female", "other"]),
   height: z.number().min(1).max(300),
   weight: z.number().min(1).max(500),
   activityLevel: z.enum(["sedentary", "lightlyActive", "moderatelyActive", "veryActive", "superActive"]),
@@ -23,16 +24,42 @@ const formSchema = z.object({
   alcoholConsumption: z.enum(["never", "occasionally", "weekly", "frequently", "daily"]),
   stressLevel: z.enum(["low", "moderate", "high"]),
   eatingOutside: z.enum(["rarely", "onceWeek", "twoToFourWeek", "daily"]),
-  waterIntake: z.number().min(0).max(10)
+  waterIntake: z.number().min(0).max(10),
+  symptoms: z.array(z.string()),
+  medicalConditions: z.array(z.string())
 });
+
+const symptomsOptions = [
+  { id: "lowEnergy", label: "Low energy" },
+  { id: "poorDigestion", label: "Poor digestion" },
+  { id: "constipation", label: "Constipation" },
+  { id: "hairFall", label: "Hair fall" },
+  { id: "poorSleep", label: "Poor sleep" },
+  { id: "none", label: "None of these" },
+];
+
+const medicalConditionsOptions = [
+  { id: "diabetes", label: "Diabetes" },
+  { id: "pcos", label: "PCOS" },
+  { id: "thyroid", label: "Thyroid" },
+  { id: "hypertension", label: "Hypertension" },
+  { id: "fattyLiver", label: "Fatty liver" },
+  { id: "autoImmune", label: "Auto Immune Disease" },
+  { id: "arthritis", label: "Arthritis" },
+  { id: "hormonalImbalance", label: "Hormonal Imbalance" },
+  { id: "ibs", label: "IBS" },
+  { id: "asthma", label: "Asthma" },
+  { id: "none", label: "None of these" },
+];
+
 const HealthScore = () => {
   const [score, setScore] = React.useState<number | null>(null);
   const [recommendations, setRecommendations] = React.useState<string[]>([]);
+  
   const form = useForm<HealthScoreInputs>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       age: 25,
-      gender: "male",
       height: 170,
       weight: 70,
       activityLevel: "moderatelyActive",
@@ -41,38 +68,73 @@ const HealthScore = () => {
       alcoholConsumption: "never",
       stressLevel: "low",
       eatingOutside: "rarely",
-      waterIntake: 2.5
+      waterIntake: 2.5,
+      symptoms: [],
+      medicalConditions: []
     }
   });
+  
+  const watchSymptoms = form.watch("symptoms");
+  React.useEffect(() => {
+    if (watchSymptoms.includes("none") && watchSymptoms.length > 1) {
+      form.setValue("symptoms", ["none"]);
+    }
+  }, [watchSymptoms, form]);
+
+  const watchMedicalConditions = form.watch("medicalConditions");
+  React.useEffect(() => {
+    if (watchMedicalConditions.includes("none") && watchMedicalConditions.length > 1) {
+      form.setValue("medicalConditions", ["none"]);
+    }
+  }, [watchMedicalConditions, form]);
+
   const generateRecommendations = (data: HealthScoreInputs): string[] => {
     const recommendations: string[] = [];
+    
     if (data.sleepHours < 7 || data.sleepHours > 9) {
       recommendations.push("Try improving your sleep routine to 7–9 hrs/day.");
     }
+    
     if (data.smokingHabit === "occasionalSmoker" || data.smokingHabit === "regularSmoker") {
       recommendations.push("Consider quitting smoking to drastically improve your long-term health.");
     }
+    
     const bmi = calculateBMI(data.weight, data.height);
     if (bmi >= 25) {
       recommendations.push("Your BMI is above ideal range — work on balanced nutrition and daily movement.");
     }
+    
     if (data.waterIntake < 2.5) {
-      recommendations.push("Try to increase your water intake to at least 2.5 liters per day.");
+      recommendations.push("Try to increase your water intake to at least 8 glasses per day.");
     }
+    
     if (data.stressLevel === "high") {
       recommendations.push("Consider stress management techniques like meditation or yoga.");
     }
+    
     if (data.alcoholConsumption === "daily" || data.alcoholConsumption === "frequently") {
       recommendations.push("Reducing alcohol consumption will significantly improve your health score.");
     }
+    
     if (data.activityLevel === "sedentary" || data.activityLevel === "lightlyActive") {
       recommendations.push("Increasing your physical activity to at least 3-5 days a week can greatly improve your health.");
     }
+    
     if (data.eatingOutside === "daily" || data.eatingOutside === "twoToFourWeek") {
       recommendations.push("Try to reduce eating outside and prepare more home-cooked meals.");
     }
+    
+    if (data.symptoms.length > 0 && !data.symptoms.includes("none")) {
+      recommendations.push("Consider consulting with a healthcare professional about your symptoms.");
+    }
+    
+    if (data.medicalConditions.length > 0 && !data.medicalConditions.includes("none")) {
+      recommendations.push("Maintain regular check-ups with your doctor for your medical conditions.");
+    }
+    
     return recommendations;
   };
+
   const getScoreCategory = (score: number) => {
     if (score >= 80) return {
       label: "Excellent",
@@ -95,13 +157,16 @@ const HealthScore = () => {
       icon: <XCircle className="h-6 w-6 text-red-500" />
     };
   };
+  
   const onSubmit = (data: HealthScoreInputs) => {
     const healthScore = calculateHealthScore(data);
     setScore(healthScore);
     setRecommendations(generateRecommendations(data));
     toast.success("Health score calculated successfully!");
   };
-  return <div className="min-h-screen bg-gradient-to-b from-white to-health-light">
+
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-white to-health-light">
       <header className="py-6 text-white bg-gray-700">
         <div className="container mx-auto px-4">
           <h1 className="text-3xl md:text-4xl font-bold text-center">Health Score</h1>
@@ -119,54 +184,62 @@ const HealthScore = () => {
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <FormField control={form.control} name="age" render={({
-                  field
-                }) => <FormItem>
+                  <FormField
+                    control={form.control}
+                    name="age"
+                    render={({ field }) => (
+                      <FormItem>
                         <FormLabel>Age (years)</FormLabel>
                         <FormControl>
-                          <Input type="number" {...field} onChange={e => field.onChange(Number(e.target.value))} />
+                          <Input
+                            type="number"
+                            {...field}
+                            onChange={e => field.onChange(Number(e.target.value))}
+                          />
                         </FormControl>
-                      </FormItem>} />
+                      </FormItem>
+                    )}
+                  />
 
-                  <FormField control={form.control} name="gender" render={({
-                  field
-                }) => <FormItem>
-                        <FormLabel>Gender</FormLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select gender" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            <SelectItem value="male">Male</SelectItem>
-                            <SelectItem value="female">Female</SelectItem>
-                            <SelectItem value="other">Other</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </FormItem>} />
-
-                  <FormField control={form.control} name="height" render={({
-                  field
-                }) => <FormItem>
+                  <FormField
+                    control={form.control}
+                    name="height"
+                    render={({ field }) => (
+                      <FormItem>
                         <FormLabel>Height (cm)</FormLabel>
                         <FormControl>
-                          <Input type="number" {...field} onChange={e => field.onChange(Number(e.target.value))} />
+                          <Input
+                            type="number"
+                            {...field}
+                            onChange={e => field.onChange(Number(e.target.value))}
+                          />
                         </FormControl>
-                      </FormItem>} />
+                      </FormItem>
+                    )}
+                  />
 
-                  <FormField control={form.control} name="weight" render={({
-                  field
-                }) => <FormItem>
+                  <FormField
+                    control={form.control}
+                    name="weight"
+                    render={({ field }) => (
+                      <FormItem>
                         <FormLabel>Weight (kg)</FormLabel>
                         <FormControl>
-                          <Input type="number" {...field} onChange={e => field.onChange(Number(e.target.value))} />
+                          <Input
+                            type="number"
+                            {...field}
+                            onChange={e => field.onChange(Number(e.target.value))}
+                          />
                         </FormControl>
-                      </FormItem>} />
+                      </FormItem>
+                    )}
+                  />
 
-                  <FormField control={form.control} name="activityLevel" render={({
-                  field
-                }) => <FormItem>
+                  <FormField
+                    control={form.control}
+                    name="activityLevel"
+                    render={({ field }) => (
+                      <FormItem>
                         <FormLabel>Physical Activity Level</FormLabel>
                         <Select onValueChange={field.onChange} defaultValue={field.value}>
                           <FormControl>
@@ -182,20 +255,32 @@ const HealthScore = () => {
                             <SelectItem value="superActive">Super Active (Daily intense training)</SelectItem>
                           </SelectContent>
                         </Select>
-                      </FormItem>} />
+                      </FormItem>
+                    )}
+                  />
 
-                  <FormField control={form.control} name="sleepHours" render={({
-                  field
-                }) => <FormItem>
+                  <FormField
+                    control={form.control}
+                    name="sleepHours"
+                    render={({ field }) => (
+                      <FormItem>
                         <FormLabel>Sleep Hours (0-12)</FormLabel>
                         <FormControl>
-                          <Input type="number" {...field} onChange={e => field.onChange(Number(e.target.value))} />
+                          <Input
+                            type="number"
+                            {...field}
+                            onChange={e => field.onChange(Number(e.target.value))}
+                          />
                         </FormControl>
-                      </FormItem>} />
+                      </FormItem>
+                    )}
+                  />
 
-                  <FormField control={form.control} name="smokingHabit" render={({
-                  field
-                }) => <FormItem>
+                  <FormField
+                    control={form.control}
+                    name="smokingHabit"
+                    render={({ field }) => (
+                      <FormItem>
                         <FormLabel>Smoking Habit</FormLabel>
                         <Select onValueChange={field.onChange} defaultValue={field.value}>
                           <FormControl>
@@ -209,11 +294,15 @@ const HealthScore = () => {
                             <SelectItem value="regularSmoker">Regular smoker</SelectItem>
                           </SelectContent>
                         </Select>
-                      </FormItem>} />
+                      </FormItem>
+                    )}
+                  />
 
-                  <FormField control={form.control} name="alcoholConsumption" render={({
-                  field
-                }) => <FormItem>
+                  <FormField
+                    control={form.control}
+                    name="alcoholConsumption"
+                    render={({ field }) => (
+                      <FormItem>
                         <FormLabel>Alcohol Consumption</FormLabel>
                         <Select onValueChange={field.onChange} defaultValue={field.value}>
                           <FormControl>
@@ -229,11 +318,15 @@ const HealthScore = () => {
                             <SelectItem value="daily">Daily</SelectItem>
                           </SelectContent>
                         </Select>
-                      </FormItem>} />
+                      </FormItem>
+                    )}
+                  />
 
-                  <FormField control={form.control} name="stressLevel" render={({
-                  field
-                }) => <FormItem>
+                  <FormField
+                    control={form.control}
+                    name="stressLevel"
+                    render={({ field }) => (
+                      <FormItem>
                         <FormLabel>Stress Level</FormLabel>
                         <Select onValueChange={field.onChange} defaultValue={field.value}>
                           <FormControl>
@@ -247,11 +340,15 @@ const HealthScore = () => {
                             <SelectItem value="high">High</SelectItem>
                           </SelectContent>
                         </Select>
-                      </FormItem>} />
+                      </FormItem>
+                    )}
+                  />
 
-                  <FormField control={form.control} name="eatingOutside" render={({
-                  field
-                }) => <FormItem>
+                  <FormField
+                    control={form.control}
+                    name="eatingOutside"
+                    render={({ field }) => (
+                      <FormItem>
                         <FormLabel>Eating Outside Frequency</FormLabel>
                         <Select onValueChange={field.onChange} defaultValue={field.value}>
                           <FormControl>
@@ -266,21 +363,131 @@ const HealthScore = () => {
                             <SelectItem value="daily">Daily</SelectItem>
                           </SelectContent>
                         </Select>
-                      </FormItem>} />
+                      </FormItem>
+                    )}
+                  />
 
-                  <FormField control={form.control} name="waterIntake" render={({
-                  field
-                }) => <FormItem>
-                        <FormLabel>Water Intake (liters/day)</FormLabel>
+                  <FormField
+                    control={form.control}
+                    name="waterIntake"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Water Intake (glasses/day)</FormLabel>
                         <FormControl>
-                          <Input type="number" step="0.1" {...field} onChange={e => field.onChange(Number(e.target.value))} />
+                          <Input
+                            type="number"
+                            step="1"
+                            {...field}
+                            onChange={e => field.onChange(Number(e.target.value))}
+                          />
                         </FormControl>
-                      </FormItem>} />
+                      </FormItem>
+                    )}
+                  />
                 </div>
 
-                <Button type="submit" className="w-full md:w-1/2 block text-center bg-red-900 hover:bg-red-800 px-[14px] mx-px">Calculate Health Score</Button>
+                <div className="space-y-4">
+                  <FormField
+                    control={form.control}
+                    name="symptoms"
+                    render={() => (
+                      <FormItem>
+                        <div className="mb-4">
+                          <FormLabel className="text-base">Symptoms</FormLabel>
+                          <p className="text-sm text-gray-500">Select all that apply</p>
+                        </div>
+                        <div className="grid grid-cols-2 gap-2">
+                          {symptomsOptions.map((option) => (
+                            <FormField
+                              key={option.id}
+                              control={form.control}
+                              name="symptoms"
+                              render={({ field }) => {
+                                return (
+                                  <FormItem
+                                    key={option.id}
+                                    className="flex flex-row items-start space-x-3 space-y-0"
+                                  >
+                                    <FormControl>
+                                      <Checkbox
+                                        checked={field.value?.includes(option.id)}
+                                        onCheckedChange={(checked) => {
+                                          const updatedValue = checked
+                                            ? [...field.value, option.id]
+                                            : field.value.filter((value) => value !== option.id);
+                                          field.onChange(updatedValue);
+                                        }}
+                                        disabled={option.id !== "none" && watchSymptoms.includes("none")}
+                                      />
+                                    </FormControl>
+                                    <FormLabel className="font-normal">
+                                      {option.label}
+                                    </FormLabel>
+                                  </FormItem>
+                                );
+                              }}
+                            />
+                          ))}
+                        </div>
+                      </FormItem>
+                    )}
+                  />
+                </div>
 
-                {score !== null && <div className="mt-6 p-4 bg-gray-50 rounded-lg">
+                <div className="space-y-4">
+                  <FormField
+                    control={form.control}
+                    name="medicalConditions"
+                    render={() => (
+                      <FormItem>
+                        <div className="mb-4">
+                          <FormLabel className="text-base">Medical Conditions</FormLabel>
+                          <p className="text-sm text-gray-500">Select all that apply</p>
+                        </div>
+                        <div className="grid grid-cols-2 gap-2">
+                          {medicalConditionsOptions.map((option) => (
+                            <FormField
+                              key={option.id}
+                              control={form.control}
+                              name="medicalConditions"
+                              render={({ field }) => {
+                                return (
+                                  <FormItem
+                                    key={option.id}
+                                    className="flex flex-row items-start space-x-3 space-y-0"
+                                  >
+                                    <FormControl>
+                                      <Checkbox
+                                        checked={field.value?.includes(option.id)}
+                                        onCheckedChange={(checked) => {
+                                          const updatedValue = checked
+                                            ? [...field.value, option.id]
+                                            : field.value.filter((value) => value !== option.id);
+                                          field.onChange(updatedValue);
+                                        }}
+                                        disabled={option.id !== "none" && watchMedicalConditions.includes("none")}
+                                      />
+                                    </FormControl>
+                                    <FormLabel className="font-normal">
+                                      {option.label}
+                                    </FormLabel>
+                                  </FormItem>
+                                );
+                              }}
+                            />
+                          ))}
+                        </div>
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <Button type="submit" className="w-full md:w-1/2 block text-center bg-red-900 hover:bg-red-800 px-[14px] mx-px">
+                  Calculate Health Score
+                </Button>
+
+                {score !== null && (
+                  <div className="mt-6 p-4 bg-gray-50 rounded-lg">
                     <h3 className="text-xl font-semibold text-center">Your Health Score</h3>
                     <div className="flex items-center justify-center gap-2 mt-2">
                       {getScoreCategory(score).icon}
@@ -294,20 +501,27 @@ const HealthScore = () => {
                       <Progress value={score} className="h-3 w-full" indicatorClassName={getScoreCategory(score).color} />
                     </div>
                     
-                    {recommendations.length > 0 && <Alert className="mt-4">
+                    {recommendations.length > 0 && (
+                      <Alert className="mt-4">
                         <AlertTitle>Personalized Recommendations</AlertTitle>
                         <AlertDescription>
                           <ul className="list-disc pl-5 mt-2 space-y-1">
-                            {recommendations.map((rec, index) => <li key={index} className="text-sm">{rec}</li>)}
+                            {recommendations.map((rec, index) => (
+                              <li key={index} className="text-sm">{rec}</li>
+                            ))}
                           </ul>
                         </AlertDescription>
-                      </Alert>}
-                  </div>}
+                      </Alert>
+                    )}
+                  </div>
+                )}
               </form>
             </Form>
           </CardContent>
         </Card>
       </main>
-    </div>;
+    </div>
+  );
 };
+
 export default HealthScore;
