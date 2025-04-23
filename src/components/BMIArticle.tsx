@@ -1,6 +1,5 @@
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
-
 const BMIArticle = () => {
   const scrollToTop = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
@@ -9,9 +8,7 @@ const BMIArticle = () => {
       behavior: 'smooth'
     });
   };
-
-  return (
-    <Card className="mt-12 max-w-4xl mx-auto">
+  return <Card className="mt-12 max-w-4xl mx-auto">
       <CardContent className="prose prose-slate max-w-none p-6">
         <h1 className="text-3xl font-bold mb-6">Understanding BMI: Your Guide to a Healthy Weight</h1>
         
@@ -50,7 +47,7 @@ const BMIArticle = () => {
         <ul className="list-disc pl-6 my-4">
           <li>Directly measure body fat</li>
           <li>Account for muscle mass</li>
-          <li>Consider age, gender, or ethnicity</li>
+          <li>Consider age, gender, or medical conditions</li>
           <li>Reflect fitness level</li>
         </ul>
 
@@ -71,16 +68,11 @@ const BMIArticle = () => {
           <p className="mb-4">
             Use our free <a href="#" onClick={scrollToTop} className="text-blue-600 hover:text-blue-800 font-medium">BMI Calculator</a> to quickly determine your body mass index and get personalized recommendations for your health journey.
           </p>
-          <button 
-            onClick={scrollToTop}
-            className="inline-block bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
-          >
+          <button onClick={scrollToTop} className="inline-block bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors">
             Calculate Your BMI Now
           </button>
         </div>
       </CardContent>
-    </Card>
-  );
+    </Card>;
 };
-
 export default BMIArticle;
