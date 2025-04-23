@@ -1,3 +1,4 @@
+
 import BMICalculator from "@/components/BMICalculator";
 import BMIInfo from "@/components/BMIInfo";
 import BMIArticle from "@/components/BMIArticle";
