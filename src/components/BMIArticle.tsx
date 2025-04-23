@@ -2,7 +2,7 @@ import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 
 const BMIArticle = () => {
-  const scrollToTop = (e: React.MouseEvent<HTMLAnchorElement>) => {
+  const scrollToTop = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
     window.scrollTo({
       top: 0,
