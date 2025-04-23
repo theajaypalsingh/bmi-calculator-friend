@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from 'react';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -53,8 +53,8 @@ const medicalConditionsOptions = [
 ];
 
 const HealthScore = () => {
-  const [score, setScore] = React.useState<number | null>(null);
-  const [recommendations, setRecommendations] = React.useState<string[]>([]);
+  const [score, setScore] = useState<number | null>(null);
+  const [recommendations, setRecommendations] = useState<string[]>([]);
   
   const form = useForm<HealthScoreInputs>({
     resolver: zodResolver(formSchema),
@@ -482,9 +482,14 @@ const HealthScore = () => {
                   />
                 </div>
 
-                <Button type="submit" className="w-full md:w-1/2 block text-center bg-red-900 hover:bg-red-800 px-[14px] mx-px">
-                  Calculate Health Score
-                </Button>
+                <div className="flex justify-center">
+                  <Button 
+                    type="submit" 
+                    className="w-full md:w-1/2 text-center bg-red-900 hover:bg-red-800 px-[14px] mx-px"
+                  >
+                    Calculate Health Score
+                  </Button>
+                </div>
 
                 {score !== null && (
                   <div className="mt-6 p-4 bg-gray-50 rounded-lg">
