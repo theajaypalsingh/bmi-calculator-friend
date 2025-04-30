@@ -1,3 +1,11 @@
+
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /login/
+Disallow: /backend/
+
+# Search engine specific rules
 User-agent: Googlebot
 Allow: /
 
@@ -10,5 +18,5 @@ Allow: /
 User-agent: facebookexternalhit
 Allow: /
 
-User-agent: *
-Allow: /
+# Sitemap location
+Sitemap: https://checkbmi.info/sitemap.xml
