@@ -1,4 +1,3 @@
-
 User-agent: *
 Allow: /
 Disallow: /admin/
@@ -19,4 +18,5 @@ User-agent: facebookexternalhit
 Allow: /
 
 # Sitemap location
+
 Sitemap: https://checkbmi.info/sitemap.xml
