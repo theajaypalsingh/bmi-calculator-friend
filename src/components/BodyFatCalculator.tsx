@@ -13,15 +13,20 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 const convertCmToInches = (cm: number): number => Math.round(cm / 2.54);
 const convertInchesToCm = (inches: number): number => {
   // Format to one decimal place while converting
-  return Math.round((inches * 2.54) * 10) / 10;
+  return Math.round(inches * 2.54 * 10) / 10;
 };
-const convertFeetToInches = (feet: number, inches: number): number => (feet * 12) + inches;
-const convertInchesToFeet = (totalInches: number): { feet: number, inches: number } => {
+const convertFeetToInches = (feet: number, inches: number): number => feet * 12 + inches;
+const convertInchesToFeet = (totalInches: number): {
+  feet: number;
+  inches: number;
+} => {
   const feet = Math.floor(totalInches / 12);
-  const inches = totalInches - (feet * 12);
-  return { feet, inches };
+  const inches = totalInches - feet * 12;
+  return {
+    feet,
+    inches
+  };
 };
-
 const BodyFatCalculator: React.FC = () => {
   // Units and inputs state
   const [gender, setGender] = useState<"male" | "female">("male");
@@ -29,20 +34,18 @@ const BodyFatCalculator: React.FC = () => {
   const [feet, setFeet] = useState<number>(5);
   const [inches, setInches] = useState<number>(10);
   const [heightCm, setHeightCm] = useState<number>(177.8); // ~5'10"
-  
+
   // Measurements with single fields and unit toggle
   const [useMetricWaist, setUseMetricWaist] = useState<boolean>(true);
   const [waistCm, setWaistCm] = useState<number>(85);
   const [waistInch, setWaistInch] = useState<number>(33.5);
-  
   const [useMetricNeck, setUseMetricNeck] = useState<boolean>(true);
   const [neckCm, setNeckCm] = useState<number>(37);
   const [neckInch, setNeckInch] = useState<number>(14.6);
-  
   const [useMetricHip, setUseMetricHip] = useState<boolean>(true);
   const [hipCm, setHipCm] = useState<number>(95);
   const [hipInch, setHipInch] = useState<number>(37.4);
-  
+
   // Result state
   const [bodyFatPercentage, setBodyFatPercentage] = useState<number | null>(null);
   const [category, setCategory] = useState<string>("");
@@ -56,7 +59,10 @@ const BodyFatCalculator: React.FC = () => {
     if (useMetric) {
       // Convert from cm to feet and inches
       const totalInches = convertCmToInches(heightCm);
-      const { feet: calculatedFeet, inches: calculatedInches } = convertInchesToFeet(totalInches);
+      const {
+        feet: calculatedFeet,
+        inches: calculatedInches
+      } = convertInchesToFeet(totalInches);
       setFeet(calculatedFeet);
       setInches(calculatedInches);
     } else {
@@ -70,19 +76,15 @@ const BodyFatCalculator: React.FC = () => {
   const handleFeetChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseFloat(e.target.value) || 0;
     setFeet(value);
-    
     const totalInches = convertFeetToInches(value, inches);
     setHeightCm(convertInchesToCm(totalInches));
   };
-
   const handleInchesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseFloat(e.target.value) || 0;
     setInches(value);
-    
     const totalInches = convertFeetToInches(feet, value);
     setHeightCm(convertInchesToCm(totalInches));
   };
-
   const handleCmChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseFloat(e.target.value) || 0;
     setHeightCm(value);
@@ -97,7 +99,6 @@ const BodyFatCalculator: React.FC = () => {
       setWaistCm(convertInchesToCm(waistInch));
     }
   };
-  
   const handleWaistChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseFloat(e.target.value) || 0;
     if (useMetricWaist) {
@@ -118,7 +119,6 @@ const BodyFatCalculator: React.FC = () => {
       setNeckCm(convertInchesToCm(neckInch));
     }
   };
-  
   const handleNeckChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseFloat(e.target.value) || 0;
     if (useMetricNeck) {
@@ -139,7 +139,6 @@ const BodyFatCalculator: React.FC = () => {
       setHipCm(convertInchesToCm(hipInch));
     }
   };
-  
   const handleHipChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseFloat(e.target.value) || 0;
     if (useMetricHip) {
@@ -192,22 +191,18 @@ const BodyFatCalculator: React.FC = () => {
       setError("Please enter a valid height.");
       return false;
     }
-    
     if (waistCm <= 0) {
       setError("Please enter a valid waist circumference.");
       return false;
     }
-    
     if (neckCm <= 0) {
       setError("Please enter a valid neck circumference.");
       return false;
     }
-    
     if (gender === "female" && hipCm <= 0) {
       setError("Please enter a valid hip circumference.");
       return false;
     }
-    
     setError("");
     return true;
   };
@@ -219,20 +214,18 @@ const BodyFatCalculator: React.FC = () => {
       setCategory("");
       return;
     }
-    
     setIsCalculating(true);
-    
+
     // Simulate calculation delay for loading animation
     setTimeout(() => {
       try {
         let bodyFat: number;
-        
         if (gender === "male") {
           bodyFat = 86.010 * Math.log10(waistCm - neckCm) - 70.041 * Math.log10(heightCm) + 36.76;
         } else {
           bodyFat = 163.205 * Math.log10(waistCm + hipCm - neckCm) - 97.684 * Math.log10(heightCm) - 78.387;
         }
-        
+
         // Ensure the result is valid
         if (isNaN(bodyFat) || bodyFat < 0) {
           setError("Invalid measurements. Please check your inputs.");
@@ -250,13 +243,10 @@ const BodyFatCalculator: React.FC = () => {
         setBodyFatPercentage(null);
         setCategory("");
       }
-      
       setIsCalculating(false);
     }, 600); // 600ms delay for the loading animation
   };
-
-  return (
-    <Card className="w-full max-w-md mx-auto shadow-lg">
+  return <Card className="w-full max-w-md mx-auto shadow-lg">
       <CardHeader className="text-white rounded-t-lg bg-gray-800">
         <CardTitle className="text-2xl font-bold text-center">Body Fat Calculator</CardTitle>
       </CardHeader>
@@ -265,12 +255,7 @@ const BodyFatCalculator: React.FC = () => {
         {/* Gender Selection */}
         <div className="mb-6">
           <Label htmlFor="gender" className="text-base font-medium mb-2 block">Gender</Label>
-          <RadioGroup
-            id="gender"
-            value={gender}
-            onValueChange={(value: "male" | "female") => setGender(value)}
-            className="flex space-x-4"
-          >
+          <RadioGroup id="gender" value={gender} onValueChange={(value: "male" | "female") => setGender(value)} className="flex space-x-4">
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="male" id="male" />
               <Label htmlFor="male" className="flex items-center">
@@ -299,51 +284,18 @@ const BodyFatCalculator: React.FC = () => {
             </div>
           </div>
           
-          {useMetric ? (
-            <div>
-              <Input 
-                type="number" 
-                id="height-cm" 
-                value={heightCm} 
-                onChange={handleCmChange} 
-                className="w-full" 
-                step="0.1" 
-                min="50" 
-                max="300"
-                placeholder="Height in cm"
-              />
-            </div>
-          ) : (
-            <div className="flex gap-2">
+          {useMetric ? <div>
+              <Input type="number" id="height-cm" value={heightCm} onChange={handleCmChange} className="w-full" step="0.1" min="50" max="300" placeholder="Height in cm" />
+            </div> : <div className="flex gap-2">
               <div className="w-1/2">
-                <Input 
-                  type="number" 
-                  id="height-feet" 
-                  value={feet} 
-                  onChange={handleFeetChange} 
-                  className="w-full" 
-                  min="1" 
-                  max="8"
-                  placeholder="Feet"
-                />
+                <Input type="number" id="height-feet" value={feet} onChange={handleFeetChange} className="w-full" min="1" max="8" placeholder="Feet" />
                 <Label htmlFor="height-feet" className="text-xs text-gray-500">Feet</Label>
               </div>
               <div className="w-1/2">
-                <Input 
-                  type="number" 
-                  id="height-inches" 
-                  value={inches} 
-                  onChange={handleInchesChange} 
-                  className="w-full" 
-                  min="0" 
-                  max="11" 
-                  step="0.1"
-                  placeholder="Inches"
-                />
+                <Input type="number" id="height-inches" value={inches} onChange={handleInchesChange} className="w-full" min="0" max="11" step="0.1" placeholder="Inches" />
                 <Label htmlFor="height-inches" className="text-xs text-gray-500">Inches</Label>
               </div>
-            </div>
-          )}
+            </div>}
         </div>
         
         {/* Waist Circumference */}
@@ -356,15 +308,7 @@ const BodyFatCalculator: React.FC = () => {
               <span className={`ml-2 text-sm ${useMetricWaist ? "font-medium" : "text-gray-500"}`}>cm</span>
             </div>
           </div>
-          <Input 
-            type="number" 
-            id="waist" 
-            value={useMetricWaist ? waistCm : waistInch} 
-            onChange={handleWaistChange} 
-            className="w-full" 
-            step="0.1"
-            placeholder={useMetricWaist ? "Waist in cm" : "Waist in inches"}
-          />
+          <Input type="number" id="waist" value={useMetricWaist ? waistCm : waistInch} onChange={handleWaistChange} className="w-full" step="0.1" placeholder={useMetricWaist ? "Waist in cm" : "Waist in inches"} />
         </div>
         
         {/* Neck Circumference */}
@@ -377,20 +321,11 @@ const BodyFatCalculator: React.FC = () => {
               <span className={`ml-2 text-sm ${useMetricNeck ? "font-medium" : "text-gray-500"}`}>cm</span>
             </div>
           </div>
-          <Input 
-            type="number" 
-            id="neck" 
-            value={useMetricNeck ? neckCm : neckInch} 
-            onChange={handleNeckChange} 
-            className="w-full" 
-            step="0.1"
-            placeholder={useMetricNeck ? "Neck in cm" : "Neck in inches"}
-          />
+          <Input type="number" id="neck" value={useMetricNeck ? neckCm : neckInch} onChange={handleNeckChange} className="w-full" step="0.1" placeholder={useMetricNeck ? "Neck in cm" : "Neck in inches"} />
         </div>
         
         {/* Hip Circumference (only for females) */}
-        {gender === "female" && (
-          <div className="mb-6">
+        {gender === "female" && <div className="mb-6">
             <div className="flex justify-between items-center mb-2">
               <Label htmlFor="hip-toggle" className="text-base font-medium">Hip Circumference</Label>
               <div className="flex items-center">
@@ -399,49 +334,29 @@ const BodyFatCalculator: React.FC = () => {
                 <span className={`ml-2 text-sm ${useMetricHip ? "font-medium" : "text-gray-500"}`}>cm</span>
               </div>
             </div>
-            <Input 
-              type="number" 
-              id="hip" 
-              value={useMetricHip ? hipCm : hipInch} 
-              onChange={handleHipChange} 
-              className="w-full" 
-              step="0.1"
-              placeholder={useMetricHip ? "Hip in cm" : "Hip in inches"}
-            />
-          </div>
-        )}
+            <Input type="number" id="hip" value={useMetricHip ? hipCm : hipInch} onChange={handleHipChange} className="w-full" step="0.1" placeholder={useMetricHip ? "Hip in cm" : "Hip in inches"} />
+          </div>}
         
         {/* Error Message */}
-        {error && (
-          <Alert variant="destructive" className="mt-4">
+        {error && <Alert variant="destructive" className="mt-4">
             <AlertDescription>{error}</AlertDescription>
-          </Alert>
-        )}
+          </Alert>}
         
         {/* Calculate Button */}
         <div className="flex justify-center mt-6">
-          <Button 
-            onClick={calculateBodyFat} 
-            className="w-auto px-6 bg-health-primary hover:bg-health-dark"
-            disabled={isCalculating}
-          >
-            {isCalculating ? (
-              <>
+          <Button onClick={calculateBodyFat} disabled={isCalculating} className="w-auto px-6 bg-red-800 hover:bg-red-700">
+            {isCalculating ? <>
                 <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
                 Calculating...
-              </>
-            ) : (
-              "Calculate Body Fat %"
-            )}
+              </> : "Calculate Body Fat %"}
           </Button>
         </div>
         
         {/* Results */}
-        {bodyFatPercentage !== null && (
-          <div className="mt-6 p-4 bg-gray-50 rounded-md border border-gray-100 animate-fade-in">
+        {bodyFatPercentage !== null && <div className="mt-6 p-4 bg-gray-50 rounded-md border border-gray-100 animate-fade-in">
             <h3 className="text-lg font-semibold text-center mb-2">Results</h3>
             
             <div className="flex flex-col items-center">
@@ -454,8 +369,7 @@ const BodyFatCalculator: React.FC = () => {
                 <p className="mt-1 text-gray-700">{getCategoryDescription(category)}</p>
               </div>
             </div>
-          </div>
-        )}
+          </div>}
         
         {/* Information Section */}
         <div className="mt-6">
@@ -465,18 +379,7 @@ const BodyFatCalculator: React.FC = () => {
                 <Ruler className="mr-2 h-4 w-4" />
                 About Body Fat Percentage
               </span>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className={`h-4 w-4 transition-transform ${showInfo ? "rotate-180" : ""}`}
-              >
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`h-4 w-4 transition-transform ${showInfo ? "rotate-180" : ""}`}>
                 <polyline points="6 9 12 15 18 9"></polyline>
               </svg>
             </CollapsibleTrigger>
@@ -506,8 +409,6 @@ const BodyFatCalculator: React.FC = () => {
           For medical advice, please consult a healthcare professional.
         </p>
       </CardFooter>
-    </Card>
-  );
+    </Card>;
 };
-
 export default BodyFatCalculator;
