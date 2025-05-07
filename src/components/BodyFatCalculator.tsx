@@ -12,7 +12,10 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 
 // Conversion functions
 const convertCmToInches = (cm: number): number => cm / 2.54;
-const convertInchesToCm = (inches: number): number => inches * 2.54;
+const convertInchesToCm = (inches: number): number => {
+  // Format to one decimal place while converting
+  return Math.round((inches * 2.54) * 10) / 10;
+};
 const convertFeetToInches = (feet: number, inches: number): number => (feet * 12) + inches;
 const convertInchesToFeet = (totalInches: number): { feet: number, inches: number } => {
   const feet = Math.floor(totalInches / 12);
