@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -36,7 +37,9 @@ const calculateMaleBodyFat = (heightCm: number, waistCm: number, neckCm: number)
 
 const calculateFemaleBodyFat = (heightCm: number, waistCm: number, neckCm: number, hipCm: number): number => {
   // Women: %Body fat = 495 / (1.29579 − 0.35004 × log10(waist + hip − neck) + 0.22100 × log10(height)) − 450
-  return 495 / (1.29579 - 0.35004 * Math.log10(waistCm + hipCm - neckCm) + 0.22100 * Math.log10(heightCm)) - 450;
+  const logValue = Math.log10(waistCm + hipCm - neckCm);
+  const heightLog = Math.log10(heightCm);
+  return 495 / (1.29579 - 0.35004 * logValue + 0.22100 * heightLog) - 450;
 };
 
 const BodyFatCalculator: React.FC = () => {
@@ -239,16 +242,33 @@ const BodyFatCalculator: React.FC = () => {
     }
     setIsCalculating(true);
 
+    // Ensure all measurements are in centimeters before calculation
+    const finalHeightCm = heightCm;
+    const finalWaistCm = waistCm;
+    const finalNeckCm = neckCm;
+    const finalHipCm = hipCm;
+
+    // Log the values to verify correct inputs to formula
+    console.log("Calculation values:", {
+      gender,
+      height: finalHeightCm,
+      waist: finalWaistCm,
+      neck: finalNeckCm,
+      hip: finalHipCm
+    });
+
     // Simulate calculation delay for loading animation
     setTimeout(() => {
       try {
         let bodyFat: number;
         
         if (gender === "male") {
-          bodyFat = calculateMaleBodyFat(heightCm, waistCm, neckCm);
+          bodyFat = calculateMaleBodyFat(finalHeightCm, finalWaistCm, finalNeckCm);
         } else {
-          bodyFat = calculateFemaleBodyFat(heightCm, waistCm, neckCm, hipCm);
+          bodyFat = calculateFemaleBodyFat(finalHeightCm, finalWaistCm, finalNeckCm, finalHipCm);
         }
+
+        console.log("Calculated body fat:", bodyFat);
 
         // Ensure the result is valid
         if (isNaN(bodyFat) || bodyFat < 0 || bodyFat > 100) {
