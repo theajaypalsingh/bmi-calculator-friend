@@ -27,6 +27,18 @@ const convertInchesToFeet = (totalInches: number): {
     inches
   };
 };
+
+// Updated Body Fat calculation functions
+const calculateMaleBodyFat = (heightCm: number, waistCm: number, neckCm: number): number => {
+  // Men: %Body fat = 495 / (1.0324 − 0.19077 × log10(waist − neck) + 0.15456 × log10(height)) − 450
+  return 495 / (1.0324 - 0.19077 * Math.log10(waistCm - neckCm) + 0.15456 * Math.log10(heightCm)) - 450;
+};
+
+const calculateFemaleBodyFat = (heightCm: number, waistCm: number, neckCm: number, hipCm: number): number => {
+  // Women: %Body fat = 495 / (1.29579 − 0.35004 × log10(waist + hip − neck) + 0.22100 × log10(height)) − 450
+  return 495 / (1.29579 - 0.35004 * Math.log10(waistCm + hipCm - neckCm) + 0.22100 * Math.log10(heightCm)) - 450;
+};
+
 const BodyFatCalculator: React.FC = () => {
   // Units and inputs state
   const [gender, setGender] = useState<"male" | "female">("male");
@@ -203,6 +215,17 @@ const BodyFatCalculator: React.FC = () => {
       setError("Please enter a valid hip circumference.");
       return false;
     }
+    
+    // Additional validation for the log10 calculations
+    if (gender === "male" && waistCm <= neckCm) {
+      setError("Waist circumference must be greater than neck circumference.");
+      return false;
+    }
+    if (gender === "female" && (waistCm + hipCm) <= neckCm) {
+      setError("The sum of waist and hip must be greater than neck circumference.");
+      return false;
+    }
+    
     setError("");
     return true;
   };
@@ -220,15 +243,16 @@ const BodyFatCalculator: React.FC = () => {
     setTimeout(() => {
       try {
         let bodyFat: number;
+        
         if (gender === "male") {
-          bodyFat = 86.010 * Math.log10(waistCm - neckCm) - 70.041 * Math.log10(heightCm) + 36.76;
+          bodyFat = calculateMaleBodyFat(heightCm, waistCm, neckCm);
         } else {
-          bodyFat = 163.205 * Math.log10(waistCm + hipCm - neckCm) - 97.684 * Math.log10(heightCm) - 78.387;
+          bodyFat = calculateFemaleBodyFat(heightCm, waistCm, neckCm, hipCm);
         }
 
         // Ensure the result is valid
-        if (isNaN(bodyFat) || bodyFat < 0) {
-          setError("Invalid measurements. Please check your inputs.");
+        if (isNaN(bodyFat) || bodyFat < 0 || bodyFat > 100) {
+          setError("Invalid measurement combination. Please check your inputs.");
           setBodyFatPercentage(null);
           setCategory("");
         } else {
@@ -240,12 +264,14 @@ const BodyFatCalculator: React.FC = () => {
         }
       } catch (e) {
         setError("An error occurred during calculation. Please check your inputs.");
+        console.error("Body fat calculation error:", e);
         setBodyFatPercentage(null);
         setCategory("");
       }
       setIsCalculating(false);
     }, 600); // 600ms delay for the loading animation
   };
+  
   return <Card className="w-full max-w-md mx-auto shadow-lg">
       <CardHeader className="text-white rounded-t-lg bg-gray-800">
         <CardTitle className="text-2xl font-bold text-center">Body Fat Calculator</CardTitle>
