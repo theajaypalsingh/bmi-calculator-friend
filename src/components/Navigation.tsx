@@ -1,4 +1,3 @@
-
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -14,7 +13,6 @@ const Navigation = () => {
     { href: "/health-score", label: "Health Score" },
     { href: "/step-count", label: "Step Count" },
     { href: "/body-fat", label: "Body Fat Calculator" },
-    { href: "/dietary-tips", label: "Dietary Tips" },
     { href: "/consultation", label: "Consultation" },
   ];
 
