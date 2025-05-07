@@ -11,6 +11,7 @@ import Navigation from "./components/Navigation";
 import StepCount from "./pages/StepCount";
 import HealthScore from "./pages/HealthScore";
 import Consultation from "./pages/Consultation";
+import BodyFat from "./pages/BodyFat";
 
 const queryClient = new QueryClient();
 
@@ -27,6 +28,7 @@ const App = () => (
           <Route path="/step-count" element={<StepCount />} />
           <Route path="/health-score" element={<HealthScore />} />
           <Route path="/consultation" element={<Consultation />} />
+          <Route path="/body-fat" element={<BodyFat />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

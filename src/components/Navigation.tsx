@@ -1,88 +1,116 @@
 
-import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { NavigationMenu, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, navigationMenuTriggerStyle } from "@/components/ui/navigation-menu";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Calculator, ActivitySquare, Heart, Phone, Menu } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useState } from "react";
 
 const Navigation = () => {
   const location = useLocation();
-  const currentPath = location.pathname;
   const isMobile = useIsMobile();
-  const [open, setOpen] = useState(false);
-  const navigationItems = [{
-    path: "/",
-    label: "BMI Calculator",
-    icon: Calculator
-  }, {
-    path: "/step-count",
-    label: "Daily Step Count",
-    icon: ActivitySquare
-  }, {
-    path: "/health-score",
-    label: "Health Score",
-    icon: Heart
-  }, {
-    path: "/consultation",
-    label: "Free Consultation",
-    icon: Phone
-  }];
+  const [isOpen, setIsOpen] = useState(false);
 
-  // Function to render navigation items
-  const renderNavigationItems = () => {
-    return navigationItems.map(item => {
-      const isActive = currentPath === item.path;
-      const Icon = item.icon;
-      return <NavigationMenuItem key={item.path}>
-          <Link to={item.path} onClick={() => setOpen(false)}>
-            <NavigationMenuLink className={`${navigationMenuTriggerStyle()} transition-colors ${isActive ? "bg-white text-black hover:bg-gray-100 hover:text-black" : "bg-transparent text-white hover:bg-gray-800 hover:text-white"}`}>
-              <Icon size={18} className={`mr-1 ${isActive ? "" : "bg-transparent"}`} />
-              {item.label}
-            </NavigationMenuLink>
-          </Link>
-        </NavigationMenuItem>;
-    });
-  };
+  const links = [
+    { href: "/", label: "Home" },
+    { href: "/health-score", label: "Health Score" },
+    { href: "/step-count", label: "Step Count" },
+    { href: "/body-fat", label: "Body Fat Calculator" },
+    { href: "/dietary-tips", label: "Dietary Tips" },
+    { href: "/consultation", label: "Consultation" },
+  ];
 
-  // Mobile navigation with hamburger menu
+  // Show mobile navigation
   if (isMobile) {
-    return <div className="sticky top-0 z-50 text-white py-3 shadow-md bg-gray-950">
-        <div className="container mx-auto px-4 flex items-center">
-          <Sheet open={open} onOpenChange={setOpen}>
-            <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="text-white">
-                <Menu size={24} />
-                <span className="sr-only">Menu</span>
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="left" className="bg-gray-950 text-white w-64 p-0">
-              <div className="pt-6">
-                <NavigationMenu className="max-w-none w-full mx-0 bg-transparent">
-                  <NavigationMenuList className="flex flex-col space-y-2 px-2">
-                    {renderNavigationItems()}
-                  </NavigationMenuList>
-                </NavigationMenu>
-              </div>
-            </SheetContent>
-          </Sheet>
-          <div className="mx-auto">
-            <h1 className="text-lg font-medium">Health App</h1>
+    return (
+      <div className="bg-gray-800 text-white">
+        <div className="container mx-auto px-4">
+          <div className="flex justify-between items-center py-3">
+            <Link to="/" className="text-xl font-bold">
+              Health App
+            </Link>
+            <button
+              onClick={() => setIsOpen(!isOpen)}
+              className="focus:outline-none"
+              aria-label="Toggle navigation menu"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                {isOpen ? (
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                ) : (
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4 6h16M4 12h16M4 18h16"
+                  />
+                )}
+              </svg>
+            </button>
           </div>
         </div>
-      </div>;
+        {isOpen && (
+          <div className="container mx-auto px-4 pb-3">
+            <nav className="flex flex-col space-y-2">
+              {links.map((link) => (
+                <Link
+                  key={link.href}
+                  to={link.href}
+                  className={cn(
+                    "px-3 py-2 rounded-md text-base font-medium",
+                    location.pathname === link.href
+                      ? "bg-gray-900 text-white"
+                      : "text-gray-300 hover:bg-gray-700 hover:text-white"
+                  )}
+                  onClick={() => setIsOpen(false)}
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </nav>
+          </div>
+        )}
+      </div>
+    );
   }
 
-  // Desktop navigation
-  return <div className="sticky top-0 z-50 text-white py-3 shadow-md bg-gray-950 px-[157px]">
-      <div className="container mx-auto px-4 flex justify-center">
-        <NavigationMenu className="max-w-none w-full justify-center mx-0 bg-transparent my-[5px]">
-          <NavigationMenuList className="flex flex-wrap justify-center gap-1">
-            {renderNavigationItems()}
-          </NavigationMenuList>
-        </NavigationMenu>
+  // Show desktop navigation
+  return (
+    <div className="bg-gray-800 text-white">
+      <div className="container mx-auto px-4">
+        <div className="flex items-center justify-between h-16">
+          <Link to="/" className="text-xl font-bold">
+            Health App
+          </Link>
+          <nav className="flex space-x-4">
+            {links.map((link) => (
+              <Link
+                key={link.href}
+                to={link.href}
+                className={cn(
+                  "px-3 py-2 rounded-md text-sm font-medium",
+                  location.pathname === link.href
+                    ? "bg-gray-900 text-white"
+                    : "text-gray-300 hover:bg-gray-700 hover:text-white"
+                )}
+              >
+                {link.label}
+              </Link>
+            ))}
+          </nav>
+        </div>
       </div>
-    </div>;
+    </div>
+  );
 };
+
 export default Navigation;
