@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Form, FormControl, FormField, FormItem, FormLabel } from '@/components/ui/form';
 import { useForm } from 'react-hook-form';
 import { ActivitySquare } from 'lucide-react';
+
 type FormData = {
   age: number;
   weight: number;
@@ -14,6 +15,7 @@ type FormData = {
   gender: string;
   activityLevel: string;
 };
+
 const activityMultipliers = {
   sedentary: 1.2,
   lightlyActive: 1.375,
@@ -21,6 +23,7 @@ const activityMultipliers = {
   veryActive: 1.725,
   superActive: 1.9
 };
+
 const stepPercentages = {
   sedentary: 0.10,
   lightlyActive: 0.15,
@@ -28,10 +31,13 @@ const stepPercentages = {
   veryActive: 0.25,
   superActive: 0.30
 };
+
 const CALORIES_PER_STEP = 0.05;
+
 const StepCount = () => {
   const [stepGoal, setStepGoal] = useState<number>(0);
   const [showResults, setShowResults] = useState<boolean>(false);
+  
   const form = useForm<FormData>({
     defaultValues: {
       age: 30,
@@ -41,6 +47,7 @@ const StepCount = () => {
       activityLevel: 'lightlyActive'
     }
   });
+
   const calculateStepGoal = (data: FormData) => {
     let bmr = 0;
     if (data.gender === 'male') {
@@ -58,11 +65,13 @@ const StepCount = () => {
     const steps = tdee * stepPercentage / CALORIES_PER_STEP;
     return Math.round(steps / 100) * 100;
   };
+
   const onSubmit = (data: FormData) => {
     const calculatedStepGoal = calculateStepGoal(data);
     setStepGoal(calculatedStepGoal);
     setShowResults(true);
   };
+
   const getActivityLabel = (key: string): string => {
     switch (key) {
       case 'sedentary':
@@ -79,11 +88,13 @@ const StepCount = () => {
         return key;
     }
   };
+
   return <div className="container mx-auto px-4 py-8">
+      <h1 className="text-3xl font-bold text-center mb-6">Daily Step Goal Calculator</h1>
       <Card className="max-w-md mx-auto">
-        <CardHeader className="text-white rounded-t-lg bg-gray-700">
-          <CardTitle className="text-xl font-bold text-center">Daily Step Goal Calculator</CardTitle>
-          <CardDescription className="text-center text-white/90">Find your optimal daily step target</CardDescription>
+        <CardHeader>
+          <CardTitle className="text-xl font-bold text-center">Find your optimal daily step target</CardTitle>
+          <CardDescription className="text-center">Get personalized recommendations based on your profile</CardDescription>
         </CardHeader>
         
         <CardContent className="pt-6 pb-4">
@@ -178,11 +189,12 @@ const StepCount = () => {
           <div className="text-sm text-gray-500 space-y-2 w-full">
             <p className="text-center">Step goals are calculated based on your BMR, activity level, and estimated caloric needs.
 
-Note - There's no single universal formula to calculate “Ideal daily step count,” The above calculation is based on research from ACSM (American College of Sports Medicine) and public health bodies like WHO and CDC.</p>
+Note - There's no single universal formula to calculate "Ideal daily step count," The above calculation is based on research from ACSM (American College of Sports Medicine) and public health bodies like WHO and CDC.</p>
             <p className="text-center text-xs">Consult your healthcare provider before starting any new fitness program.</p>
           </div>
         </CardFooter>
       </Card>
     </div>;
 };
+
 export default StepCount;
