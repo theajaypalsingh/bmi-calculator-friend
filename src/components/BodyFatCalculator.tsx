@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -26,10 +27,17 @@ const BodyFatCalculator: React.FC = () => {
   const [feet, setFeet] = useState<number>(5);
   const [inches, setInches] = useState<number>(10);
   const [heightCm, setHeightCm] = useState<number>(177.8); // ~5'10"
+  
+  // Measurements with single fields and unit toggle
+  const [useMetricWaist, setUseMetricWaist] = useState<boolean>(true);
   const [waistCm, setWaistCm] = useState<number>(85);
   const [waistInch, setWaistInch] = useState<number>(33.5);
+  
+  const [useMetricNeck, setUseMetricNeck] = useState<boolean>(true);
   const [neckCm, setNeckCm] = useState<number>(37);
   const [neckInch, setNeckInch] = useState<number>(14.6);
+  
+  const [useMetricHip, setUseMetricHip] = useState<boolean>(true);
   const [hipCm, setHipCm] = useState<number>(95);
   const [hipInch, setHipInch] = useState<number>(37.4);
   
@@ -78,43 +86,67 @@ const BodyFatCalculator: React.FC = () => {
     setHeightCm(value);
   };
 
-  // Handle waist changes
-  const handleWaistCmChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  // Handle waist measurement changes
+  const handleWaistUnitToggle = () => {
+    setUseMetricWaist(!useMetricWaist);
+    if (useMetricWaist) {
+      setWaistInch(convertCmToInches(waistCm));
+    } else {
+      setWaistCm(convertInchesToCm(waistInch));
+    }
+  };
+  
+  const handleWaistChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseFloat(e.target.value) || 0;
-    setWaistCm(value);
-    setWaistInch(convertCmToInches(value));
+    if (useMetricWaist) {
+      setWaistCm(value);
+      setWaistInch(convertCmToInches(value));
+    } else {
+      setWaistInch(value);
+      setWaistCm(convertInchesToCm(value));
+    }
   };
 
-  const handleWaistInchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  // Handle neck measurement changes
+  const handleNeckUnitToggle = () => {
+    setUseMetricNeck(!useMetricNeck);
+    if (useMetricNeck) {
+      setNeckInch(convertCmToInches(neckCm));
+    } else {
+      setNeckCm(convertInchesToCm(neckInch));
+    }
+  };
+  
+  const handleNeckChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseFloat(e.target.value) || 0;
-    setWaistInch(value);
-    setWaistCm(convertInchesToCm(value));
+    if (useMetricNeck) {
+      setNeckCm(value);
+      setNeckInch(convertCmToInches(value));
+    } else {
+      setNeckInch(value);
+      setNeckCm(convertInchesToCm(value));
+    }
   };
 
-  // Handle neck changes
-  const handleNeckCmChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = parseFloat(e.target.value) || 0;
-    setNeckCm(value);
-    setNeckInch(convertCmToInches(value));
+  // Handle hip measurement changes
+  const handleHipUnitToggle = () => {
+    setUseMetricHip(!useMetricHip);
+    if (useMetricHip) {
+      setHipInch(convertCmToInches(hipCm));
+    } else {
+      setHipCm(convertInchesToCm(hipInch));
+    }
   };
-
-  const handleNeckInchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  
+  const handleHipChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseFloat(e.target.value) || 0;
-    setNeckInch(value);
-    setNeckCm(convertInchesToCm(value));
-  };
-
-  // Handle hip changes
-  const handleHipCmChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = parseFloat(e.target.value) || 0;
-    setHipCm(value);
-    setHipInch(convertCmToInches(value));
-  };
-
-  const handleHipInchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = parseFloat(e.target.value) || 0;
-    setHipInch(value);
-    setHipCm(convertInchesToCm(value));
+    if (useMetricHip) {
+      setHipCm(value);
+      setHipInch(convertCmToInches(value));
+    } else {
+      setHipInch(value);
+      setHipCm(convertInchesToCm(value));
+    }
   };
 
   // Get category based on body fat percentage and gender
@@ -314,96 +346,66 @@ const BodyFatCalculator: React.FC = () => {
         
         {/* Waist Circumference */}
         <div className="mb-6">
-          <Label htmlFor="waist" className="text-base font-medium mb-2 block">Waist Circumference</Label>
-          <div className="flex gap-2">
-            <div className="w-1/2">
-              <Input 
-                type="number" 
-                id="waist-cm" 
-                value={waistCm} 
-                onChange={handleWaistCmChange} 
-                className="w-full" 
-                step="0.1"
-                placeholder="cm"
-              />
-              <Label htmlFor="waist-cm" className="text-xs text-gray-500">cm</Label>
-            </div>
-            <div className="w-1/2">
-              <Input 
-                type="number" 
-                id="waist-inch" 
-                value={waistInch} 
-                onChange={handleWaistInchChange} 
-                className="w-full" 
-                step="0.1"
-                placeholder="inches"
-              />
-              <Label htmlFor="waist-inch" className="text-xs text-gray-500">inches</Label>
+          <div className="flex justify-between items-center mb-2">
+            <Label htmlFor="waist-toggle" className="text-base font-medium">Waist Circumference</Label>
+            <div className="flex items-center">
+              <span className={`mr-2 text-sm ${!useMetricWaist ? "font-medium" : "text-gray-500"}`}>inches</span>
+              <Switch id="waist-toggle" checked={useMetricWaist} onCheckedChange={handleWaistUnitToggle} />
+              <span className={`ml-2 text-sm ${useMetricWaist ? "font-medium" : "text-gray-500"}`}>cm</span>
             </div>
           </div>
+          <Input 
+            type="number" 
+            id="waist" 
+            value={useMetricWaist ? waistCm : waistInch} 
+            onChange={handleWaistChange} 
+            className="w-full" 
+            step="0.1"
+            placeholder={useMetricWaist ? "Waist in cm" : "Waist in inches"}
+          />
         </div>
         
         {/* Neck Circumference */}
         <div className="mb-6">
-          <Label htmlFor="neck" className="text-base font-medium mb-2 block">Neck Circumference</Label>
-          <div className="flex gap-2">
-            <div className="w-1/2">
-              <Input 
-                type="number" 
-                id="neck-cm" 
-                value={neckCm} 
-                onChange={handleNeckCmChange} 
-                className="w-full" 
-                step="0.1"
-                placeholder="cm"
-              />
-              <Label htmlFor="neck-cm" className="text-xs text-gray-500">cm</Label>
-            </div>
-            <div className="w-1/2">
-              <Input 
-                type="number" 
-                id="neck-inch" 
-                value={neckInch} 
-                onChange={handleNeckInchChange} 
-                className="w-full" 
-                step="0.1"
-                placeholder="inches"
-              />
-              <Label htmlFor="neck-inch" className="text-xs text-gray-500">inches</Label>
+          <div className="flex justify-between items-center mb-2">
+            <Label htmlFor="neck-toggle" className="text-base font-medium">Neck Circumference</Label>
+            <div className="flex items-center">
+              <span className={`mr-2 text-sm ${!useMetricNeck ? "font-medium" : "text-gray-500"}`}>inches</span>
+              <Switch id="neck-toggle" checked={useMetricNeck} onCheckedChange={handleNeckUnitToggle} />
+              <span className={`ml-2 text-sm ${useMetricNeck ? "font-medium" : "text-gray-500"}`}>cm</span>
             </div>
           </div>
+          <Input 
+            type="number" 
+            id="neck" 
+            value={useMetricNeck ? neckCm : neckInch} 
+            onChange={handleNeckChange} 
+            className="w-full" 
+            step="0.1"
+            placeholder={useMetricNeck ? "Neck in cm" : "Neck in inches"}
+          />
         </div>
         
         {/* Hip Circumference (only for females) */}
         {gender === "female" && (
           <div className="mb-6">
-            <Label htmlFor="hip" className="text-base font-medium mb-2 block">Hip Circumference</Label>
-            <div className="flex gap-2">
-              <div className="w-1/2">
-                <Input 
-                  type="number" 
-                  id="hip-cm" 
-                  value={hipCm} 
-                  onChange={handleHipCmChange} 
-                  className="w-full" 
-                  step="0.1"
-                  placeholder="cm"
-                />
-                <Label htmlFor="hip-cm" className="text-xs text-gray-500">cm</Label>
-              </div>
-              <div className="w-1/2">
-                <Input 
-                  type="number" 
-                  id="hip-inch" 
-                  value={hipInch} 
-                  onChange={handleHipInchChange} 
-                  className="w-full" 
-                  step="0.1"
-                  placeholder="inches"
-                />
-                <Label htmlFor="hip-inch" className="text-xs text-gray-500">inches</Label>
+            <div className="flex justify-between items-center mb-2">
+              <Label htmlFor="hip-toggle" className="text-base font-medium">Hip Circumference</Label>
+              <div className="flex items-center">
+                <span className={`mr-2 text-sm ${!useMetricHip ? "font-medium" : "text-gray-500"}`}>inches</span>
+                <Switch id="hip-toggle" checked={useMetricHip} onCheckedChange={handleHipUnitToggle} />
+                <span className={`ml-2 text-sm ${useMetricHip ? "font-medium" : "text-gray-500"}`}>cm</span>
               </div>
             </div>
+            <Input 
+              type="number" 
+              id="hip" 
+              value={useMetricHip ? hipCm : hipInch} 
+              onChange={handleHipChange} 
+              className="w-full" 
+              step="0.1"
+              placeholder={useMetricHip ? "Hip in cm" : "Hip in inches"}
+            />
           </div>
         )}
         
