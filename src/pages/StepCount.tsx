@@ -89,8 +89,13 @@ const StepCount = () => {
     }
   };
 
-  return <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold text-center mb-6">Daily Step Goal Calculator</h1>
+  return (
+    <div className="container mx-auto px-4 py-8">
+      <div className="bg-gray-800 text-white p-6 mb-8 rounded-lg">
+        <h1 className="text-3xl font-bold text-center">Daily Step Goal Calculator</h1>
+        <p className="text-center mt-2">Know how much steps you should do daily</p>
+      </div>
+      
       <Card className="max-w-md mx-auto">
         <CardHeader>
           <CardTitle className="text-xl font-bold text-center">Find your optimal daily step target</CardTitle>
@@ -194,7 +199,8 @@ Note - There's no single universal formula to calculate "Ideal daily step count,
           </div>
         </CardFooter>
       </Card>
-    </div>;
+    </div>
+  );
 };
 
 export default StepCount;
