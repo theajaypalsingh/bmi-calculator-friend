@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -7,7 +6,7 @@ import { Switch } from "@/components/ui/switch";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { Ruler, GenderMale, GenderFemale } from "lucide-react";
+import { Ruler, User, UserRound } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 // Conversion functions
@@ -241,14 +240,14 @@ const BodyFatCalculator: React.FC = () => {
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="male" id="male" />
               <Label htmlFor="male" className="flex items-center">
-                <GenderMale className="mr-1 h-5 w-5" />
+                <User className="mr-1 h-5 w-5" />
                 Male
               </Label>
             </div>
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="female" id="female" />
               <Label htmlFor="female" className="flex items-center">
-                <GenderFemale className="mr-1 h-5 w-5" />
+                <UserRound className="mr-1 h-5 w-5" />
                 Female
               </Label>
             </div>
