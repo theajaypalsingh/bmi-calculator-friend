@@ -1,3 +1,4 @@
+
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -22,9 +23,7 @@ const Navigation = () => {
       <div className="bg-gray-800 text-white">
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center py-3">
-            <Link to="/" className="text-xl font-bold">
-              Health App
-            </Link>
+            <div></div> {/* Empty div to maintain spacing */}
             <button
               onClick={() => setIsOpen(!isOpen)}
               className="focus:outline-none"
@@ -85,10 +84,7 @@ const Navigation = () => {
   return (
     <div className="bg-gray-800 text-white">
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-16">
-          <Link to="/" className="text-xl font-bold">
-            Health App
-          </Link>
+        <div className="flex items-center justify-center h-16">
           <nav className="flex space-x-4">
             {links.map((link) => (
               <Link
