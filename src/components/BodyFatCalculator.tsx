@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -11,7 +10,7 @@ import { Ruler, User, UserRound } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 // Conversion functions
-const convertCmToInches = (cm: number): number => cm / 2.54;
+const convertCmToInches = (cm: number): number => Math.round(cm / 2.54);
 const convertInchesToCm = (inches: number): number => {
   // Format to one decimal place while converting
   return Math.round((inches * 2.54) * 10) / 10;
