@@ -90,51 +90,54 @@ const StepCount = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="bg-gray-800 text-white p-6 mb-8 rounded-lg">
-        <h1 className="text-3xl font-bold text-center">Daily Step Goal Calculator</h1>
-        <p className="text-center mt-2">Know how much steps you should do daily</p>
+    <div className="container-fluid p-0">
+      <div className="bg-gray-800 text-white py-6">
+        <div className="container mx-auto">
+          <h1 className="text-3xl font-bold text-center">Daily Step Goal Calculator</h1>
+          <p className="text-center mt-2">Know how much steps you should do daily</p>
+        </div>
       </div>
       
-      <Card className="max-w-md mx-auto">
-        <CardHeader>
-          <CardTitle className="text-xl font-bold text-center">Find your optimal daily step target</CardTitle>
-          <CardDescription className="text-center">Get personalized recommendations based on your profile</CardDescription>
-        </CardHeader>
-        
-        <CardContent className="pt-6 pb-4">
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-              <FormField control={form.control} name="age" render={({
-              field
-            }) => <FormItem>
+      <div className="container mx-auto px-4 py-8">
+        <Card className="max-w-md mx-auto">
+          <CardHeader>
+            <CardTitle className="text-xl font-bold text-center">Find your optimal daily step target</CardTitle>
+            <CardDescription className="text-center">Get personalized recommendations based on your profile</CardDescription>
+          </CardHeader>
+          
+          <CardContent className="pt-6 pb-4">
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                <FormField control={form.control} name="age" render={({
+                  field
+                }) => <FormItem>
                     <FormLabel>Age (years)</FormLabel>
                     <FormControl>
                       <Input type="number" min="10" max="100" {...field} onChange={e => field.onChange(parseInt(e.target.value) || 0)} />
                     </FormControl>
                   </FormItem>} />
 
-              <FormField control={form.control} name="height" render={({
-              field
-            }) => <FormItem>
+                <FormField control={form.control} name="height" render={({
+                  field
+                }) => <FormItem>
                     <FormLabel>Height (cm)</FormLabel>
                     <FormControl>
                       <Input type="number" min="100" max="250" {...field} onChange={e => field.onChange(parseInt(e.target.value) || 0)} />
                     </FormControl>
                   </FormItem>} />
 
-              <FormField control={form.control} name="weight" render={({
-              field
-            }) => <FormItem>
+                <FormField control={form.control} name="weight" render={({
+                  field
+                }) => <FormItem>
                     <FormLabel>Weight (kg)</FormLabel>
                     <FormControl>
                       <Input type="number" min="30" max="200" {...field} onChange={e => field.onChange(parseInt(e.target.value) || 0)} />
                     </FormControl>
                   </FormItem>} />
 
-              <FormField control={form.control} name="gender" render={({
-              field
-            }) => <FormItem>
+                <FormField control={form.control} name="gender" render={({
+                  field
+                }) => <FormItem>
                     <FormLabel>Gender</FormLabel>
                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
@@ -150,9 +153,9 @@ const StepCount = () => {
                     </Select>
                   </FormItem>} />
 
-              <FormField control={form.control} name="activityLevel" render={({
-              field
-            }) => <FormItem>
+                <FormField control={form.control} name="activityLevel" render={({
+                  field
+                }) => <FormItem>
                     <FormLabel>Physical Activity Level</FormLabel>
                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
@@ -170,35 +173,36 @@ const StepCount = () => {
                     </Select>
                   </FormItem>} />
 
-              <div className="flex justify-center mt-6">
-                <Button type="submit" className="px-6 bg-red-800 hover:bg-red-700">
-                  <ActivitySquare className="mr-2 h-4 w-4" />
-                  Calculate Step Goal
-                </Button>
-              </div>
-            </form>
-          </Form>
+                <div className="flex justify-center mt-6">
+                  <Button type="submit" className="px-6 bg-red-800 hover:bg-red-700">
+                    <ActivitySquare className="mr-2 h-4 w-4" />
+                    Calculate Step Goal
+                  </Button>
+                </div>
+              </form>
+            </Form>
+            
+            {showResults && <div className="mt-6 p-4 bg-green-50 border border-green-200 rounded-md">
+                <p className="text-center font-medium">Your recommended daily step goal:</p>
+                <p className="text-center text-2xl font-bold text-green-600">
+                  {stepGoal.toLocaleString()} steps/day
+                </p>
+                <p className="text-center text-sm text-gray-600 mt-2">
+                  {stepGoal.toLocaleString()} steps/day is recommended based on your profile to improve your health.
+                </p>
+              </div>}
+          </CardContent>
           
-          {showResults && <div className="mt-6 p-4 bg-green-50 border border-green-200 rounded-md">
-              <p className="text-center font-medium">Your recommended daily step goal:</p>
-              <p className="text-center text-2xl font-bold text-green-600">
-                {stepGoal.toLocaleString()} steps/day
-              </p>
-              <p className="text-center text-sm text-gray-600 mt-2">
-                {stepGoal.toLocaleString()} steps/day is recommended based on your profile to improve your health.
-              </p>
-            </div>}
-        </CardContent>
-        
-        <CardFooter className="border-t px-6 py-4">
-          <div className="text-sm text-gray-500 space-y-2 w-full">
-            <p className="text-center">Step goals are calculated based on your BMR, activity level, and estimated caloric needs.
+          <CardFooter className="border-t px-6 py-4">
+            <div className="text-sm text-gray-500 space-y-2 w-full">
+              <p className="text-center">Step goals are calculated based on your BMR, activity level, and estimated caloric needs.
 
 Note - There's no single universal formula to calculate "Ideal daily step count," The above calculation is based on research from ACSM (American College of Sports Medicine) and public health bodies like WHO and CDC.</p>
-            <p className="text-center text-xs">Consult your healthcare provider before starting any new fitness program.</p>
-          </div>
-        </CardFooter>
-      </Card>
+              <p className="text-center text-xs">Consult your healthcare provider before starting any new fitness program.</p>
+            </div>
+          </CardFooter>
+        </Card>
+      </div>
     </div>
   );
 };
