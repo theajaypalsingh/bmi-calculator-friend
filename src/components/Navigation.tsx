@@ -48,7 +48,7 @@ const Navigation = () => {
 
   // Show desktop navigation
   return <div className="bg-gray-800 text-white">
-      <div className="container mx-auto px-4">
+      <div className="container mx-auto px-4 bg-gray-950">
         <div className="flex items-center justify-center h-16 bg-gray-950">
           <nav className="flex space-x-4">
             {links.map(link => <Link key={link.href} to={link.href} className={cn("px-3 py-2 rounded-md text-sm font-medium", location.pathname === link.href ? "bg-gray-900 text-white" : "text-gray-300 hover:bg-gray-700 hover:text-white")}>
