@@ -12,6 +12,7 @@ import StepCount from "./pages/StepCount";
 import HealthScore from "./pages/HealthScore";
 import Consultation from "./pages/Consultation";
 import BodyFat from "./pages/BodyFat";
+import BMRCalculator from "./pages/BMRCalculator";
 
 const queryClient = new QueryClient();
 
@@ -29,6 +30,7 @@ const App = () => (
           <Route path="/health-score" element={<HealthScore />} />
           <Route path="/consultation" element={<Consultation />} />
           <Route path="/body-fat" element={<BodyFat />} />
+          <Route path="/bmr-calculator" element={<BMRCalculator />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
