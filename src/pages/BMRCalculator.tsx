@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
@@ -10,6 +9,7 @@ import { Switch } from '@/components/ui/switch';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { ActivitySquare, Calculator, Loader2 } from 'lucide-react';
 import { bmrCalculator } from '@/utils/bmrCalculator';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 
 const BMRCalculator = () => {
   // Gender state
@@ -579,7 +579,7 @@ const BMRCalculator = () => {
                 <div className="bg-gray-50 p-4 rounded-md mt-4">
                   <h4 className="font-medium mb-2">What do these numbers mean?</h4>
                   <p className="text-sm text-gray-700 mb-2">
-                    <span className="font-medium">BMR (Basal Metabolic Rate):</span> The number of calories your body needs to maintain basic physiological functions at complete rest.
+                    <span className="font-medium">BMR (Basal Metabolic Rate):</span> The number of calories your body needs to perform basic life-sustaining functions while at rest. These functions include breathing, circulation, cell production, nutrient processing, and maintaining body temperature. Essentially, your BMR represents the minimum amount of energy your body requires to stay alive when at complete rest.
                   </p>
                   <p className="text-sm text-gray-700">
                     <span className="font-medium">TDEE (Total Daily Energy Expenditure):</span> The estimated number of calories you burn per day when your activity level is taken into account.
@@ -596,6 +596,111 @@ const BMRCalculator = () => {
             </p>
           </CardFooter>
         </Card>
+        
+        {/* FAQ Section */}
+        <div className="max-w-4xl mx-auto mt-10">
+          <h2 className="text-2xl font-bold text-center mb-6">Frequently Asked Questions</h2>
+          
+          <Accordion type="single" collapsible className="w-full">
+            <AccordionItem value="item-1">
+              <AccordionTrigger className="text-left font-medium">
+                What is BMR (Basal Metabolic Rate)?
+              </AccordionTrigger>
+              <AccordionContent>
+                <p className="text-gray-700">
+                  BMR (Basal Metabolic Rate) is the number of calories your body needs to perform basic life-sustaining functions while at rest. These functions include breathing, circulation, cell production, nutrient processing, and maintaining body temperature. Essentially, your BMR represents the minimum amount of energy your body requires to stay alive when at complete rest.
+                </p>
+              </AccordionContent>
+            </AccordionItem>
+            
+            <AccordionItem value="item-2">
+              <AccordionTrigger className="text-left font-medium">
+                What is TDEE (Total Daily Energy Expenditure)?
+              </AccordionTrigger>
+              <AccordionContent>
+                <p className="text-gray-700">
+                  TDEE (Total Daily Energy Expenditure) is the total number of calories you burn throughout the day. It includes your BMR plus additional calories burned through physical activity, exercise, and the thermic effect of food (energy used to digest food). Your TDEE represents how many calories you need to consume daily to maintain your current weight.
+                </p>
+              </AccordionContent>
+            </AccordionItem>
+            
+            <AccordionItem value="item-3">
+              <AccordionTrigger className="text-left font-medium">
+                How accurate is this BMR calculator?
+              </AccordionTrigger>
+              <AccordionContent>
+                <p className="text-gray-700">
+                  This calculator uses the Katch-McArdle formula combined with the U.S. Navy method for body fat estimation, which is considered more accurate than basic BMR formulas because it takes into account your body composition. However, it's still an estimate. Factors like genetics, medical conditions, and precise body composition can affect your actual metabolic rate. For the most accurate measurement, medical tests like indirect calorimetry would be needed.
+                </p>
+              </AccordionContent>
+            </AccordionItem>
+            
+            <AccordionItem value="item-4">
+              <AccordionTrigger className="text-left font-medium">
+                How should I measure my body circumferences correctly?
+              </AccordionTrigger>
+              <AccordionContent>
+                <div className="text-gray-700">
+                  <p className="mb-2">For the most accurate measurements:</p>
+                  <ul className="list-disc pl-5 space-y-2">
+                    <li><strong>Neck:</strong> Measure below your Adam's apple, keeping the tape horizontal.</li>
+                    <li><strong>Waist:</strong> Measure at the narrowest part of your waist, typically above your belly button.</li>
+                    <li><strong>Hip:</strong> Measure at the widest part of your buttocks.</li>
+                  </ul>
+                  <p className="mt-2">Use a flexible measuring tape and ensure it's snug but not tight. For consistency, take measurements at the same time of day.</p>
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+            
+            <AccordionItem value="item-5">
+              <AccordionTrigger className="text-left font-medium">
+                How can I use my BMR and TDEE for weight management?
+              </AccordionTrigger>
+              <AccordionContent>
+                <div className="text-gray-700">
+                  <p className="mb-2">Your TDEE can be used as a baseline for calorie targets:</p>
+                  <ul className="list-disc pl-5 space-y-2">
+                    <li><strong>Weight maintenance:</strong> Consume calories equal to your TDEE.</li>
+                    <li><strong>Weight loss:</strong> Consume fewer calories than your TDEE (typically 500 calories less per day for about 1 pound loss per week).</li>
+                    <li><strong>Weight gain:</strong> Consume more calories than your TDEE (typically 300-500 calories more per day for lean muscle gain).</li>
+                  </ul>
+                  <p className="mt-2">Remember that healthy, sustainable weight management combines proper nutrition with regular physical activity.</p>
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+            
+            <AccordionItem value="item-6">
+              <AccordionTrigger className="text-left font-medium">
+                Why do I need to include body measurements in a BMR calculator?
+              </AccordionTrigger>
+              <AccordionContent>
+                <p className="text-gray-700">
+                  Traditional BMR formulas (like Harris-Benedict) use only height, weight, age, and gender. This calculator uses the Katch-McArdle formula, which factors in body composition through the Navy body fat estimation method. Since muscle burns more calories than fat even at rest, knowing your body fat percentage allows for a more accurate BMR calculation. Two people with the same weight but different body compositions will have different metabolic rates.
+                </p>
+              </AccordionContent>
+            </AccordionItem>
+            
+            <AccordionItem value="item-7">
+              <AccordionTrigger className="text-left font-medium">
+                What factors can change my BMR over time?
+              </AccordionTrigger>
+              <AccordionContent>
+                <div className="text-gray-700">
+                  <p className="mb-2">Several factors can influence your BMR:</p>
+                  <ul className="list-disc pl-5 space-y-2">
+                    <li><strong>Age:</strong> BMR typically decreases by 1-2% per decade after age 20.</li>
+                    <li><strong>Body composition:</strong> Increasing muscle mass can raise BMR.</li>
+                    <li><strong>Major weight changes:</strong> Significant weight loss can temporarily lower BMR.</li>
+                    <li><strong>Hormonal changes:</strong> Thyroid issues, menopause, and other hormonal fluctuations affect BMR.</li>
+                    <li><strong>Environmental temperature:</strong> Extreme cold can temporarily increase BMR.</li>
+                    <li><strong>Dietary patterns:</strong> Severe calorie restriction for long periods can lower BMR.</li>
+                  </ul>
+                  <p className="mt-2">It's a good idea to recalculate your BMR after significant body changes or every 3-6 months when actively managing your weight.</p>
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
+        </div>
       </div>
     </div>
   );
