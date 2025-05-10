@@ -1,5 +1,6 @@
 
 import BodyFatCalculator from "@/components/BodyFatCalculator";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
 const BodyFat = () => {
   return (
@@ -80,6 +81,102 @@ const BodyFat = () => {
                 </table>
               </div>
             </div>
+          </div>
+
+          {/* FAQ Section */}
+          <div className="mt-12 max-w-3xl mx-auto">
+            <h3 className="text-2xl font-semibold mb-5 text-center">Frequently Asked Questions</h3>
+            
+            <Accordion type="single" collapsible className="w-full">
+              <AccordionItem value="item-1">
+                <AccordionTrigger className="text-left font-medium">
+                  How accurate is the U.S. Navy body fat calculation method?
+                </AccordionTrigger>
+                <AccordionContent>
+                  <p className="text-gray-700">
+                    The U.S. Navy method is considered reasonably accurate for most people with an error margin of 3-4%. It tends to be more accurate for those with average body compositions. However, it may be less accurate for individuals with very athletic builds or those with obesity. For the most accurate measurements, methods like DEXA scans, hydrostatic weighing, or air displacement plethysmography (Bod Pod) are recommended.
+                  </p>
+                </AccordionContent>
+              </AccordionItem>
+              
+              <AccordionItem value="item-2">
+                <AccordionTrigger className="text-left font-medium">
+                  How often should I measure my body fat percentage?
+                </AccordionTrigger>
+                <AccordionContent>
+                  <p className="text-gray-700">
+                    For most people, measuring body fat once every 4-8 weeks is sufficient to track changes. Body fat percentage doesn't change dramatically day-to-day or even week-to-week. Measuring too frequently might lead to frustration as changes may not be noticeable in short periods. Consistency in measurement conditions (time of day, hydration status, etc.) is more important than frequency.
+                  </p>
+                </AccordionContent>
+              </AccordionItem>
+              
+              <AccordionItem value="item-3">
+                <AccordionTrigger className="text-left font-medium">
+                  Why is my body fat calculation showing an error?
+                </AccordionTrigger>
+                <AccordionContent>
+                  <p className="text-gray-700">
+                    Errors in calculation typically occur when there's an issue with the input measurements. Common problems include:
+                    <ul className="list-disc ml-5 mt-2">
+                      <li>Waist measurement smaller than or equal to neck measurement (for males)</li>
+                      <li>Sum of waist and hip measurements less than or equal to neck measurement (for females)</li>
+                      <li>Entering zero or negative values</li>
+                      <li>Using incorrect units (mixing cm and inches)</li>
+                    </ul>
+                    Double-check your measurements and make sure they're entered correctly.
+                  </p>
+                </AccordionContent>
+              </AccordionItem>
+              
+              <AccordionItem value="item-4">
+                <AccordionTrigger className="text-left font-medium">
+                  What is the difference between BMI and body fat percentage?
+                </AccordionTrigger>
+                <AccordionContent>
+                  <p className="text-gray-700">
+                    BMI (Body Mass Index) is simply a ratio of weight to height and doesn't differentiate between fat, muscle, bone, or other tissues. Body fat percentage, on the other hand, specifically measures the proportion of fat mass to total body mass. This makes body fat percentage a more accurate indicator of health and fitness, especially for athletes or muscular individuals who may have a high BMI but low body fat.
+                  </p>
+                </AccordionContent>
+              </AccordionItem>
+              
+              <AccordionItem value="item-5">
+                <AccordionTrigger className="text-left font-medium">
+                  How can I reduce my body fat percentage safely?
+                </AccordionTrigger>
+                <AccordionContent>
+                  <p className="text-gray-700">
+                    To reduce body fat percentage safely:
+                    <ul className="list-disc ml-5 mt-2">
+                      <li>Create a moderate calorie deficit (250-500 calories below maintenance)</li>
+                      <li>Increase protein intake to preserve muscle mass (0.8-1g per pound of body weight)</li>
+                      <li>Incorporate strength training 2-4 times per week</li>
+                      <li>Include cardiovascular exercise for heart health and additional calorie burn</li>
+                      <li>Ensure adequate sleep (7-9 hours)</li>
+                      <li>Manage stress levels</li>
+                      <li>Stay hydrated</li>
+                      <li>Aim for a sustainable rate of fat loss (0.5-1% of body weight per week)</li>
+                    </ul>
+                    Always consult with healthcare professionals before starting any new diet or exercise program.
+                  </p>
+                </AccordionContent>
+              </AccordionItem>
+              
+              <AccordionItem value="item-6">
+                <AccordionTrigger className="text-left font-medium">
+                  Is there an "ideal" body fat percentage?
+                </AccordionTrigger>
+                <AccordionContent>
+                  <p className="text-gray-700">
+                    There's no one-size-fits-all "ideal" body fat percentage, as optimal levels vary based on age, gender, fitness goals, and individual health factors. However, general health-optimal ranges are:
+                    <ul className="list-disc ml-5 mt-2">
+                      <li>Men: 10-20% (with 2-5% being essential fat)</li>
+                      <li>Women: 18-28% (with 10-13% being essential fat)</li>
+                    </ul>
+                    Athletes might maintain lower percentages, while slightly higher percentages may be perfectly healthy for many individuals, especially as they age. Very low body fat percentages (below essential levels) can lead to health problems and hormonal disruptions.
+                  </p>
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
           </div>
         </div>
       </main>
