@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -133,6 +132,7 @@ const Consultation = () => {
                 <Button 
                   onClick={() => setIsSubmitted(false)} 
                   variant="outline"
+                  className="mx-auto"
                 >
                   Request Another Consultation
                 </Button>
@@ -251,16 +251,18 @@ const Consultation = () => {
                       </p>
                     </div>
                     
-                    <Button type="submit" className="w-full" disabled={isSubmitting}>
-                      {isSubmitting ? (
-                        <>
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          Processing...
-                        </>
-                      ) : (
-                        "Request Consultation"
-                      )}
-                    </Button>
+                    <div className="flex justify-center">
+                      <Button type="submit" className="px-10" disabled={isSubmitting}>
+                        {isSubmitting ? (
+                          <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Processing...
+                          </>
+                        ) : (
+                          "Request Consultation"
+                        )}
+                      </Button>
+                    </div>
                   </form>
                 </Form>
               </>
