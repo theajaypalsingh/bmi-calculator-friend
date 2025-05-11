@@ -6,7 +6,8 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Form, FormControl, FormField, FormItem, FormLabel } from '@/components/ui/form';
 import { useForm } from 'react-hook-form';
-import { ActivitySquare } from 'lucide-react';
+import { ActivitySquare, HelpCircle } from 'lucide-react';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 
 type FormData = {
   age: number;
@@ -202,6 +203,93 @@ Note - There's no single universal formula to calculate "Ideal daily step count,
             </div>
           </CardFooter>
         </Card>
+        
+        {/* FAQ Section */}
+        <div className="max-w-2xl mx-auto mt-12">
+          <h2 className="text-2xl font-bold text-center mb-6">Frequently Asked Questions</h2>
+          <Accordion type="single" collapsible className="w-full">
+            <AccordionItem value="item-1">
+              <AccordionTrigger className="text-left">
+                How many steps should I aim for each day?
+              </AccordionTrigger>
+              <AccordionContent>
+                <p>While 10,000 steps is a common goal, the ideal step count varies by individual. Research suggests:</p>
+                <ul className="list-disc pl-6 mt-2 space-y-1">
+                  <li>For basic health benefits: 7,000-8,000 steps</li>
+                  <li>For weight management: 10,000-12,000 steps</li>
+                  <li>For active lifestyles: 12,000-15,000 steps</li>
+                </ul>
+                <p className="mt-2">Our calculator provides a personalized recommendation based on your body metrics and activity level.</p>
+              </AccordionContent>
+            </AccordionItem>
+            
+            <AccordionItem value="item-2">
+              <AccordionTrigger className="text-left">
+                How does the step goal calculator work?
+              </AccordionTrigger>
+              <AccordionContent>
+                Our calculator uses your age, gender, weight, height, and activity level to:
+                <ol className="list-decimal pl-6 mt-2 space-y-1">
+                  <li>Calculate your Basal Metabolic Rate (BMR)</li>
+                  <li>Determine your Total Daily Energy Expenditure (TDEE) based on activity level</li>
+                  <li>Estimate an appropriate percentage of calories that should come from walking</li>
+                  <li>Convert those calories into steps based on average calorie burn per step (approximately 0.05 calories per step)</li>
+                </ol>
+                <p className="mt-2">This provides a scientifically-backed step goal tailored to your unique physiology and lifestyle.</p>
+              </AccordionContent>
+            </AccordionItem>
+            
+            <AccordionItem value="item-3">
+              <AccordionTrigger className="text-left">
+                How can I increase my daily steps?
+              </AccordionTrigger>
+              <AccordionContent>
+                <p>Here are some practical ways to increase your daily step count:</p>
+                <ul className="list-disc pl-6 mt-2 space-y-1">
+                  <li>Take a short walk during lunch breaks</li>
+                  <li>Park farther away from entrances</li>
+                  <li>Use stairs instead of elevators</li>
+                  <li>Walk while talking on the phone</li>
+                  <li>Set hourly reminders to stand up and move</li>
+                  <li>Walk to nearby destinations instead of driving</li>
+                  <li>Take a longer route when possible</li>
+                  <li>Consider walking meetings at work</li>
+                </ul>
+              </AccordionContent>
+            </AccordionItem>
+            
+            <AccordionItem value="item-4">
+              <AccordionTrigger className="text-left">
+                Are all steps equal, or do I need to walk faster?
+              </AccordionTrigger>
+              <AccordionContent>
+                <p>The intensity of your walking does matter:</p>
+                <ul className="list-disc pl-6 mt-2 space-y-1">
+                  <li><strong>Casual steps</strong> (shopping, around the house) contribute to your overall total and are beneficial</li>
+                  <li><strong>Brisk walking</strong> (3-4 mph) provides greater cardiovascular benefits</li>
+                  <li><strong>Power walking</strong> (4-5+ mph) significantly increases calorie burn and fitness benefits</li>
+                </ul>
+                <p className="mt-2">For optimal health, aim for a mix of walking speeds with at least 30 minutes of moderate-intensity walking daily.</p>
+              </AccordionContent>
+            </AccordionItem>
+            
+            <AccordionItem value="item-5">
+              <AccordionTrigger className="text-left">
+                What if I can't reach my step goal every day?
+              </AccordionTrigger>
+              <AccordionContent>
+                <p>Don't worry if you can't meet your goal every single day. Consider these approaches:</p>
+                <ul className="list-disc pl-6 mt-2 space-y-1">
+                  <li>Focus on weekly averages rather than daily goals</li>
+                  <li>Start with lower targets and gradually increase</li>
+                  <li>Compensate for low-step days with more active days when possible</li>
+                  <li>Remember that any increase in physical activity is beneficial</li>
+                </ul>
+                <p className="mt-2">Consistency over time matters more than perfect adherence every day.</p>
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
+        </div>
       </div>
     </div>
   );
