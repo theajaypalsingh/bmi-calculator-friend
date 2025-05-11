@@ -49,7 +49,7 @@ const Footer = () => {
             </a>
           </div>
         </div>
-        <div className="border-t border-gray-800 mt-8 pt-6 text-center">
+        <div className="border-t border-gray-800 mt-8 pt-6 text-center bg-gray-950">
           <p className="text-black">&copy; {new Date().getFullYear()} BMI Calculator. All rights reserved.</p>
           <p className="text-sm mt-2 text-black">
             This calculator provides general information and is not a substitute for professional medical advice.
