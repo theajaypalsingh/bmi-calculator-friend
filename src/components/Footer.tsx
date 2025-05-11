@@ -16,13 +16,7 @@ const Footer = () => {
   return (
     <footer className="text-white py-6 mt-12 bg-zinc-950">
       <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div>
-            <h3 className="text-lg font-bold mb-4">BMI Calculator</h3>
-            <p className="text-sm text-health-light">
-              Check your Body Mass Index quickly and easily with our simple calculator.
-            </p>
-          </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div>
             <h3 className="text-lg font-bold mb-4">Sitemap</h3>
             <ul className="space-y-2">
