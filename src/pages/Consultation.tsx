@@ -64,6 +64,7 @@ const Consultation = () => {
       // Use fetch with no-cors mode to handle CORS issues
       await fetch(scriptUrl, {
         method: "POST",
+        mode: "no-cors", // This is important for cross-origin requests to Google Scripts
         headers: {
           "Content-Type": "application/json"
         },
