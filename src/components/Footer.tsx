@@ -29,7 +29,7 @@ const Footer = () => {
       behavior: "smooth"
     });
   };
-  return <footer className="text-white py-6 mx-0 my-0 bg-slate-700">
+  return <footer className="text-white py-6 mx-0 my-0 bg-gray-700">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div>
