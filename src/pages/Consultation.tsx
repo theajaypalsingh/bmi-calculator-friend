@@ -57,30 +57,32 @@ const Consultation = () => {
   });
 
   const submitToGoogleSheet = async (data: FormValues) => {
-  const scriptUrl = "https://script.google.com/macros/s/AKfycbyyJYkhFSYUMH_xKhKET7o_EBJ4bnNsnRrmQGlKB6JCut3ckdSiEn18UpHXZMToGWH-Wg/exec";
-  
-  try {
-    const response = await fetch(scriptUrl, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        name: data.name,
-        gender: data.gender,
-        email: data.email,
-        country: data.country,
-        timestamp: new Date().toISOString(),
-      }),
-    });
+    // Updated Google Apps Script URL with proper deployment ID
+    const scriptUrl = "https://script.google.com/macros/s/AKfycbwFEeK9EVYaYm_bJXr-2gCr7D8aCAhLyn7q-iovca9vG1IXcWEPST6eXUvqLz3nA040/exec";
+    
+    try {
+      // Use fetch with no-cors mode to handle CORS issues
+      await fetch(scriptUrl, {
+        method: "POST",
+        mode: "no-cors", // This is important for cross-origin requests to Google Scripts
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          name: data.name,
+          gender: data.gender,
+          email: data.email,
+          country: data.country,
+          timestamp: new Date().toISOString(),
+        }),
+      });
 
-    return true; // Assume success (no-cors mode)
-  } catch (error) {
-    console.error("Error submitting form:", error);
-    return false;
-  }
-};
-
+      return true; // Assume success since no-cors doesn't return readable response
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      return false;
+    }
+  };
 
   const onSubmit = async (data: FormValues) => {
     setIsSubmitting(true);
