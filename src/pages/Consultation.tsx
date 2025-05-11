@@ -62,12 +62,19 @@ const Consultation = () => {
     const scriptUrl = "https://script.google.com/macros/s/AKfycbyyJYkhFSYUMH_xKhKET7o_EBJ4bnNsnRrmQGlKB6JCut3ckdSiEn18UpHXZMToGWH-Wg/exec";
     
     try {
-      const response = await fetch(scriptUrl, {
-        method: "POST",
-        mode: "no-cors", // Required for Google Apps Script
-        headers: {
-          "Content-Type": "application/json",
-        },
+      const response = await fetch("https://script.google.com/macros/s/AKfycbyyJYkhFSYUMH_xKhKET7o_EBJ4bnNsnRrmQGlKB6JCut3ckdSiEn18UpHXZMToGWH-Wg/exec", {
+  method: "POST",
+  body: JSON.stringify({
+    name: data.name,
+    gender: data.gender,
+    email: data.email,
+    country: data.country
+  }),
+  headers: {
+    "Content-Type": "application/json"
+  }
+});
+
         body: JSON.stringify({
           name: data.name,
           gender: data.gender,
