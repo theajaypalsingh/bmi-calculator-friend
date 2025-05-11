@@ -57,32 +57,30 @@ const Consultation = () => {
   });
 
   const submitToGoogleSheet = async (data: FormValues) => {
-    // Google Sheet submission script URL
-    // This URL comes from deploying your Google Apps Script web app
-    const scriptUrl = "https://script.google.com/macros/s/AKfycbyyJYkhFSYUMH_xKhKET7o_EBJ4bnNsnRrmQGlKB6JCut3ckdSiEn18UpHXZMToGWH-Wg/exec";
-    
-    try {
-      const response = await fetch("https://script.google.com/macros/s/AKfycbyyJYkhFSYUMH_xKhKET7o_EBJ4bnNsnRrmQGlKB6JCut3ckdSiEn18UpHXZMToGWH-Wg/exec", {
-  method: "POST",
-  body: JSON.stringify({
-    name: data.name,
-    gender: data.gender,
-    email: data.email,
-    country: data.country
-  }),
-  headers: {
-    "Content-Type": "application/json"
+  const scriptUrl = "https://script.google.com/macros/s/AKfycbyyJYkhFSYUMH_xKhKET7o_EBJ4bnNsnRrmQGlKB6JCut3ckdSiEn18UpHXZMToGWH-Wg/exec";
+  
+  try {
+    const response = await fetch(scriptUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        name: data.name,
+        gender: data.gender,
+        email: data.email,
+        country: data.country,
+        timestamp: new Date().toISOString(),
+      }),
+    });
+
+    return true; // Assume success (no-cors mode)
+  } catch (error) {
+    console.error("Error submitting form:", error);
+    return false;
   }
-});
-      
-      // Since we're using no-cors, we can't access the response status
-      // We assume success if no error was thrown
-      return true;
-    } catch (error) {
-      console.error("Error submitting form:", error);
-      return false;
-    }
-  };
+};
+
 
   const onSubmit = async (data: FormValues) => {
     setIsSubmitting(true);
