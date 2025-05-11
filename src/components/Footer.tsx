@@ -37,14 +37,16 @@ const Footer = () => {
       <div className="container mx-auto px-4 py-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div className="flex flex-col items-center">
-            <h3 className="text-lg font-bold mb-4 text-white">Sitemap</h3>
-            <ul className="space-y-2 text-left w-max">
-              {links.map(link => <li key={link.href}>
-                  <Link to={link.href} className="text-sm text-white hover:text-gray-300 transition-colors" onClick={handleLinkClick}>
-                    {link.label}
-                  </Link>
-                </li>)}
-            </ul>
+            <div className="w-max self-start">
+              <h3 className="text-lg font-bold mb-4 text-white">Sitemap</h3>
+              <ul className="space-y-2 text-left w-max">
+                {links.map(link => <li key={link.href}>
+                    <Link to={link.href} className="text-sm text-white hover:text-gray-300 transition-colors" onClick={handleLinkClick}>
+                      {link.label}
+                    </Link>
+                  </li>)}
+              </ul>
+            </div>
           </div>
           <div className="text-center">
             <h3 className="text-lg font-bold mb-4 text-white">Connect</h3>
