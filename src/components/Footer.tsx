@@ -1,7 +1,5 @@
-
 import { Linkedin } from "lucide-react";
 import { Link } from "react-router-dom";
-
 const Footer = () => {
   const links = [{
     href: "/",
@@ -25,26 +23,20 @@ const Footer = () => {
     href: "/dietary-tips",
     label: "Dietary Tips"
   }];
-
   const handleLinkClick = () => {
     window.scrollTo({
       top: 0,
       behavior: "smooth"
     });
   };
-
-  return <footer className="text-black py-6 bg-zinc-300 mx-0 my-0">
+  return <footer className="text-black py-6 mx-0 my-0 bg-blue-100">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div>
             <h3 className="text-lg font-bold mb-4 text-black">Sitemap</h3>
             <ul className="space-y-2">
               {links.map(link => <li key={link.href}>
-                  <Link 
-                    to={link.href} 
-                    className="text-sm text-black hover:text-gray-700 transition-colors"
-                    onClick={handleLinkClick}
-                  >
+                  <Link to={link.href} className="text-sm text-black hover:text-gray-700 transition-colors" onClick={handleLinkClick}>
                     {link.label}
                   </Link>
                 </li>)}
