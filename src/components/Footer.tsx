@@ -1,4 +1,3 @@
-
 import { Linkedin } from "lucide-react";
 import { Link } from "react-router-dom";
 const Footer = () => {
@@ -30,7 +29,7 @@ const Footer = () => {
       behavior: "smooth"
     });
   };
-  return <footer className="text-white py-6 mx-0 my-0 bg-gray-800">
+  return <footer className="text-white py-6 mx-0 my-0 bg-zinc-500">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div>
@@ -50,7 +49,7 @@ const Footer = () => {
             </a>
           </div>
         </div>
-        <div className="border-t border-gray-700 mt-8 pt-6 text-center">
+        <div className="border-t border-gray-700 mt-8 pt-6 text-center mx-0 my-0 bg-gray-950 px-0 py-[35px]">
           <p className="text-white">&copy; {new Date().getFullYear()} BMI Calculator. All rights reserved.</p>
           <p className="text-sm mt-2 text-white">
             This calculator provides general information and is not a substitute for professional medical advice.
