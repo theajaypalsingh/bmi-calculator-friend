@@ -1,8 +1,17 @@
+
 import React from "react";
 import { Link } from "react-router-dom";
 import { ArrowLeft, Linkedin } from "lucide-react";
 import { Button } from "@/components/ui/button";
+
 const DietaryTips = () => {
+  const handleLinkClick = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
+  };
+  
   return <div className="min-h-screen bg-gradient-to-b from-white to-health-light">
       <header className="py-6 text-white bg-gray-700">
         <div className="container mx-auto px-4">
@@ -14,7 +23,7 @@ const DietaryTips = () => {
       <main className="container mx-auto px-4 py-8">
         <div className="max-w-3xl mx-auto">
           <Button variant="outline" asChild className="mb-6">
-            <Link to="/" className="flex items-center gap-2">
+            <Link to="/" className="flex items-center gap-2" onClick={handleLinkClick}>
               <ArrowLeft size={16} /> Back to BMI Calculator
             </Link>
           </Button>
@@ -82,7 +91,13 @@ const DietaryTips = () => {
           <p>&copy; {new Date().getFullYear()} BMI Calculator. All rights reserved.</p>
           <p className="text-sm mt-2 text-health-light">This calculator provides general information and is not a substitute for professional medical advice.</p>
           <div className="mt-4 flex justify-center">
-            <a href="https://www.linkedin.com/in/ajay-pal-singh-rajput-5956b5181/" target="_blank" rel="noopener noreferrer" className="text-health-light hover:text-white transition-colors" aria-label="LinkedIn Profile">
+            <a 
+              href="https://www.linkedin.com/in/ajay-pal-singh-rajput-5956b5181/" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="text-health-light hover:text-white transition-colors" 
+              aria-label="LinkedIn Profile"
+            >
               <Linkedin size={24} />
             </a>
           </div>
