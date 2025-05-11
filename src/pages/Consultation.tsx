@@ -58,7 +58,7 @@ const Consultation = () => {
 
   const submitToGoogleSheet = async (data: FormValues) => {
     // Updated Google Apps Script URL with proper deployment ID
-    const scriptUrl = "https://script.google.com/macros/s/AKfycbwFEeK9EVYaYm_bJXr-2gCr7D8aCAhLyn7q-iovca9vG1IXcWEPST6eXUvqLz3nA040/exec";
+    const scriptUrl = "https://script.google.com/macros/s/AKfycbyyJYkhFSYUMH_xKhKET7o_EBJ4bnNsnRrmQGlKB6JCut3ckdSiEn18UpHXZMToGWH-Wg/exec";
     
     try {
       // Use fetch with no-cors mode to handle CORS issues
