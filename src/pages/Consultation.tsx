@@ -59,7 +59,7 @@ const Consultation = () => {
   const submitToGoogleSheet = async (data: FormValues) => {
     // Google Sheet submission script URL
     // This URL comes from deploying your Google Apps Script web app
-    const scriptUrl = "https://script.google.com/macros/s/AKfycbwvQqRvxN_jdFzaPPTL0Ygc9RH9mHF4HQ7lLl28p-MoXqgT42tl502Nyhxf0cKgmeG2/exec";
+    const scriptUrl = "https://script.google.com/macros/s/AKfycbyyJYkhFSYUMH_xKhKET7o_EBJ4bnNsnRrmQGlKB6JCut3ckdSiEn18UpHXZMToGWH-Wg/exec";
     
     try {
       const response = await fetch(scriptUrl, {
