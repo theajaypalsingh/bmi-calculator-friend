@@ -105,7 +105,7 @@ const Consultation = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-health-light">
+    <div className="min-h-screen bg-gradient-to-b from-white to-health-light pb-0">
       <header className="py-6 text-white bg-gray-700">
         <div className="container mx-auto px-4">
           <h1 className="text-3xl md:text-4xl font-bold text-center">Free Consultation</h1>
@@ -268,12 +268,6 @@ const Consultation = () => {
           </div>
         </div>
       </main>
-
-      <footer className="text-white py-6 mt-12 bg-zinc-950">
-        <div className="container mx-auto px-4 text-center">
-          <p>&copy; {new Date().getFullYear()} Health Calculator. All rights reserved.</p>
-        </div>
-      </footer>
     </div>
   );
 };
