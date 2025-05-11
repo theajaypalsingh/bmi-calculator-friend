@@ -74,15 +74,6 @@ const Consultation = () => {
     "Content-Type": "application/json"
   }
 });
-
-        body: JSON.stringify({
-          name: data.name,
-          gender: data.gender,
-          email: data.email,
-          country: data.country,
-          timestamp: new Date().toISOString(),
-        }),
-      });
       
       // Since we're using no-cors, we can't access the response status
       // We assume success if no error was thrown
