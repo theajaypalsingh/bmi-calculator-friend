@@ -30,7 +30,7 @@ const Footer = () => {
       behavior: "smooth"
     });
   };
-  return <footer className="text-white bg-gray-700 w-full">
+  return <footer className="text-white bg-gray-700 w-full flex flex-col">
       <div className="container mx-auto px-4 py-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div>
@@ -51,7 +51,7 @@ const Footer = () => {
           </div>
         </div>
       </div>
-      <div className="border-t border-gray-700 bg-gray-950 w-full m-0 p-0">
+      <div className="bg-gray-950 w-full">
         <div className="container mx-auto px-4 py-6">
           <p className="text-white">&copy; {new Date().getFullYear()} BMI Calculator. All rights reserved.</p>
           <p className="text-sm mt-2 text-white">
