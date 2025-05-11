@@ -8,6 +8,7 @@ import Index from "./pages/Index";
 import DietaryTips from "./pages/DietaryTips";
 import NotFound from "./pages/NotFound";
 import Navigation from "./components/Navigation";
+import Footer from "./components/Footer";
 import StepCount from "./pages/StepCount";
 import HealthScore from "./pages/HealthScore";
 import Consultation from "./pages/Consultation";
@@ -22,18 +23,23 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <Navigation />
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/dietary-tips" element={<DietaryTips />} />
-          <Route path="/step-count" element={<StepCount />} />
-          <Route path="/health-score" element={<HealthScore />} />
-          <Route path="/consultation" element={<Consultation />} />
-          <Route path="/body-fat" element={<BodyFat />} />
-          <Route path="/bmr-calculator" element={<BMRCalculator />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        <div className="flex flex-col min-h-screen">
+          <Navigation />
+          <div className="flex-grow">
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/dietary-tips" element={<DietaryTips />} />
+              <Route path="/step-count" element={<StepCount />} />
+              <Route path="/health-score" element={<HealthScore />} />
+              <Route path="/consultation" element={<Consultation />} />
+              <Route path="/body-fat" element={<BodyFat />} />
+              <Route path="/bmr-calculator" element={<BMRCalculator />} />
+              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </div>
+          <Footer />
+        </div>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
