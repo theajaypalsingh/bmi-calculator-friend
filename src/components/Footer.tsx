@@ -1,6 +1,7 @@
 
 import { Linkedin } from "lucide-react";
 import { Link } from "react-router-dom";
+
 const Footer = () => {
   const links = [{
     href: "/",
@@ -24,7 +25,7 @@ const Footer = () => {
     href: "/dietary-tips",
     label: "Dietary Tips"
   }];
-  return <footer className="text-black py-6 mt-12 bg-zinc-300">
+  return <footer className="text-black py-6 bg-zinc-300">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div>
