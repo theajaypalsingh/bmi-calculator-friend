@@ -5,10 +5,14 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 const BodyFat = () => {
   return (
     <div className="min-h-full bg-gradient-to-b from-white to-health-light pb-0">
-      <header className="py-6 text-white bg-gray-700">
+      <header className="py-8 text-white bg-gradient-to-r from-gray-700 to-gray-900">
         <div className="container mx-auto px-4">
-          <h1 className="text-3xl md:text-4xl font-bold text-center">Body Fat Percentage Calculator</h1>
-          <p className="text-center mt-2 text-health-light">Calculate your body fat using the U.S. Navy formula</p>
+          <h1 className="text-3xl md:text-5xl font-bold text-center mb-2 animate-fade-in">
+            <span className="text-health-light">Body Fat</span> Calculator
+          </h1>
+          <p className="text-center text-lg text-health-light opacity-90">
+            Calculate your body fat using the U.S. Navy formula
+          </p>
         </div>
       </header>
 
