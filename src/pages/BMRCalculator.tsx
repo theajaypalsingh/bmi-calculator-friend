@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -8,7 +7,6 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { bmrCalculator } from "@/utils/bmrCalculator";
-
 const BMRCalculator = () => {
   const [gender, setGender] = useState("female");
   const [age, setAge] = useState("");
@@ -18,10 +16,8 @@ const BMRCalculator = () => {
   const [bmr, setBmr] = useState<number | null>(null);
   const [tdee, setTdee] = useState<number | null>(null);
   const [unitSystem, setUnitSystem] = useState("metric");
-
   const handleCalculate = () => {
     if (!age || !weight || !height) return;
-
     const ageValue = parseFloat(age);
     let weightValue = parseFloat(weight);
     let heightValue = parseFloat(height);
@@ -33,16 +29,11 @@ const BMRCalculator = () => {
     }
 
     // Use the appropriate BMR calculation based on gender
-    const calculatedBMR = gender === "male" 
-      ? 10 * weightValue + 6.25 * heightValue - 5 * ageValue + 5
-      : 10 * weightValue + 6.25 * heightValue - 5 * ageValue - 161;
-      
+    const calculatedBMR = gender === "male" ? 10 * weightValue + 6.25 * heightValue - 5 * ageValue + 5 : 10 * weightValue + 6.25 * heightValue - 5 * ageValue - 161;
     const calculatedTDEE = calculatedBMR * parseFloat(activityLevel);
-
     setBmr(Math.round(calculatedBMR));
     setTdee(Math.round(calculatedTDEE));
   };
-
   const resetCalculator = () => {
     setAge("");
     setWeight("");
@@ -51,9 +42,7 @@ const BMRCalculator = () => {
     setBmr(null);
     setTdee(null);
   };
-
-  return (
-    <div className="min-h-full bg-gradient-to-b from-white to-health-light pb-0">
+  return <div className="min-h-full bg-gradient-to-b from-white to-health-light pb-0">
       <header className="py-8 text-white bg-gradient-to-r from-gray-700 to-gray-900">
         <div className="container mx-auto px-4">
           <h1 className="text-3xl md:text-5xl font-bold text-center mb-2 animate-fade-in">
@@ -82,16 +71,10 @@ const BMRCalculator = () => {
                   <CardContent>
                     <div className="mb-6">
                       <div className="flex justify-center space-x-4 mb-6">
-                        <Button
-                          variant={unitSystem === "metric" ? "default" : "outline"}
-                          onClick={() => setUnitSystem("metric")}
-                        >
+                        <Button variant={unitSystem === "metric" ? "default" : "outline"} onClick={() => setUnitSystem("metric")}>
                           Metric (kg/cm)
                         </Button>
-                        <Button
-                          variant={unitSystem === "imperial" ? "default" : "outline"}
-                          onClick={() => setUnitSystem("imperial")}
-                        >
+                        <Button variant={unitSystem === "imperial" ? "default" : "outline"} onClick={() => setUnitSystem("imperial")}>
                           Imperial (lb/in)
                         </Button>
                       </div>
@@ -99,12 +82,7 @@ const BMRCalculator = () => {
                       <div className="grid gap-6">
                         <div className="space-y-2">
                           <Label htmlFor="gender">Gender</Label>
-                          <RadioGroup
-                            id="gender"
-                            value={gender}
-                            onValueChange={setGender}
-                            className="flex space-x-4"
-                          >
+                          <RadioGroup id="gender" value={gender} onValueChange={setGender} className="flex space-x-4">
                             <div className="flex items-center space-x-2">
                               <RadioGroupItem value="male" id="male" />
                               <Label htmlFor="male">Male</Label>
@@ -118,39 +96,21 @@ const BMRCalculator = () => {
                         
                         <div className="space-y-2">
                           <Label htmlFor="age">Age (years)</Label>
-                          <Input
-                            id="age"
-                            type="number"
-                            placeholder="Enter your age"
-                            value={age}
-                            onChange={(e) => setAge(e.target.value)}
-                          />
+                          <Input id="age" type="number" placeholder="Enter your age" value={age} onChange={e => setAge(e.target.value)} />
                         </div>
                         
                         <div className="space-y-2">
                           <Label htmlFor="weight">
                             Weight ({unitSystem === "metric" ? "kg" : "lb"})
                           </Label>
-                          <Input
-                            id="weight"
-                            type="number"
-                            placeholder={`Enter your weight in ${unitSystem === "metric" ? "kilograms" : "pounds"}`}
-                            value={weight}
-                            onChange={(e) => setWeight(e.target.value)}
-                          />
+                          <Input id="weight" type="number" placeholder={`Enter your weight in ${unitSystem === "metric" ? "kilograms" : "pounds"}`} value={weight} onChange={e => setWeight(e.target.value)} />
                         </div>
                         
                         <div className="space-y-2">
                           <Label htmlFor="height">
                             Height ({unitSystem === "metric" ? "cm" : "in"})
                           </Label>
-                          <Input
-                            id="height"
-                            type="number"
-                            placeholder={`Enter your height in ${unitSystem === "metric" ? "centimeters" : "inches"}`}
-                            value={height}
-                            onChange={(e) => setHeight(e.target.value)}
-                          />
+                          <Input id="height" type="number" placeholder={`Enter your height in ${unitSystem === "metric" ? "centimeters" : "inches"}`} value={height} onChange={e => setHeight(e.target.value)} />
                         </div>
                         
                         <div className="space-y-2">
@@ -180,8 +140,7 @@ const BMRCalculator = () => {
                       </div>
                     </div>
                     
-                    {bmr !== null && tdee !== null && (
-                      <div className="mt-8 bg-blue-50 p-6 rounded-lg">
+                    {bmr !== null && tdee !== null && <div className="mt-8 bg-blue-50 p-6 rounded-lg">
                         <h3 className="text-xl font-semibold text-center mb-4">Your Results</h3>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                           <div className="bg-white p-4 rounded-md shadow text-center">
@@ -213,8 +172,7 @@ const BMRCalculator = () => {
                             </ul>
                           </div>
                         </div>
-                      </div>
-                    )}
+                      </div>}
                   </CardContent>
                 </Card>
               </TabsContent>
@@ -266,8 +224,6 @@ const BMRCalculator = () => {
           </div>
         </div>
       </main>
-    </div>
-  );
+    </div>;
 };
-
 export default BMRCalculator;
