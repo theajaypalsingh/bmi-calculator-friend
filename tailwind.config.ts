@@ -63,13 +63,17 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-				// Health-related colors
+				// Health-related colors - enhanced
 				health: {
 					primary: '#3B82F6', // blue-500
 					secondary: '#10B981', // emerald-500
-					accent: '#0EA5E9', // sky-500
-					light: '#EFF6FF', // blue-50
-					dark: '#1E3A8A', // blue-900
+					accent: '#0EA5E9',   // sky-500
+					light: '#EFF6FF',    // blue-50
+					dark: '#1E3A8A',     // blue-900
+					green: '#059669',    // green-600
+					yellow: '#F59E0B',   // amber-500
+					red: '#DC2626',      // red-600
+					purple: '#8B5CF6',   // violet-500
 				}
 			},
 			borderRadius: {
@@ -98,6 +102,9 @@ export default {
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out'
+			},
+			boxShadow: {
+				'health': '0 4px 14px -2px rgba(59, 130, 246, 0.2)',
 			}
 		}
 	},
