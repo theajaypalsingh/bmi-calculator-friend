@@ -2,7 +2,7 @@
 import BodyFatCalculator from "@/components/BodyFatCalculator";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Card, CardContent } from "@/components/ui/card";
-import { TapeMeasure } from "lucide-react";
+import { Ruler } from "lucide-react";
 
 const BodyFat = () => {
   return (
@@ -29,7 +29,7 @@ const BodyFat = () => {
                   This formula uses measurements of your height, neck, waist, and hip circumferences for accurate results.
                 </p>
                 <div className="flex items-center mb-6 p-4 bg-blue-50 rounded-lg border border-blue-100">
-                  <TapeMeasure className="h-8 w-8 text-health-primary mr-4 flex-shrink-0" />
+                  <Ruler className="h-8 w-8 text-health-primary mr-4 flex-shrink-0" />
                   <p className="text-sm text-gray-700">
                     <span className="font-semibold">Pro tip:</span> For most accurate results, take measurements in the morning before eating and after using the bathroom. Stand relaxed when measuring.
                   </p>
