@@ -66,7 +66,7 @@ const BMRCalculator = () => {
       </header>
 
       <main className="container mx-auto px-4 py-8">
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-3xl mx-auto"> {/* Reduced from max-w-4xl to max-w-3xl */}
           <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
             <Tabs defaultValue="calculator" className="w-full">
               <TabsList className="grid w-full grid-cols-2 mb-8">
@@ -170,7 +170,7 @@ const BMRCalculator = () => {
                         </div>
                         
                         <div className="flex space-x-4">
-                          <Button onClick={handleCalculate} className="flex-1">
+                          <Button onClick={handleCalculate} className="flex-1 max-w-40 mx-auto"> {/* Added max-w-40 and mx-auto to center and reduce width */}
                             Calculate
                           </Button>
                           <Button variant="outline" onClick={resetCalculator}>
