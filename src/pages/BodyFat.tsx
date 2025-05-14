@@ -1,6 +1,8 @@
 
 import BodyFatCalculator from "@/components/BodyFatCalculator";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { Card, CardContent } from "@/components/ui/card";
+import { TapeMeasure } from "lucide-react";
 
 const BodyFat = () => {
   return (
@@ -19,18 +21,46 @@ const BodyFat = () => {
       <main className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto">
           <div className="mb-8">
-            <h2 className="text-2xl font-bold mb-4 text-center">Calculate Your Body Fat Percentage</h2>
-            <p className="text-center text-gray-700 max-w-2xl mx-auto">
-              Use this calculator to estimate your body fat percentage using the U.S. Navy method. 
-              This formula uses measurements of your height, neck, waist, and hip circumferences.
-            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+              <div className="order-2 md:order-1">
+                <h2 className="text-2xl font-bold mb-4 text-center md:text-left">Calculate Your Body Fat Percentage</h2>
+                <p className="text-gray-700 mb-6">
+                  Use this calculator to estimate your body fat percentage using the U.S. Navy method. 
+                  This formula uses measurements of your height, neck, waist, and hip circumferences for accurate results.
+                </p>
+                <div className="flex items-center mb-6 p-4 bg-blue-50 rounded-lg border border-blue-100">
+                  <TapeMeasure className="h-8 w-8 text-health-primary mr-4 flex-shrink-0" />
+                  <p className="text-sm text-gray-700">
+                    <span className="font-semibold">Pro tip:</span> For most accurate results, take measurements in the morning before eating and after using the bathroom. Stand relaxed when measuring.
+                  </p>
+                </div>
+              </div>
+              
+              <div className="order-1 md:order-2">
+                <div className="rounded-xl overflow-hidden shadow-lg transform hover:scale-[1.01] transition-transform duration-300">
+                  <img 
+                    src="/measurement.jpg" 
+                    alt="Woman measuring waist circumference" 
+                    className="w-full h-auto object-cover rounded-xl"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.src = "https://images.unsplash.com/photo-1605296867424-35fc98e937a7?q=80&w=2070";
+                    }}
+                  />
+                </div>
+              </div>
+            </div>
           </div>
           
-          <div className="flex justify-center">
-            <BodyFatCalculator />
+          <div className="flex justify-center mb-12">
+            <Card className="w-full border-0 shadow-health">
+              <CardContent className="p-0">
+                <BodyFatCalculator />
+              </CardContent>
+            </Card>
           </div>
           
-          <div className="mt-12 max-w-3xl mx-auto">
+          <div className="mt-12 max-w-3xl mx-auto bg-white p-6 rounded-xl shadow-sm">
             <h3 className="text-xl font-semibold mb-3">About Body Fat Percentage</h3>
             <div className="prose prose-blue max-w-none">
               <p>
@@ -88,7 +118,7 @@ const BodyFat = () => {
           </div>
 
           {/* FAQ Section */}
-          <div className="mt-12 max-w-3xl mx-auto">
+          <div className="mt-12 max-w-3xl mx-auto bg-white p-6 rounded-xl shadow-sm">
             <h3 className="text-2xl font-semibold mb-5 text-center">Frequently Asked Questions</h3>
             
             <Accordion type="single" collapsible className="w-full">
