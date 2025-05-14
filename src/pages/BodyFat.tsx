@@ -1,7 +1,9 @@
+
 import BodyFatCalculator from "@/components/BodyFatCalculator";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Ruler } from "lucide-react";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
 
 const BodyFat = () => {
   return (
@@ -19,17 +21,17 @@ const BodyFat = () => {
 
       <main className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto">
-          {/* Single clean image below the header */}
-          <div className="mb-8">
-            <div className="rounded-xl overflow-hidden shadow-lg">
+          {/* Single clean image below the header - Using AspectRatio like in the homepage */}
+          <div className="mb-8 rounded-xl overflow-hidden shadow-xl">
+            <AspectRatio ratio={16/5} className="bg-muted">
               <img 
                 key="body-fat-measurement-image"
                 src="/lovable-uploads/6c5e9f9c-828b-47e1-96dd-147607c176e9.png" 
                 alt="Person measuring waist with tape measure" 
-                className="w-full h-auto object-cover"
+                className="object-cover w-full h-full rounded-xl"
                 loading="eager"
               />
-            </div>
+            </AspectRatio>
             <p className="text-center text-gray-700 mt-4">
               This formula uses measurements of your height, neck, waist, and hip circumferences
             </p>
