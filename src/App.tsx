@@ -41,7 +41,7 @@ const App = () => (
         <div className="flex flex-col min-h-screen overflow-hidden">
           <ScrollToTop />
           <Navigation />
-          <div className="flex-grow flex flex-col">
+          <div className="flex-grow flex flex-col pt-16"> {/* Added padding-top equal to navbar height */}
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/dietary-tips" element={<DietaryTips />} />

@@ -31,7 +31,7 @@ const Navigation = () => {
 
   // Show mobile navigation
   if (isMobile) {
-    return <div className="bg-gray-800 text-white w-full">
+    return <div className="bg-gray-800 text-white w-full fixed top-0 z-50">
         <div className="px-4">
           <div className="flex justify-between items-center py-3">
             <div></div> {/* Empty div to maintain spacing */}
@@ -53,7 +53,7 @@ const Navigation = () => {
   }
 
   // Show desktop navigation
-  return <div className="bg-gray-800 text-white w-full">
+  return <div className="bg-gray-800 text-white w-full fixed top-0 z-50">
       <div className="bg-gray-950 w-full">
         <div className="flex items-center justify-center h-16">
           <nav className="flex space-x-4">
