@@ -20,13 +20,15 @@ const BodyFat = () => {
 
       <main className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto">
-          {/* Image added below the heading */}
+          {/* Image added below the heading with key to prevent flickering */}
           <div className="mb-8">
             <div className="rounded-xl overflow-hidden shadow-lg">
               <img 
+                key="measuring-waist-image"
                 src="/measuring-waist.jpg" 
                 alt="Woman measuring waist circumference" 
                 className="w-full h-auto object-cover"
+                loading="eager"
                 onError={(e) => {
                   const target = e.target as HTMLImageElement;
                   target.src = "https://images.unsplash.com/photo-1605296867424-35fc98e937a7?q=80&w=2070";
@@ -43,9 +45,11 @@ const BodyFat = () => {
               <div className="order-1 md:order-2">
                 <div className="rounded-xl overflow-hidden shadow-lg transform hover:scale-[1.01] transition-transform duration-300">
                   <img 
+                    key="measurement-image"
                     src="/measurement.jpg" 
                     alt="Woman measuring waist circumference" 
                     className="w-full h-auto object-cover rounded-xl"
+                    loading="eager"
                     onError={(e) => {
                       const target = e.target as HTMLImageElement;
                       target.src = "https://images.unsplash.com/photo-1605296867424-35fc98e937a7?q=80&w=2070";
