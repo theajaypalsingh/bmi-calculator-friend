@@ -3,6 +3,7 @@ import BMICalculator from "@/components/BMICalculator";
 import BMIInfo from "@/components/BMIInfo";
 import BMIArticle from "@/components/BMIArticle";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
 const Index = () => {
   return (
@@ -41,6 +42,97 @@ const Index = () => {
               <BMIInfo />
             </div>
           </div>
+          
+          {/* FAQ Section */}
+          <div className="mt-12 bg-white rounded-xl shadow-lg p-6 border border-gray-100 transform hover:scale-[1.01] transition-transform">
+            <h2 className="text-2xl font-bold mb-6 text-center">Frequently Asked Questions</h2>
+            <Accordion type="single" collapsible className="w-full">
+              <AccordionItem value="item-1">
+                <AccordionTrigger className="text-left font-medium">
+                  What is BMI and how is it calculated?
+                </AccordionTrigger>
+                <AccordionContent>
+                  <p className="text-gray-700">
+                    BMI (Body Mass Index) is a numerical value calculated from your weight and height. 
+                    The formula is BMI = weight(kg) / height²(m²). It's used to categorize a person 
+                    as underweight, normal weight, overweight, or obese based on tissue mass (muscle, fat, and bone).
+                  </p>
+                </AccordionContent>
+              </AccordionItem>
+              
+              <AccordionItem value="item-2">
+                <AccordionTrigger className="text-left font-medium">
+                  Is BMI accurate for everyone?
+                </AccordionTrigger>
+                <AccordionContent>
+                  <p className="text-gray-700">
+                    BMI is a useful screening tool, but it has limitations. It doesn't directly measure body fat 
+                    and doesn't account for factors like muscle mass, bone density, or distribution of fat. 
+                    Athletes with high muscle mass may have higher BMIs despite low body fat. Similarly, 
+                    elderly individuals might have lower BMIs despite having less muscle mass.
+                  </p>
+                </AccordionContent>
+              </AccordionItem>
+              
+              <AccordionItem value="item-3">
+                <AccordionTrigger className="text-left font-medium">
+                  What are the BMI categories?
+                </AccordionTrigger>
+                <AccordionContent>
+                  <ul className="list-disc pl-5 text-gray-700 space-y-1">
+                    <li>Below 18.5: Underweight</li>
+                    <li>18.5 to 24.9: Normal weight</li>
+                    <li>25.0 to 29.9: Overweight</li>
+                    <li>30.0 and above: Obesity</li>
+                  </ul>
+                </AccordionContent>
+              </AccordionItem>
+              
+              <AccordionItem value="item-4">
+                <AccordionTrigger className="text-left font-medium">
+                  How often should I check my BMI?
+                </AccordionTrigger>
+                <AccordionContent>
+                  <p className="text-gray-700">
+                    There's no strict rule on how often to check your BMI. For most adults, checking once 
+                    or twice a year is sufficient unless you're actively trying to lose or gain weight. 
+                    In that case, checking every few months might help track your progress, but remember 
+                    that daily or weekly fluctuations are normal and not always meaningful.
+                  </p>
+                </AccordionContent>
+              </AccordionItem>
+              
+              <AccordionItem value="item-5">
+                <AccordionTrigger className="text-left font-medium">
+                  Can children use adult BMI calculators?
+                </AccordionTrigger>
+                <AccordionContent>
+                  <p className="text-gray-700">
+                    No, children and teens should not use adult BMI calculators. For individuals aged 2-20, 
+                    BMI is age and sex-specific and is often referred to as "BMI-for-age." Growth patterns 
+                    differ between boys and girls, and children's body composition changes as they grow. 
+                    Special BMI calculators for children take these factors into account.
+                  </p>
+                </AccordionContent>
+              </AccordionItem>
+              
+              <AccordionItem value="item-6">
+                <AccordionTrigger className="text-left font-medium">
+                  What should I do if my BMI indicates I'm overweight or obese?
+                </AccordionTrigger>
+                <AccordionContent>
+                  <p className="text-gray-700">
+                    If your BMI indicates you're overweight or obese, consider consulting with a healthcare 
+                    professional. They can provide a more comprehensive assessment of your health, including 
+                    additional measurements and tests. They may recommend lifestyle changes such as improved 
+                    diet, increased physical activity, or in some cases, medical interventions. Remember that 
+                    BMI is just one health indicator and should be considered alongside other factors.
+                  </p>
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+          </div>
+          
           <div className="mt-12 transform hover:scale-[1.01] transition-transform">
             <BMIArticle />
           </div>
