@@ -43,8 +43,12 @@ const Index = () => {
             </div>
           </div>
           
-          {/* FAQ Section */}
-          <div className="mt-12 bg-white rounded-xl shadow-lg p-6 border border-gray-100 transform hover:scale-[1.01] transition-transform">
+          <div className="mt-12 transform hover:scale-[1.01] transition-transform">
+            <BMIArticle />
+          </div>
+          
+          {/* FAQ Section - moved down just above the footer */}
+          <div className="mt-12 mb-12 bg-white rounded-xl shadow-lg p-6 border border-gray-100 transform hover:scale-[1.01] transition-transform">
             <h2 className="text-2xl font-bold mb-6 text-center">Frequently Asked Questions</h2>
             <Accordion type="single" collapsible className="w-full">
               <AccordionItem value="item-1">
@@ -131,10 +135,6 @@ const Index = () => {
                 </AccordionContent>
               </AccordionItem>
             </Accordion>
-          </div>
-          
-          <div className="mt-12 transform hover:scale-[1.01] transition-transform">
-            <BMIArticle />
           </div>
         </div>
       </main>
