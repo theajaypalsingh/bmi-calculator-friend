@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { calculateBMR } from "@/utils/bmrCalculator";
+import { bmrCalculator } from "@/utils/bmrCalculator";
 
 const BMRCalculator = () => {
   const [gender, setGender] = useState("female");
@@ -32,7 +32,11 @@ const BMRCalculator = () => {
       heightValue = heightValue * 2.54; // inches to cm
     }
 
-    const calculatedBMR = calculateBMR(gender, ageValue, weightValue, heightValue);
+    // Use the appropriate BMR calculation based on gender
+    const calculatedBMR = gender === "male" 
+      ? 10 * weightValue + 6.25 * heightValue - 5 * ageValue + 5
+      : 10 * weightValue + 6.25 * heightValue - 5 * ageValue - 161;
+      
     const calculatedTDEE = calculatedBMR * parseFloat(activityLevel);
 
     setBmr(Math.round(calculatedBMR));
