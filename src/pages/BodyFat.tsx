@@ -40,20 +40,6 @@ const BodyFat = () => {
           
           <div className="mb-8">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-              <div className="order-2 md:order-1">
-                <h2 className="text-2xl font-bold mb-4 text-center md:text-left">Calculate Your Body Fat Percentage</h2>
-                <p className="text-gray-700 mb-6">
-                  Use this calculator to estimate your body fat percentage using the U.S. Navy method. 
-                  This formula uses measurements of your height, neck, waist, and hip circumferences for accurate results.
-                </p>
-                <div className="flex items-center mb-6 p-4 bg-blue-50 rounded-lg border border-blue-100">
-                  <Ruler className="h-8 w-8 text-health-primary mr-4 flex-shrink-0" />
-                  <p className="text-sm text-gray-700">
-                    <span className="font-semibold">Pro tip:</span> For most accurate results, take measurements in the morning before eating and after using the bathroom. Stand relaxed when measuring.
-                  </p>
-                </div>
-              </div>
-              
               <div className="order-1 md:order-2">
                 <div className="rounded-xl overflow-hidden shadow-lg transform hover:scale-[1.01] transition-transform duration-300">
                   <img 
