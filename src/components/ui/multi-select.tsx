@@ -42,18 +42,20 @@ export function MultiSelect({
 
   // Ensure options is always an array to prevent "undefined is not iterable" error
   const safeOptions = Array.isArray(options) ? options : [];
+  // Ensure selected is always an array too
+  const safeSelected = Array.isArray(selected) ? selected : [];
 
   const handleSelect = React.useCallback((value: string) => {
     if (value === 'none') {
       // If "none" is selected, deselect all other options
-      if (selected.includes('none')) {
-        onChange(selected.filter(s => s !== 'none'));
+      if (safeSelected.includes('none')) {
+        onChange(safeSelected.filter(s => s !== 'none'));
       } else {
         onChange(['none']);
       }
     } else {
       // If any other option is selected, remove "none" from selection
-      let updatedSelected = selected.filter(s => s !== 'none');
+      let updatedSelected = safeSelected.filter(s => s !== 'none');
       
       if (updatedSelected.includes(value)) {
         // If already selected, remove it
@@ -65,11 +67,21 @@ export function MultiSelect({
       
       onChange(updatedSelected);
     }
-  }, [selected, onChange]);
+  }, [safeSelected, onChange]);
 
   const handleRemove = React.useCallback((value: string) => {
-    onChange(selected.filter(s => s !== value));
-  }, [selected, onChange]);
+    onChange(safeSelected.filter(s => s !== value));
+  }, [safeSelected, onChange]);
+
+  // If options or selected are undefined, render a simple button
+  if (!Array.isArray(options) || !Array.isArray(selected)) {
+    return (
+      <Button variant="outline" className={cn("w-full justify-between", className)} disabled>
+        {placeholder}
+        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+      </Button>
+    );
+  }
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -80,8 +92,8 @@ export function MultiSelect({
           aria-expanded={open}
           className={cn("w-full justify-between", className)}
         >
-          {selected.length > 0
-            ? `${selected.length} option${selected.length > 1 ? "s" : ""} selected`
+          {safeSelected.length > 0
+            ? `${safeSelected.length} option${safeSelected.length > 1 ? "s" : ""} selected`
             : placeholder}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
@@ -92,9 +104,9 @@ export function MultiSelect({
           <CommandEmpty>No option found.</CommandEmpty>
           <CommandGroup>
             {safeOptions.map((option) => {
-              const isSelected = selected.includes(option.value);
+              const isSelected = safeSelected.includes(option.value);
               const isNone = option.value === 'none';
-              const isDisabled = option.disabled || (isNone ? false : selected.includes('none'));
+              const isDisabled = option.disabled || (isNone ? false : safeSelected.includes('none'));
               
               return (
                 <CommandItem
@@ -119,9 +131,9 @@ export function MultiSelect({
             })}
           </CommandGroup>
         </Command>
-        {selected.length > 0 && (
+        {safeSelected.length > 0 && (
           <div className="p-2 flex flex-wrap gap-1">
-            {selected.map((value) => {
+            {safeSelected.map((value) => {
               const option = safeOptions.find((opt) => opt.value === value);
               return (
                 <Badge
