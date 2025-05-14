@@ -1,231 +1,246 @@
 
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Slider } from "@/components/ui/slider";
-import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/hooks/use-toast";
-import { 
-  BarChart, 
-  Bar, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
-  ResponsiveContainer,
-  ReferenceLine
-} from "recharts";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { ArrowDownIcon } from "lucide-react";
 
-// Sample data - would come from user input in a real app
-const initialData = [
-  { day: "Mon", steps: 5234 },
-  { day: "Tue", steps: 7290 },
-  { day: "Wed", steps: 6120 },
-  { day: "Thu", steps: 8340 },
-  { day: "Fri", steps: 9230 },
-  { day: "Sat", steps: 7891 },
-  { day: "Sun", steps: 4932 },
-];
+const stepCountSchema = z.object({
+  height: z.coerce.number().min(100, "Height must be at least 100cm").max(250, "Height must be less than 250cm"),
+  weight: z.coerce.number().min(30, "Weight must be at least 30kg").max(300, "Weight must be less than 300kg"),
+  age: z.coerce.number().min(10, "Age must be at least 10 years").max(120, "Age must be less than 120 years"),
+  gender: z.enum(["male", "female", "other"]),
+  activityLevel: z.enum(["sedentary", "lightlyActive", "moderatelyActive", "veryActive", "superActive"]),
+});
+
+type StepCountFormValues = z.infer<typeof stepCountSchema>;
+
+const activityLevelFactors = {
+  sedentary: {
+    factor: 1.2,
+    stepPercent: 0.10,
+    label: "Sedentary"
+  },
+  lightlyActive: {
+    factor: 1.375,
+    stepPercent: 0.15,
+    label: "Lightly Active"
+  },
+  moderatelyActive: {
+    factor: 1.55,
+    stepPercent: 0.20,
+    label: "Moderately Active"
+  },
+  veryActive: {
+    factor: 1.725,
+    stepPercent: 0.25,
+    label: "Very Active"
+  },
+  superActive: {
+    factor: 1.9,
+    stepPercent: 0.30,
+    label: "Super Active"
+  }
+};
 
 const StepCount = () => {
-  const [dailyGoal, setDailyGoal] = useState(8000);
-  const [weeklyData, setWeeklyData] = useState(initialData);
-  const [todaySteps, setTodaySteps] = useState(0);
-  const { toast } = useToast();
+  const [stepGoal, setStepGoal] = useState<number | null>(null);
 
-  // Calculate average steps per day
-  const avgSteps = Math.round(
-    weeklyData.reduce((sum, day) => sum + day.steps, 0) / weeklyData.length
-  );
+  const form = useForm<StepCountFormValues>({
+    resolver: zodResolver(stepCountSchema),
+    defaultValues: {
+      height: 170,
+      weight: 70,
+      age: 30,
+      gender: "male",
+      activityLevel: "moderatelyActive",
+    },
+  });
 
-  // Calculate total steps for the week
-  const totalSteps = weeklyData.reduce((sum, day) => sum + day.steps, 0);
-
-  // Calculate percentage of goal achieved today
-  const goalPercentage = Math.min(Math.round((todaySteps / dailyGoal) * 100), 100);
-
-  const handleAddSteps = () => {
-    // Simulate adding steps (in a real app, this might come from a pedometer)
-    const newSteps = todaySteps + Math.floor(Math.random() * 1000 + 500);
-    setTodaySteps(newSteps);
-    
-    if (newSteps >= dailyGoal && todaySteps < dailyGoal) {
-      toast({
-        title: "Congratulations! 🎉",
-        description: "You've reached your daily step goal!",
-      });
+  const calculateStepGoal = (values: StepCountFormValues) => {
+    // Calculate BMR using Mifflin-St Jeor formula
+    let bmr = 0;
+    if (values.gender === "male") {
+      bmr = 10 * values.weight + 6.25 * values.height - 5 * values.age + 5;
+    } else {
+      bmr = 10 * values.weight + 6.25 * values.height - 5 * values.age - 161;
     }
-  };
 
-  const handleGoalChange = (value: number[]) => {
-    setDailyGoal(value[0]);
-  };
+    // Calculate TDEE (Total Daily Energy Expenditure)
+    const activityFactor = activityLevelFactors[values.activityLevel].factor;
+    const tdee = bmr * activityFactor;
 
-  // Function to determine health status based on average steps
-  const getHealthStatus = (steps: number) => {
-    if (steps < 5000) return { text: "Sedentary", color: "text-red-500" };
-    if (steps < 7500) return { text: "Low Active", color: "text-yellow-500" };
-    if (steps < 10000) return { text: "Somewhat Active", color: "text-blue-500" };
-    return { text: "Active", color: "text-green-500" };
+    // Estimate step goal
+    const stepPercent = activityLevelFactors[values.activityLevel].stepPercent;
+    const caloriesForSteps = tdee * stepPercent;
+    const caloriesPerStep = 0.05;
+    
+    // Calculate steps and round to nearest 100
+    const steps = Math.round(caloriesForSteps / caloriesPerStep / 100) * 100;
+    
+    setStepGoal(steps);
   };
-
-  const status = getHealthStatus(avgSteps);
 
   return (
-    <div className="min-h-full bg-gradient-to-b from-white to-health-light pb-0">
+    <div className="min-h-full bg-gradient-to-b from-white to-health-light pb-12">
       <header className="py-8 text-white bg-gradient-to-r from-gray-700 to-gray-900">
         <div className="container mx-auto px-4">
           <h1 className="text-3xl md:text-5xl font-bold text-center mb-2 animate-fade-in">
-            <span className="text-health-light">Step</span> Counter
+            <span className="text-health-light">Step</span> Goal Calculator
           </h1>
           <p className="text-center text-lg text-health-light opacity-90">
-            Track and analyze your daily steps
+            Calculate your personalized daily step goal
           </p>
         </div>
       </header>
       
       <main className="container mx-auto px-4 py-8">
-        <div className="max-w-4xl mx-auto">
-          <div className="grid gap-6 grid-cols-1 md:grid-cols-2">
-            {/* Today's progress */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Today's Progress</CardTitle>
-                <CardDescription>Track your steps toward today's goal</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-8">
-                  <div className="space-y-2">
-                    <div className="flex justify-between">
-                      <span className="text-sm text-muted-foreground">Progress</span>
-                      <span className="text-sm font-medium">{goalPercentage}%</span>
-                    </div>
-                    <Progress value={goalPercentage} className="h-2" />
-                  </div>
-                  
-                  <div className="flex justify-between">
-                    <div>
-                      <p className="text-3xl font-bold">{todaySteps.toLocaleString()}</p>
-                      <p className="text-sm text-muted-foreground">steps taken</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-3xl font-bold text-gray-400">{dailyGoal.toLocaleString()}</p>
-                      <p className="text-sm text-muted-foreground">daily goal</p>
-                    </div>
-                  </div>
-                  
-                  <Button onClick={handleAddSteps} className="w-full">
-                    + Add Steps
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-            
-            {/* Daily goal setting */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Set Your Daily Goal</CardTitle>
-                <CardDescription>Adjust your target steps per day</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-6">
-                  <div className="space-y-2">
-                    <p className="text-xl font-semibold text-center">
-                      {dailyGoal.toLocaleString()} steps
-                    </p>
-                    <Slider
-                      defaultValue={[dailyGoal]}
-                      max={15000}
-                      step={500}
-                      min={3000}
-                      onValueChange={handleGoalChange}
-                    />
-                    <div className="flex justify-between text-sm text-muted-foreground">
-                      <span>3,000</span>
-                      <span>15,000</span>
-                    </div>
-                  </div>
-                  
-                  <div className="p-4 bg-blue-50 rounded-lg">
-                    <h4 className="font-medium mb-2">Expert Recommendation</h4>
-                    <p className="text-sm text-gray-700">
-                      Health experts generally recommend 8,000-10,000 steps per day for optimal health benefits.
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-          
-          {/* Weekly overview */}
-          <Card className="mt-6">
+        <div className="max-w-3xl mx-auto">
+          <Card className="shadow-lg">
             <CardHeader>
-              <div className="flex justify-between">
-                <div>
-                  <CardTitle>Weekly Overview</CardTitle>
-                  <CardDescription>Your step count for the past 7 days</CardDescription>
-                </div>
-                <div className="text-right">
-                  <p className="font-semibold">Status: <span className={status.color}>{status.text}</span></p>
-                  <p className="text-sm text-muted-foreground">Avg: {avgSteps.toLocaleString()} steps/day</p>
-                </div>
-              </div>
+              <CardTitle>Step Goal Calculator</CardTitle>
+              <CardDescription>Enter your information to get a personalized daily step goal</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="h-[300px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={weeklyData} margin={{ top: 20, right: 0, left: 0, bottom: 20 }}>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                    <XAxis dataKey="day" />
-                    <YAxis />
-                    <Tooltip formatter={(value) => [`${value.toLocaleString()} steps`, "Count"]} />
-                    <ReferenceLine y={dailyGoal} stroke="#ff4757" strokeDasharray="3 3" label="Goal" />
-                    <Bar dataKey="steps" fill="#3B82F6" radius={[4, 4, 0, 0]} />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-              
-              <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <p className="text-sm text-muted-foreground">Total Steps This Week</p>
-                    <p className="text-2xl font-bold">{totalSteps.toLocaleString()}</p>
+              <Form {...form}>
+                <form onSubmit={form.handleSubmit(calculateStepGoal)} className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <FormField
+                      control={form.control}
+                      name="height"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Height (cm)</FormLabel>
+                          <FormControl>
+                            <Input type="number" placeholder="Height in cm" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    
+                    <FormField
+                      control={form.control}
+                      name="weight"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Weight (kg)</FormLabel>
+                          <FormControl>
+                            <Input type="number" placeholder="Weight in kg" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    
+                    <FormField
+                      control={form.control}
+                      name="age"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Age (years)</FormLabel>
+                          <FormControl>
+                            <Input type="number" placeholder="Age in years" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    
+                    <FormField
+                      control={form.control}
+                      name="gender"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Gender</FormLabel>
+                          <Select
+                            onValueChange={field.onChange}
+                            defaultValue={field.value}
+                          >
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select gender" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              <SelectItem value="male">Male</SelectItem>
+                              <SelectItem value="female">Female</SelectItem>
+                              <SelectItem value="other">Other</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    
+                    <FormField
+                      control={form.control}
+                      name="activityLevel"
+                      render={({ field }) => (
+                        <FormItem className="md:col-span-2">
+                          <FormLabel>Physical Activity Level</FormLabel>
+                          <Select
+                            onValueChange={field.onChange}
+                            defaultValue={field.value}
+                          >
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select activity level" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              <SelectItem value="sedentary">Sedentary</SelectItem>
+                              <SelectItem value="lightlyActive">Lightly Active</SelectItem>
+                              <SelectItem value="moderatelyActive">Moderately Active</SelectItem>
+                              <SelectItem value="veryActive">Very Active</SelectItem>
+                              <SelectItem value="superActive">Super Active</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
                   </div>
-                  <div className="text-right">
-                    <p className="text-sm text-muted-foreground">Estimated Calories</p>
-                    <p className="text-2xl font-bold">{Math.round(totalSteps * 0.04).toLocaleString()}</p>
+                  
+                  <Button type="submit" className="mx-auto max-w-40 block">Calculate</Button>
+                </form>
+              </Form>
+              
+              {stepGoal && (
+                <div className="mt-8 text-center">
+                  <div className="flex justify-center mb-4">
+                    <ArrowDownIcon className="h-8 w-8 text-blue-500 animate-bounce" />
+                  </div>
+                  <div className="p-6 bg-blue-50 rounded-lg">
+                    <h2 className="text-2xl font-bold text-blue-700 mb-2">{stepGoal.toLocaleString()} steps/day</h2>
+                    <p className="text-gray-700">
+                      {stepGoal.toLocaleString()} steps/day is recommended based on your profile to 
+                      maintain/improve your health.
+                    </p>
                   </div>
                 </div>
+              )}
+              
+              <div className="mt-8">
+                <h3 className="text-lg font-semibold mb-2">How we calculate your step goal</h3>
+                <p className="text-sm text-gray-600 mb-2">
+                  First, we calculate your Basal Metabolic Rate (BMR) using the Mifflin-St Jeor formula, which is based on your height, weight, age, and gender.
+                </p>
+                <p className="text-sm text-gray-600 mb-2">
+                  Next, we determine your Total Daily Energy Expenditure (TDEE) by multiplying your BMR by an activity factor based on your physical activity level.
+                </p>
+                <p className="text-sm text-gray-600">
+                  Finally, we estimate what percentage of your daily energy should come from walking based on your activity level, 
+                  and convert this to steps using an average calorie burn of 0.05 calories per step.
+                </p>
               </div>
             </CardContent>
           </Card>
-          
-          {/* Health benefits section */}
-          <div className="mt-8 bg-white p-6 rounded-xl shadow-lg">
-            <h2 className="text-2xl font-bold mb-4">Health Benefits of Walking</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <h3 className="font-semibold text-lg">Physical Benefits</h3>
-                <ul className="list-disc pl-5 space-y-1">
-                  <li>Helps maintain a healthy weight</li>
-                  <li>Strengthens bones and muscles</li>
-                  <li>Improves cardiovascular fitness</li>
-                  <li>Reduces risk of heart disease and stroke</li>
-                  <li>Improves balance and coordination</li>
-                </ul>
-              </div>
-              <div className="space-y-2">
-                <h3 className="font-semibold text-lg">Mental Benefits</h3>
-                <ul className="list-disc pl-5 space-y-1">
-                  <li>Reduces stress and anxiety</li>
-                  <li>Improves mood and mental well-being</li>
-                  <li>Boosts energy levels</li>
-                  <li>Enhances creativity and cognitive function</li>
-                  <li>Improves sleep quality</li>
-                </ul>
-              </div>
-            </div>
-          </div>
         </div>
       </main>
     </div>
