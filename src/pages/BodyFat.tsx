@@ -23,7 +23,7 @@ const BodyFat = () => {
             <AspectRatio ratio={16 / 5} className="bg-muted">
               <img key="body-fat-measurement-image" src="/lovable-uploads/6c5e9f9c-828b-47e1-96dd-147607c176e9.png" alt="Person measuring waist with tape measure" className="object-cover w-full h-full rounded-xl" loading="eager" />
             </AspectRatio>
-            <p className="text-center text-gray-700 mt-4">*This formula uses measurements of your height, neck, waist, and hip circumferences</p>
+            <p className="text-center text-gray-700 mt-4 text-xs">*This formula uses measurements of your height, neck, waist, and hip circumferences</p>
           </div>
           
           <div className="flex justify-center mb-12">
