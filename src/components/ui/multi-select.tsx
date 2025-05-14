@@ -40,10 +40,9 @@ export function MultiSelect({
 }: MultiSelectProps) {
   const [open, setOpen] = React.useState(false);
 
-  // Ensure options is always an array to prevent "undefined is not iterable" error
-  const safeOptions = Array.isArray(options) ? options : [];
-  // Ensure selected is always an array too
-  const safeSelected = Array.isArray(selected) ? selected : [];
+  // Ensure options and selected are always arrays to prevent "undefined is not iterable" error
+  const safeOptions = React.useMemo(() => Array.isArray(options) ? options : [], [options]);
+  const safeSelected = React.useMemo(() => Array.isArray(selected) ? selected : [], [selected]);
 
   const handleSelect = React.useCallback((value: string) => {
     if (value === 'none') {
@@ -72,16 +71,6 @@ export function MultiSelect({
   const handleRemove = React.useCallback((value: string) => {
     onChange(safeSelected.filter(s => s !== value));
   }, [safeSelected, onChange]);
-
-  // If options or selected are undefined, render a simple button
-  if (!Array.isArray(options) || !Array.isArray(selected)) {
-    return (
-      <Button variant="outline" className={cn("w-full justify-between", className)} disabled>
-        {placeholder}
-        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-      </Button>
-    );
-  }
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -141,7 +130,7 @@ export function MultiSelect({
                   variant="secondary"
                   className="flex items-center gap-1"
                 >
-                  {option?.label || value}
+                  {option?.label ?? value}
                   <X
                     className="h-3 w-3 cursor-pointer"
                     onClick={() => handleRemove(value)}
