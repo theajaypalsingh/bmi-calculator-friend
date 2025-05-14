@@ -25,9 +25,9 @@ const BodyFat = () => {
             <div className="rounded-xl overflow-hidden shadow-lg">
               <img 
                 key="body-fat-measurement-image"
-                src="https://images.unsplash.com/photo-1605296867424-35fc98e937a7?q=80&w=2070" 
+                src="https://images.unsplash.com/photo-1605296867424-35fc98e937a7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" 
                 alt="Person measuring waist circumference" 
-                className="w-full h-auto object-cover"
+                className="w-full h-64 object-cover"
                 loading="eager"
               />
             </div>
