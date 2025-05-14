@@ -7,73 +7,77 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
+import { MultiSelect } from "./ui/multi-select";
+import { calculateHealthScore, getScoreCategory } from "@/utils/healthScoreCalculator";
+import { toast } from "@/components/ui/use-toast";
+
+// Medical condition options
+const medicalConditionOptions = [
+  { value: "none", label: "None of these" },
+  { value: "diabetes", label: "Diabetes" },
+  { value: "pcos", label: "PCOS" },
+  { value: "thyroid", label: "Thyroid" },
+  { value: "hypertension", label: "Hypertension" },
+  { value: "fatty_liver", label: "Fatty liver" },
+  { value: "autoimmune", label: "Auto Immune Disease" },
+  { value: "arthritis", label: "Arthritis" },
+  { value: "hormonal", label: "Hormonal Imbalance" },
+  { value: "ibs", label: "IBS" },
+  { value: "asthma", label: "Asthma" }
+];
+
+// Symptom options
+const symptomOptions = [
+  { value: "none", label: "None of these" },
+  { value: "low_energy", label: "Low energy" },
+  { value: "poor_digestion", label: "Poor digestion" },
+  { value: "constipation", label: "Constipation" },
+  { value: "hair_fall", label: "Hair fall" },
+  { value: "poor_sleep", label: "Poor sleep" }
+];
 
 const HealthScoreCalculator = () => {
   const [age, setAge] = useState("");
   const [bmi, setBmi] = useState("");
-  const [steps, setSteps] = useState("");
   const [sleep, setSleep] = useState("");
-  const [fruits, setFruits] = useState("2");
-  const [smoking, setSmoking] = useState("no");
-  const [alcohol, setAlcohol] = useState("none");
+  const [activityLevel, setActivityLevel] = useState("moderatelyActive");
+  const [smoking, setSmoking] = useState("never");
+  const [alcohol, setAlcohol] = useState("never");
+  const [stressLevel, setStressLevel] = useState("low");
+  const [eatingOutside, setEatingOutside] = useState("oneToTwo");
+  const [waterIntake, setWaterIntake] = useState("eightPlus");
+  const [symptoms, setSymptoms] = useState<string[]>([]);
+  const [medicalConditions, setMedicalConditions] = useState<string[]>([]);
   const [healthScore, setHealthScore] = useState<number | null>(null);
   const [scoreCategory, setScoreCategory] = useState<string>("");
   
-  const calculateHealthScore = () => {
-    if (!age || !bmi || !steps || !sleep) return;
+  const calculateScore = () => {
+    if (!age || !bmi || !sleep) {
+      toast({
+        title: "Missing information",
+        description: "Please fill in all required fields before calculating your health score.",
+        variant: "destructive",
+      });
+      return;
+    }
     
-    // Base score starts at 50
-    let score = 50;
+    const inputs = {
+      age: parseInt(age),
+      bmi: parseFloat(bmi),
+      sleepHours: parseFloat(sleep),
+      activityLevel: activityLevel as any,
+      smokingHabit: smoking as any,
+      alcoholConsumption: alcohol as any,
+      stressLevel: stressLevel as any,
+      eatingOutside: eatingOutside as any,
+      waterIntake: waterIntake as any,
+      symptoms: symptoms,
+      medicalConditions: medicalConditions
+    };
     
-    // Age factor (younger generally means healthier starting point)
-    const ageValue = parseFloat(age);
-    if (ageValue < 30) score += 5;
-    else if (ageValue > 60) score -= 5;
-    
-    // BMI factor (healthy BMI range is typically 18.5-24.9)
-    const bmiValue = parseFloat(bmi);
-    if (bmiValue >= 18.5 && bmiValue <= 24.9) score += 15;
-    else if (bmiValue >= 25 && bmiValue <= 29.9) score += 5;
-    else if (bmiValue >= 30) score -= 10;
-    else if (bmiValue < 18.5) score -= 5;
-    
-    // Activity level (steps per day)
-    const stepsValue = parseFloat(steps);
-    if (stepsValue >= 10000) score += 15;
-    else if (stepsValue >= 7500) score += 10;
-    else if (stepsValue >= 5000) score += 5;
-    
-    // Sleep duration (7-9 hours is typically recommended)
-    const sleepValue = parseFloat(sleep);
-    if (sleepValue >= 7 && sleepValue <= 9) score += 10;
-    else if (sleepValue >= 6 && sleepValue < 7) score += 5;
-    else if (sleepValue > 9) score += 0;
-    else score -= 5;
-    
-    // Nutrition (fruits and vegetables per day)
-    const fruitsValue = parseInt(fruits);
-    if (fruitsValue >= 5) score += 10;
-    else if (fruitsValue >= 3) score += 5;
-    
-    // Smoking status
-    if (smoking === "no") score += 10;
-    else score -= 20;
-    
-    // Alcohol consumption
-    if (alcohol === "none") score += 5;
-    else if (alcohol === "moderate") score += 0;
-    else score -= 10;
-    
-    // Ensure score stays within 0-100 range
-    score = Math.max(0, Math.min(100, score));
-    
+    const score = calculateHealthScore(inputs);
     setHealthScore(Math.round(score));
-    
-    // Determine score category
-    if (score >= 86) setScoreCategory("Excellent");
-    else if (score >= 71) setScoreCategory("Good");
-    else if (score >= 51) setScoreCategory("Fair");
-    else setScoreCategory("Needs Improvement");
+    setScoreCategory(getScoreCategory(score));
   };
   
   const getScoreCategoryColor = () => {
@@ -119,17 +123,6 @@ const HealthScoreCalculator = () => {
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="steps">Daily Steps</Label>
-              <Input
-                id="steps"
-                type="number"
-                placeholder="Average steps per day"
-                value={steps}
-                onChange={(e) => setSteps(e.target.value)}
-              />
-            </div>
-            
-            <div className="space-y-2">
               <Label htmlFor="sleep">Sleep Duration (hours)</Label>
               <Input
                 id="sleep"
@@ -140,22 +133,36 @@ const HealthScoreCalculator = () => {
                 onChange={(e) => setSleep(e.target.value)}
               />
             </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="activity">Physical Activity Level</Label>
+              <Select value={activityLevel} onValueChange={setActivityLevel}>
+                <SelectTrigger id="activity">
+                  <SelectValue placeholder="Select activity level" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="sedentary">Sedentary</SelectItem>
+                  <SelectItem value="lightlyActive">Lightly Active</SelectItem>
+                  <SelectItem value="moderatelyActive">Moderately Active</SelectItem>
+                  <SelectItem value="veryActive">Very Active</SelectItem>
+                  <SelectItem value="superActive">Super Active</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="fruits">Daily Fruits &amp; Vegetables</Label>
-              <Select value={fruits} onValueChange={setFruits}>
-                <SelectTrigger id="fruits">
-                  <SelectValue placeholder="Select servings per day" />
+              <Label htmlFor="smoking">Smoking Habit</Label>
+              <Select value={smoking} onValueChange={setSmoking}>
+                <SelectTrigger id="smoking">
+                  <SelectValue placeholder="Select option" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="0">None</SelectItem>
-                  <SelectItem value="1">1 serving</SelectItem>
-                  <SelectItem value="2">2 servings</SelectItem>
-                  <SelectItem value="3">3 servings</SelectItem>
-                  <SelectItem value="4">4 servings</SelectItem>
-                  <SelectItem value="5">5+ servings</SelectItem>
+                  <SelectItem value="never">Never</SelectItem>
+                  <SelectItem value="rarely">Rarely</SelectItem>
+                  <SelectItem value="occasionally">Occasionally</SelectItem>
+                  <SelectItem value="regularly">Regularly</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -164,37 +171,87 @@ const HealthScoreCalculator = () => {
               <Label htmlFor="alcohol">Alcohol Consumption</Label>
               <Select value={alcohol} onValueChange={setAlcohol}>
                 <SelectTrigger id="alcohol">
-                  <SelectValue placeholder="Select consumption level" />
+                  <SelectValue placeholder="Select option" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="none">None</SelectItem>
-                  <SelectItem value="moderate">Moderate (1-2 drinks/week)</SelectItem>
-                  <SelectItem value="heavy">Heavy (&gt;7 drinks/week)</SelectItem>
+                  <SelectItem value="never">Never</SelectItem>
+                  <SelectItem value="rarely">Rarely</SelectItem>
+                  <SelectItem value="occasionally">Occasionally</SelectItem>
+                  <SelectItem value="regularly">Regularly</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="stress">Stress Level</Label>
+              <Select value={stressLevel} onValueChange={setStressLevel}>
+                <SelectTrigger id="stress">
+                  <SelectValue placeholder="Select option" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="low">Low</SelectItem>
+                  <SelectItem value="medium">Medium</SelectItem>
+                  <SelectItem value="high">High</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="eating">Eating Outside Frequency</Label>
+              <Select value={eatingOutside} onValueChange={setEatingOutside}>
+                <SelectTrigger id="eating">
+                  <SelectValue placeholder="Select option" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="never">Never</SelectItem>
+                  <SelectItem value="oneToTwo">1-2 times/week</SelectItem>
+                  <SelectItem value="threeToFive">3-5 times/week</SelectItem>
+                  <SelectItem value="daily">Daily</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="water">Water Intake (glasses/day)</Label>
+              <Select value={waterIntake} onValueChange={setWaterIntake}>
+                <SelectTrigger id="water">
+                  <SelectValue placeholder="Select option" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="eightPlus">8+ glasses</SelectItem>
+                  <SelectItem value="sixToSeven">6-7 glasses</SelectItem>
+                  <SelectItem value="fourToFive">4-5 glasses</SelectItem>
+                  <SelectItem value="lessThan4">Less than 4 glasses</SelectItem>
                 </SelectContent>
               </Select>
             </div>
           </div>
           
           <div className="space-y-2">
-            <Label htmlFor="smoking">Do you smoke?</Label>
-            <RadioGroup
-              id="smoking"
-              value={smoking}
-              onValueChange={setSmoking}
-              className="flex space-x-4"
-            >
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="no" id="no" />
-                <Label htmlFor="no">No</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="yes" id="yes" />
-                <Label htmlFor="yes">Yes</Label>
-              </div>
-            </RadioGroup>
+            <Label htmlFor="symptoms">Symptoms (Select all that apply)</Label>
+            <MultiSelect 
+              options={symptomOptions}
+              selected={symptoms}
+              onChange={setSymptoms}
+              placeholder="Select symptoms"
+            />
           </div>
           
-          <Button onClick={calculateHealthScore}>Calculate Health Score</Button>
+          <div className="space-y-2">
+            <Label htmlFor="conditions">Medical Conditions (Select all that apply)</Label>
+            <MultiSelect 
+              options={medicalConditionOptions}
+              selected={medicalConditions}
+              onChange={setMedicalConditions}
+              placeholder="Select medical conditions"
+            />
+          </div>
+          
+          <Button onClick={calculateScore}>Calculate Health Score</Button>
           
           {healthScore !== null && (
             <div className="mt-6 space-y-4">
