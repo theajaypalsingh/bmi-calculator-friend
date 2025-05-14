@@ -72,6 +72,44 @@ export function MultiSelect({
     onChange(safeSelected.filter(s => s !== value));
   };
 
+  // Define a fallback for empty options to prevent rendering issues
+  const renderOptions = () => {
+    if (safeOptions.length === 0) {
+      return (
+        <CommandItem value="no-options" disabled>
+          No options available
+        </CommandItem>
+      );
+    }
+    
+    return safeOptions.map((option) => {
+      const isSelected = safeSelected.includes(option.value);
+      const isNone = option.value === 'none';
+      const isDisabled = option.disabled || (isNone ? false : safeSelected.includes('none'));
+      
+      return (
+        <CommandItem
+          key={option.value}
+          value={option.value}
+          onSelect={() => handleSelect(option.value)}
+          disabled={isDisabled}
+          className={cn(
+            isDisabled && "opacity-50 cursor-not-allowed",
+            isSelected && "bg-primary-foreground"
+          )}
+        >
+          <Check
+            className={cn(
+              "mr-2 h-4 w-4",
+              isSelected ? "opacity-100" : "opacity-0"
+            )}
+          />
+          {option.label}
+        </CommandItem>
+      );
+    });
+  };
+
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
@@ -92,32 +130,7 @@ export function MultiSelect({
           <CommandInput placeholder={placeholder} />
           <CommandEmpty>No option found.</CommandEmpty>
           <CommandGroup>
-            {safeOptions.map((option) => {
-              const isSelected = safeSelected.includes(option.value);
-              const isNone = option.value === 'none';
-              const isDisabled = option.disabled || (isNone ? false : safeSelected.includes('none'));
-              
-              return (
-                <CommandItem
-                  key={option.value}
-                  value={option.value}
-                  onSelect={() => handleSelect(option.value)}
-                  disabled={isDisabled}
-                  className={cn(
-                    isDisabled && "opacity-50 cursor-not-allowed",
-                    isSelected && "bg-primary-foreground"
-                  )}
-                >
-                  <Check
-                    className={cn(
-                      "mr-2 h-4 w-4",
-                      isSelected ? "opacity-100" : "opacity-0"
-                    )}
-                  />
-                  {option.label}
-                </CommandItem>
-              );
-            })}
+            {renderOptions()}
           </CommandGroup>
         </Command>
         {safeSelected.length > 0 && (
