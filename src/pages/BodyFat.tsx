@@ -20,6 +20,24 @@ const BodyFat = () => {
 
       <main className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto">
+          {/* Image added below the heading */}
+          <div className="mb-8">
+            <div className="rounded-xl overflow-hidden shadow-lg">
+              <img 
+                src="/measuring-waist.jpg" 
+                alt="Woman measuring waist circumference" 
+                className="w-full h-auto object-cover"
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement;
+                  target.src = "https://images.unsplash.com/photo-1605296867424-35fc98e937a7?q=80&w=2070";
+                }}
+              />
+            </div>
+            <p className="text-center text-gray-700 mt-4">
+              This formula uses measurements of your height, neck, waist, and hip circumferences
+            </p>
+          </div>
+          
           <div className="mb-8">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
               <div className="order-2 md:order-1">
