@@ -1,4 +1,3 @@
-
 import BodyFatCalculator from "@/components/BodyFatCalculator";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Card, CardContent } from "@/components/ui/card";
@@ -25,9 +24,9 @@ const BodyFat = () => {
             <div className="rounded-xl overflow-hidden shadow-lg">
               <img 
                 key="body-fat-measurement-image"
-                src="https://images.unsplash.com/photo-1605296867424-35fc98e937a7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" 
-                alt="Person measuring waist circumference" 
-                className="w-full h-64 object-cover"
+                src="/lovable-uploads/6c5e9f9c-828b-47e1-96dd-147607c176e9.png" 
+                alt="Person measuring waist with tape measure" 
+                className="w-full h-auto object-cover"
                 loading="eager"
               />
             </div>
