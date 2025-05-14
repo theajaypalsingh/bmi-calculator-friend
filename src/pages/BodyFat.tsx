@@ -1,13 +1,10 @@
-
 import BodyFatCalculator from "@/components/BodyFatCalculator";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Ruler } from "lucide-react";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
-
 const BodyFat = () => {
-  return (
-    <div className="min-h-full bg-gradient-to-b from-white to-health-light pb-0">
+  return <div className="min-h-full bg-gradient-to-b from-white to-health-light pb-0">
       <header className="py-8 text-white bg-gradient-to-r from-gray-700 to-gray-900">
         <div className="container mx-auto px-4">
           <h1 className="text-3xl md:text-5xl font-bold text-center mb-2 animate-fade-in">
@@ -23,18 +20,10 @@ const BodyFat = () => {
         <div className="max-w-4xl mx-auto">
           {/* Single clean image below the header - Using AspectRatio like in the homepage */}
           <div className="mb-8 rounded-xl overflow-hidden shadow-xl">
-            <AspectRatio ratio={16/5} className="bg-muted">
-              <img 
-                key="body-fat-measurement-image"
-                src="/lovable-uploads/6c5e9f9c-828b-47e1-96dd-147607c176e9.png" 
-                alt="Person measuring waist with tape measure" 
-                className="object-cover w-full h-full rounded-xl"
-                loading="eager"
-              />
+            <AspectRatio ratio={16 / 5} className="bg-muted">
+              <img key="body-fat-measurement-image" src="/lovable-uploads/6c5e9f9c-828b-47e1-96dd-147607c176e9.png" alt="Person measuring waist with tape measure" className="object-cover w-full h-full rounded-xl" loading="eager" />
             </AspectRatio>
-            <p className="text-center text-gray-700 mt-4">
-              This formula uses measurements of your height, neck, waist, and hip circumferences
-            </p>
+            <p className="text-center text-gray-700 mt-4">*This formula uses measurements of your height, neck, waist, and hip circumferences</p>
           </div>
           
           <div className="flex justify-center mb-12">
@@ -199,8 +188,6 @@ const BodyFat = () => {
           </div>
         </div>
       </main>
-    </div>
-  );
+    </div>;
 };
-
 export default BodyFat;
