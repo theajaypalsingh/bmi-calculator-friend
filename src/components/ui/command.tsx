@@ -11,9 +11,6 @@ const Command = React.forwardRef<
   React.ElementRef<typeof CommandPrimitive>,
   React.ComponentPropsWithoutRef<typeof CommandPrimitive>
 >(({ className, children, ...props }, ref) => {
-  // Ensure children is never undefined to prevent "undefined is not iterable" errors
-  const safeChildren = children || <React.Fragment></React.Fragment>;
-  
   return (
     <CommandPrimitive
       ref={ref}
@@ -23,7 +20,7 @@ const Command = React.forwardRef<
       )}
       {...props}
     >
-      {safeChildren}
+      {children || <React.Fragment />}
     </CommandPrimitive>
   );
 });
@@ -32,14 +29,11 @@ Command.displayName = CommandPrimitive.displayName
 interface CommandDialogProps extends DialogProps {}
 
 const CommandDialog = ({ children, ...props }: CommandDialogProps) => {
-  // Ensure children is never undefined
-  const safeChildren = children || <React.Fragment></React.Fragment>;
-  
   return (
     <Dialog {...props}>
       <DialogContent className="overflow-hidden p-0 shadow-lg">
         <Command className="[&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-muted-foreground [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-group]]:px-2 [&_[cmdk-input-wrapper]_svg]:h-5 [&_[cmdk-input-wrapper]_svg]:w-5 [&_[cmdk-input]]:h-12 [&_[cmdk-item]]:px-2 [&_[cmdk-item]]:py-3 [&_[cmdk-item]_svg]:h-5 [&_[cmdk-item]_svg]:w-5">
-          {safeChildren}
+          {children || <React.Fragment />}
         </Command>
       </DialogContent>
     </Dialog>
@@ -95,9 +89,6 @@ const CommandGroup = React.forwardRef<
   React.ElementRef<typeof CommandPrimitive.Group>,
   React.ComponentPropsWithoutRef<typeof CommandPrimitive.Group>
 >(({ className, children, ...props }, ref) => {
-  // Ensure children is never undefined
-  const safeChildren = children || <React.Fragment></React.Fragment>;
-  
   return (
     <CommandPrimitive.Group
       ref={ref}
@@ -107,7 +98,7 @@ const CommandGroup = React.forwardRef<
       )}
       {...props}
     >
-      {safeChildren}
+      {children || <React.Fragment />}
     </CommandPrimitive.Group>
   );
 })

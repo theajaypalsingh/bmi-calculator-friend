@@ -39,19 +39,22 @@ export function MultiSelect({
   className,
 }: MultiSelectProps) {
   // Initialize with safe defaults to prevent "undefined is not iterable" error
-  const safeOptions = Array.isArray(options) ? options : [];
-  const safeSelected = Array.isArray(selected) ? selected : [];
+  const safeOptions = React.useMemo(() => 
+    Array.isArray(options) ? options : [], 
+    [options]
+  );
+  
+  const safeSelected = React.useMemo(() => 
+    Array.isArray(selected) ? selected : [],
+    [selected]
+  );
   
   const [open, setOpen] = React.useState(false);
 
-  const handleSelect = (value: string) => {
+  const handleSelect = React.useCallback((value: string) => {
     if (value === 'none') {
       // If "none" is selected, deselect all other options
-      if (safeSelected.includes('none')) {
-        onChange(safeSelected.filter(s => s !== 'none'));
-      } else {
-        onChange(['none']);
-      }
+      onChange(safeSelected.includes('none') ? [] : ['none']);
     } else {
       // If any other option is selected, remove "none" from selection
       let updatedSelected = safeSelected.filter(s => s !== 'none');
@@ -66,14 +69,14 @@ export function MultiSelect({
       
       onChange(updatedSelected);
     }
-  };
+  }, [safeSelected, onChange]);
 
-  const handleRemove = (value: string) => {
+  const handleRemove = React.useCallback((value: string) => {
     onChange(safeSelected.filter(s => s !== value));
-  };
+  }, [safeSelected, onChange]);
 
   // Define a fallback for empty options to prevent rendering issues
-  const renderOptions = () => {
+  const renderOptions = React.useCallback(() => {
     if (safeOptions.length === 0) {
       return (
         <CommandItem value="no-options" disabled>
@@ -108,7 +111,32 @@ export function MultiSelect({
         </CommandItem>
       );
     });
-  };
+  }, [safeOptions, safeSelected, handleSelect]);
+
+  const selectedBadges = React.useMemo(() => {
+    if (safeSelected.length === 0) return null;
+    
+    return (
+      <div className="p-2 flex flex-wrap gap-1">
+        {safeSelected.map((value) => {
+          const option = safeOptions.find((opt) => opt.value === value);
+          return (
+            <Badge
+              key={value}
+              variant="secondary"
+              className="flex items-center gap-1"
+            >
+              {option?.label ?? value}
+              <X
+                className="h-3 w-3 cursor-pointer"
+                onClick={() => handleRemove(value)}
+              />
+            </Badge>
+          );
+        })}
+      </div>
+    );
+  }, [safeOptions, safeSelected, handleRemove]);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -133,26 +161,7 @@ export function MultiSelect({
             {renderOptions()}
           </CommandGroup>
         </Command>
-        {safeSelected.length > 0 && (
-          <div className="p-2 flex flex-wrap gap-1">
-            {safeSelected.map((value) => {
-              const option = safeOptions.find((opt) => opt.value === value);
-              return (
-                <Badge
-                  key={value}
-                  variant="secondary"
-                  className="flex items-center gap-1"
-                >
-                  {option?.label ?? value}
-                  <X
-                    className="h-3 w-3 cursor-pointer"
-                    onClick={() => handleRemove(value)}
-                  />
-                </Badge>
-              );
-            })}
-          </div>
-        )}
+        {selectedBadges}
       </PopoverContent>
     </Popover>
   );
