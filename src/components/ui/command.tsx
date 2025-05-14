@@ -11,11 +11,8 @@ const Command = React.forwardRef<
   React.ElementRef<typeof CommandPrimitive>,
   React.ComponentPropsWithoutRef<typeof CommandPrimitive>
 >(({ className, children, ...props }, ref) => {
-  // Ensure children is never undefined to prevent "undefined is not iterable" errors
-  const safeChildren = React.useMemo(() => {
-    if (children === undefined || children === null) return <></>;
-    return children;
-  }, [children]);
+  // Use an empty fragment instead of null to prevent "undefined is not iterable" errors
+  const renderChildren = children || <></>;
   
   return (
     <CommandPrimitive
@@ -26,26 +23,23 @@ const Command = React.forwardRef<
       )}
       {...props}
     >
-      {safeChildren}
+      {renderChildren}
     </CommandPrimitive>
   );
-})
+});
 Command.displayName = CommandPrimitive.displayName
 
 interface CommandDialogProps extends DialogProps {}
 
 const CommandDialog = ({ children, ...props }: CommandDialogProps) => {
-  // Safety check for children
-  const safeChildren = React.useMemo(() => {
-    if (children === undefined || children === null) return <></>;
-    return children;
-  }, [children]);
+  // Use an empty fragment instead of null
+  const renderChildren = children || <></>;
   
   return (
     <Dialog {...props}>
       <DialogContent className="overflow-hidden p-0 shadow-lg">
         <Command className="[&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-muted-foreground [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-group]]:px-2 [&_[cmdk-input-wrapper]_svg]:h-5 [&_[cmdk-input-wrapper]_svg]:w-5 [&_[cmdk-input]]:h-12 [&_[cmdk-item]]:px-2 [&_[cmdk-item]]:py-3 [&_[cmdk-item]_svg]:h-5 [&_[cmdk-item]_svg]:w-5">
-          {safeChildren}
+          {renderChildren}
         </Command>
       </DialogContent>
     </Dialog>
@@ -101,11 +95,8 @@ const CommandGroup = React.forwardRef<
   React.ElementRef<typeof CommandPrimitive.Group>,
   React.ComponentPropsWithoutRef<typeof CommandPrimitive.Group>
 >(({ className, children, ...props }, ref) => {
-  // Safety check for children
-  const safeChildren = React.useMemo(() => {
-    if (children === undefined || children === null) return <></>;
-    return children;
-  }, [children]);
+  // Use an empty fragment instead of null
+  const renderChildren = children || <></>;
   
   return (
     <CommandPrimitive.Group
@@ -116,7 +107,7 @@ const CommandGroup = React.forwardRef<
       )}
       {...props}
     >
-      {safeChildren}
+      {renderChildren}
     </CommandPrimitive.Group>
   );
 })

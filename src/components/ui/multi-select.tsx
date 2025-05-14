@@ -32,8 +32,8 @@ interface MultiSelectProps {
 }
 
 export function MultiSelect({
-  options,
-  selected,
+  options = [], // Default to empty array
+  selected = [], // Default to empty array
   onChange,
   placeholder = "Select options...",
   className,
@@ -72,6 +72,17 @@ export function MultiSelect({
     onChange(safeSelected.filter(s => s !== value));
   }, [safeSelected, onChange]);
 
+  // Create a memoized dummy component to render when there might be issues
+  const EmptyCommandGroup = React.useMemo(() => {
+    return (
+      <CommandGroup>
+        <CommandItem value="placeholder" disabled>
+          No options available
+        </CommandItem>
+      </CommandGroup>
+    );
+  }, []);
+
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
@@ -91,34 +102,36 @@ export function MultiSelect({
         <Command>
           <CommandInput placeholder={placeholder} />
           <CommandEmpty>No option found.</CommandEmpty>
-          <CommandGroup>
-            {safeOptions.map((option) => {
-              const isSelected = safeSelected.includes(option.value);
-              const isNone = option.value === 'none';
-              const isDisabled = option.disabled || (isNone ? false : safeSelected.includes('none'));
-              
-              return (
-                <CommandItem
-                  key={option.value}
-                  value={option.value}
-                  onSelect={() => handleSelect(option.value)}
-                  disabled={isDisabled}
-                  className={cn(
-                    isDisabled && "opacity-50 cursor-not-allowed",
-                    isSelected && "bg-primary-foreground"
-                  )}
-                >
-                  <Check
+          {safeOptions.length > 0 ? (
+            <CommandGroup>
+              {safeOptions.map((option) => {
+                const isSelected = safeSelected.includes(option.value);
+                const isNone = option.value === 'none';
+                const isDisabled = option.disabled || (isNone ? false : safeSelected.includes('none'));
+                
+                return (
+                  <CommandItem
+                    key={option.value}
+                    value={option.value}
+                    onSelect={() => handleSelect(option.value)}
+                    disabled={isDisabled}
                     className={cn(
-                      "mr-2 h-4 w-4",
-                      isSelected ? "opacity-100" : "opacity-0"
+                      isDisabled && "opacity-50 cursor-not-allowed",
+                      isSelected && "bg-primary-foreground"
                     )}
-                  />
-                  {option.label}
-                </CommandItem>
-              );
-            })}
-          </CommandGroup>
+                  >
+                    <Check
+                      className={cn(
+                        "mr-2 h-4 w-4",
+                        isSelected ? "opacity-100" : "opacity-0"
+                      )}
+                    />
+                    {option.label}
+                  </CommandItem>
+                );
+              })}
+            </CommandGroup>
+          ) : EmptyCommandGroup}
         </Command>
         {safeSelected.length > 0 && (
           <div className="p-2 flex flex-wrap gap-1">
