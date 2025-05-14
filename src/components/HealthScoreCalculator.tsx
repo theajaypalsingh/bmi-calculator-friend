@@ -144,7 +144,7 @@ const HealthScoreCalculator = () => {
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="fruits">Daily Fruits & Vegetables</Label>
+              <Label htmlFor="fruits">Daily Fruits &amp; Vegetables</Label>
               <Select value={fruits} onValueChange={setFruits}>
                 <SelectTrigger id="fruits">
                   <SelectValue placeholder="Select servings per day" />
@@ -169,7 +169,7 @@ const HealthScoreCalculator = () => {
                 <SelectContent>
                   <SelectItem value="none">None</SelectItem>
                   <SelectItem value="moderate">Moderate (1-2 drinks/week)</SelectItem>
-                  <SelectItem value="heavy">Heavy (>7 drinks/week)</SelectItem>
+                  <SelectItem value="heavy">Heavy (&gt;7 drinks/week)</SelectItem>
                 </SelectContent>
               </Select>
             </div>
