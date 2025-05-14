@@ -40,6 +40,9 @@ export function MultiSelect({
 }: MultiSelectProps) {
   const [open, setOpen] = React.useState(false);
 
+  // Ensure options is always an array to prevent "undefined is not iterable" error
+  const safeOptions = Array.isArray(options) ? options : [];
+
   const handleSelect = React.useCallback((value: string) => {
     if (value === 'none') {
       // If "none" is selected, deselect all other options
@@ -88,7 +91,7 @@ export function MultiSelect({
           <CommandInput placeholder={placeholder} />
           <CommandEmpty>No option found.</CommandEmpty>
           <CommandGroup>
-            {options.map((option) => {
+            {safeOptions.map((option) => {
               const isSelected = selected.includes(option.value);
               const isNone = option.value === 'none';
               const isDisabled = option.disabled || (isNone ? false : selected.includes('none'));
@@ -119,14 +122,14 @@ export function MultiSelect({
         {selected.length > 0 && (
           <div className="p-2 flex flex-wrap gap-1">
             {selected.map((value) => {
-              const option = options.find((opt) => opt.value === value);
+              const option = safeOptions.find((opt) => opt.value === value);
               return (
                 <Badge
                   key={value}
                   variant="secondary"
                   className="flex items-center gap-1"
                 >
-                  {option?.label}
+                  {option?.label || value}
                   <X
                     className="h-3 w-3 cursor-pointer"
                     onClick={() => handleRemove(value)}
