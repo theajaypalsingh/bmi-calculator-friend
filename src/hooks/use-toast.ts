@@ -1,4 +1,3 @@
-
 import * as React from "react";
 import { type ToastProps } from "@/components/ui/toast";
 
@@ -18,6 +17,8 @@ export type ToastType = {
   description?: React.ReactNode;
   action?: ToastActionElement;
   variant?: ToastVariant;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 };
 
 const actionTypes = {
@@ -144,7 +145,7 @@ function dispatch(action: Action) {
 
 type Toast = Omit<ToastType, "id">;
 
-function toast({ ...props }: Toast) {
+function toast({ ...props }: Omit<ToastType, "id">) {
   const id = genId();
 
   const update = (props: ToastType) =>
