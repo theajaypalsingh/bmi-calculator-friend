@@ -1,3 +1,4 @@
+
 import BodyFatCalculator from "@/components/BodyFatCalculator";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Card, CardContent } from "@/components/ui/card";
@@ -18,10 +19,10 @@ const BodyFat = () => {
 
       <main className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto">
-          {/* Single clean image below the header - Using AspectRatio like in the homepage */}
-          <div className="mb-8 rounded-xl overflow-hidden shadow-xl">
-            <AspectRatio ratio={16 / 5} className="bg-muted">
-              <img key="body-fat-measurement-image" src="/lovable-uploads/6c5e9f9c-828b-47e1-96dd-147607c176e9.png" alt="Person measuring waist with tape measure" className="object-cover w-full h-full rounded-xl" loading="eager" />
+          {/* Image container without a white box background */}
+          <div className="mb-8">
+            <AspectRatio ratio={16 / 5} className="rounded-xl overflow-hidden">
+              <img key="body-fat-measurement-image" src="/lovable-uploads/6c5e9f9c-828b-47e1-96dd-147607c176e9.png" alt="Person measuring waist with tape measure" className="object-cover w-full h-full" loading="eager" />
             </AspectRatio>
             <p className="text-center text-gray-700 mt-4 text-xs">*This formula uses measurements of your height, neck, waist, and hip circumferences</p>
           </div>
