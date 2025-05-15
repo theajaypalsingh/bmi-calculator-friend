@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
@@ -252,7 +251,9 @@ const HealthScoreCalculator = () => {
             </div>
           </div>
           
-          <Button onClick={calculateScore}>Calculate Health Score</Button>
+          <div className="flex justify-center">
+            <Button onClick={calculateScore} className="w-auto px-8">Calculate Health Score</Button>
+          </div>
           
           {healthScore !== null && (
             <div className="mt-6 space-y-4">
