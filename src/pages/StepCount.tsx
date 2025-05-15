@@ -9,6 +9,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { ArrowDownIcon } from "lucide-react";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
 const stepCountSchema = z.object({
   height: z.coerce.number().min(100, "Height must be at least 100cm").max(250, "Height must be less than 250cm"),
@@ -101,7 +102,7 @@ const StepCount = () => {
       
       <main className="container mx-auto px-4 py-8">
         <div className="max-w-3xl mx-auto">
-          <Card className="shadow-lg">
+          <Card className="shadow-lg mb-8">
             <CardHeader>
               <CardTitle>Step Goal Calculator</CardTitle>
               <CardDescription>Enter your information to get a personalized daily step goal</CardDescription>
@@ -239,6 +240,82 @@ const StepCount = () => {
                   and convert this to steps using an average calorie burn of 0.05 calories per step.
                 </p>
               </div>
+            </CardContent>
+          </Card>
+          
+          {/* FAQ Section */}
+          <Card className="shadow-lg">
+            <CardHeader>
+              <CardTitle>Frequently Asked Questions</CardTitle>
+              <CardDescription>Common questions about step count goals</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Accordion type="single" collapsible className="w-full">
+                <AccordionItem value="item-1">
+                  <AccordionTrigger>How many steps should I aim for each day?</AccordionTrigger>
+                  <AccordionContent>
+                    <p className="text-gray-700">
+                      The commonly cited goal of 10,000 steps per day is a good general target, but the ideal step count varies based on your age, weight, gender, and activity level. That's why our calculator provides a personalized recommendation. For health benefits, research suggests even 7,000-8,000 steps can be beneficial.
+                    </p>
+                  </AccordionContent>
+                </AccordionItem>
+                
+                <AccordionItem value="item-2">
+                  <AccordionTrigger>What's the difference between activity levels?</AccordionTrigger>
+                  <AccordionContent>
+                    <ul className="list-disc pl-5 space-y-2 text-gray-700">
+                      <li><strong>Sedentary:</strong> Little to no regular exercise, desk job (eg: office worker with no exercise)</li>
+                      <li><strong>Lightly Active:</strong> Light exercise 1-3 days per week (eg: casual walking)</li>
+                      <li><strong>Moderately Active:</strong> Moderate exercise 3-5 days per week (eg: brisk walking, light sports)</li>
+                      <li><strong>Very Active:</strong> Hard exercise 6-7 days per week (eg: running, swimming)</li>
+                      <li><strong>Super Active:</strong> Very hard exercise, physical job or training twice a day (eg: professional athlete, construction worker)</li>
+                    </ul>
+                  </AccordionContent>
+                </AccordionItem>
+                
+                <AccordionItem value="item-3">
+                  <AccordionTrigger>How are step goals calculated?</AccordionTrigger>
+                  <AccordionContent>
+                    <p className="text-gray-700">
+                      Our calculator uses the Mifflin-St Jeor formula to estimate your Basal Metabolic Rate (BMR) based on your height, weight, age, and gender. Then it calculates your Total Daily Energy Expenditure (TDEE) by applying an activity factor. A portion of this energy expenditure is allocated to steps based on your activity level, which is converted to a step count using an average calorie burn of 0.05 calories per step.
+                    </p>
+                  </AccordionContent>
+                </AccordionItem>
+                
+                <AccordionItem value="item-4">
+                  <AccordionTrigger>Is walking 10,000 steps a day enough for weight loss?</AccordionTrigger>
+                  <AccordionContent>
+                    <p className="text-gray-700">
+                      Walking 10,000 steps a day can burn approximately 300-500 extra calories, which can contribute to weight loss when combined with a balanced diet. However, for significant weight loss, you may need to combine increased step count with dietary changes and possibly other forms of exercise. The key is to create a calorie deficit (burning more calories than you consume).
+                    </p>
+                  </AccordionContent>
+                </AccordionItem>
+                
+                <AccordionItem value="item-5">
+                  <AccordionTrigger>How long does it take to walk 10,000 steps?</AccordionTrigger>
+                  <AccordionContent>
+                    <p className="text-gray-700">
+                      For most people, 10,000 steps is approximately 5 miles (8 kilometers). At an average walking pace of 3 miles per hour, it would take about 1.5-2 hours of walking to reach 10,000 steps. However, your daily activities throughout the day also contribute to your step count—you don't need to do all your steps in one session.
+                    </p>
+                  </AccordionContent>
+                </AccordionItem>
+                
+                <AccordionItem value="item-6">
+                  <AccordionTrigger>How can I increase my daily step count?</AccordionTrigger>
+                  <AccordionContent>
+                    <ul className="list-disc pl-5 space-y-2 text-gray-700">
+                      <li>Take the stairs instead of elevators or escalators</li>
+                      <li>Park farther away from entrances when shopping</li>
+                      <li>Take short walking breaks during work</li>
+                      <li>Walk while talking on the phone</li>
+                      <li>Get off public transportation one stop early</li>
+                      <li>Walk your dog more often or for longer distances</li>
+                      <li>Take a short walk after meals</li>
+                      <li>Set reminders to move every hour</li>
+                    </ul>
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
             </CardContent>
           </Card>
         </div>
