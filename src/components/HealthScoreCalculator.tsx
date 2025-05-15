@@ -4,15 +4,14 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { MultiSelect } from "./ui/multi-select";
-import { calculateHealthScore, getScoreCategory } from "@/utils/healthScoreCalculator";
 import { toast } from "@/components/ui/use-toast";
+import { calculateHealthScore, getScoreCategory } from "@/utils/healthScoreCalculator";
+import { CheckboxList, CheckboxOption } from "./CheckboxList";
 
 // Medical condition options
-const medicalConditionOptions = [
+const medicalConditionOptions: CheckboxOption[] = [
   { value: "none", label: "None of these" },
   { value: "diabetes", label: "Diabetes" },
   { value: "pcos", label: "PCOS" },
@@ -27,7 +26,7 @@ const medicalConditionOptions = [
 ];
 
 // Symptom options
-const symptomOptions = [
+const symptomOptions: CheckboxOption[] = [
   { value: "none", label: "None of these" },
   { value: "low_energy", label: "Low energy" },
   { value: "poor_digestion", label: "Poor digestion" },
@@ -231,24 +230,26 @@ const HealthScoreCalculator = () => {
             </div>
           </div>
           
-          <div className="space-y-2">
+          <div className="space-y-3">
             <Label htmlFor="symptoms">Symptoms (Select all that apply)</Label>
-            <MultiSelect 
-              options={symptomOptions}
-              selected={symptoms}
-              onChange={setSymptoms}
-              placeholder="Select symptoms"
-            />
+            <div className="border rounded-md p-3 bg-background">
+              <CheckboxList 
+                options={symptomOptions}
+                selected={symptoms}
+                onChange={setSymptoms}
+              />
+            </div>
           </div>
           
-          <div className="space-y-2">
+          <div className="space-y-3">
             <Label htmlFor="conditions">Medical Conditions (Select all that apply)</Label>
-            <MultiSelect 
-              options={medicalConditionOptions}
-              selected={medicalConditions}
-              onChange={setMedicalConditions}
-              placeholder="Select medical conditions"
-            />
+            <div className="border rounded-md p-3 bg-background">
+              <CheckboxList 
+                options={medicalConditionOptions}
+                selected={medicalConditions}
+                onChange={setMedicalConditions}
+              />
+            </div>
           </div>
           
           <Button onClick={calculateScore}>Calculate Health Score</Button>
