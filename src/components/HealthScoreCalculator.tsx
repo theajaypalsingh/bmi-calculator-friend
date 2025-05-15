@@ -236,6 +236,7 @@ const HealthScoreCalculator = () => {
                 options={symptomOptions}
                 selected={symptoms}
                 onChange={setSymptoms}
+                layout={{ columns: 3, rows: 2 }}
               />
             </div>
           </div>
@@ -247,6 +248,7 @@ const HealthScoreCalculator = () => {
                 options={medicalConditionOptions}
                 selected={medicalConditions}
                 onChange={setMedicalConditions}
+                layout={{ columns: 3, rows: 4 }}
               />
             </div>
           </div>

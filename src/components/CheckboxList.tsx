@@ -14,6 +14,10 @@ interface CheckboxListProps {
   selected: string[];
   onChange: (selected: string[]) => void;
   className?: string;
+  layout?: {
+    columns: number;
+    rows?: number;
+  };
 }
 
 export function CheckboxList({
@@ -21,6 +25,7 @@ export function CheckboxList({
   selected,
   onChange,
   className,
+  layout,
 }: CheckboxListProps) {
   // Initialize with safe defaults
   const safeOptions = React.useMemo(() => 
@@ -53,8 +58,25 @@ export function CheckboxList({
     }
   }, [safeSelected, onChange]);
 
+  // Get the appropriate grid class based on column count
+  const getGridClass = () => {
+    if (!layout || !layout.columns) return "";
+    
+    switch (layout.columns) {
+      case 2: return "grid-cols-2";
+      case 3: return "grid-cols-3";
+      case 4: return "grid-cols-4";
+      default: return "grid-cols-1";
+    }
+  };
+
   return (
-    <div className={cn("space-y-2", className)}>
+    <div 
+      className={cn(
+        layout && layout.columns > 1 ? `grid ${getGridClass()} gap-x-4 gap-y-2` : "space-y-2", 
+        className
+      )}
+    >
       {safeOptions.map((option) => {
         const isSelected = safeSelected.includes(option.value);
         const isNone = option.value === 'none';
