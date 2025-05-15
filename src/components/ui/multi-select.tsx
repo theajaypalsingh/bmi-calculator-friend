@@ -77,7 +77,7 @@ export function MultiSelect({
 
   // Define a fallback for empty options to prevent rendering issues
   const renderOptions = React.useCallback(() => {
-    if (safeOptions.length === 0) {
+    if (!safeOptions || safeOptions.length === 0) {
       return (
         <CommandItem value="no-options" disabled>
           No options available
@@ -114,7 +114,7 @@ export function MultiSelect({
   }, [safeOptions, safeSelected, handleSelect]);
 
   const selectedBadges = React.useMemo(() => {
-    if (safeSelected.length === 0) return null;
+    if (!safeSelected || safeSelected.length === 0) return null;
     
     return (
       <div className="p-2 flex flex-wrap gap-1">
@@ -129,7 +129,10 @@ export function MultiSelect({
               {option?.label ?? value}
               <X
                 className="h-3 w-3 cursor-pointer"
-                onClick={() => handleRemove(value)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleRemove(value);
+                }}
               />
             </Badge>
           );
