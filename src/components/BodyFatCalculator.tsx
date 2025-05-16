@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -6,7 +7,7 @@ import { Switch } from "@/components/ui/switch";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { Ruler, User, UserRound, Tape2 } from "lucide-react";
+import { Ruler, User, UserRound, Tape } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -421,7 +422,7 @@ const BodyFatCalculator: React.FC = () => {
           <Dialog>
             <DialogTrigger asChild>
               <Button variant="link" className="text-sm flex items-center">
-                <Tape2 className="mr-1 h-4 w-4" />
+                <Tape className="mr-1 h-4 w-4" />
                 How to check inches?
               </Button>
             </DialogTrigger>
