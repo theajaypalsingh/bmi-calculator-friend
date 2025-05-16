@@ -390,7 +390,7 @@ const BodyFatCalculator: React.FC = () => {
           </Alert>}
         
         {/* Measurement Guide Link */}
-        <div className="flex justify-center mt-4 mb-2">
+        <div className="flex justify-center mt-4 mb-6">
           <Dialog>
             <DialogTrigger asChild>
               <Button variant="link" className="text-sm flex items-center">
@@ -409,33 +409,6 @@ const BodyFatCalculator: React.FC = () => {
                 <img 
                   src="/lovable-uploads/185defc2-716f-4a0c-a631-0d67ccec48a9.png" 
                   alt="Measurement guide showing how to measure waist, hips and neck" 
-                  className="max-w-full rounded-md"
-                />
-              </div>
-            </DialogContent>
-          </Dialog>
-        </div>
-
-        {/* How to check inches link */}
-        <div className="flex justify-center mt-2 mb-4">
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button variant="link" className="text-sm flex items-center">
-                <Scale className="mr-1 h-4 w-4" />
-                How to check inches?
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-md">
-              <DialogHeader>
-                <DialogTitle>How to Check Inches Correctly</DialogTitle>
-                <DialogDescription>
-                  Follow this guide for accurate inch measurements
-                </DialogDescription>
-              </DialogHeader>
-              <div className="flex justify-center my-2">
-                <img 
-                  src="/lovable-uploads/185defc2-716f-4a0c-a631-0d67ccec48a9.png" 
-                  alt="Guide showing how to check inch measurements" 
                   className="max-w-full rounded-md"
                 />
               </div>
