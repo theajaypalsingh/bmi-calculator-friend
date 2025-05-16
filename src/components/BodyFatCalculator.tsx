@@ -6,7 +6,7 @@ import { Switch } from "@/components/ui/switch";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { Ruler, User, UserRound, RulerSquare } from "lucide-react";
+import { Ruler, User, UserRound, Scale } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -421,7 +421,7 @@ const BodyFatCalculator: React.FC = () => {
           <Dialog>
             <DialogTrigger asChild>
               <Button variant="link" className="text-sm flex items-center">
-                <RulerSquare className="mr-1 h-4 w-4" />
+                <Scale className="mr-1 h-4 w-4" />
                 How to check inches?
               </Button>
             </DialogTrigger>
