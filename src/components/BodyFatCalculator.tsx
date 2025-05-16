@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -7,7 +6,7 @@ import { Switch } from "@/components/ui/switch";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { Ruler, User, UserRound, Tape } from "lucide-react";
+import { Ruler, User, UserRound, Tape2 } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -416,6 +415,33 @@ const BodyFatCalculator: React.FC = () => {
             </DialogContent>
           </Dialog>
         </div>
+
+        {/* How to check inches link */}
+        <div className="flex justify-center mt-2 mb-4">
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="link" className="text-sm flex items-center">
+                <Tape2 className="mr-1 h-4 w-4" />
+                How to check inches?
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-md">
+              <DialogHeader>
+                <DialogTitle>How to Check Inches Correctly</DialogTitle>
+                <DialogDescription>
+                  Follow this guide for accurate inch measurements
+                </DialogDescription>
+              </DialogHeader>
+              <div className="flex justify-center my-2">
+                <img 
+                  src="/lovable-uploads/185defc2-716f-4a0c-a631-0d67ccec48a9.png" 
+                  alt="Guide showing how to check inch measurements" 
+                  className="max-w-full rounded-md"
+                />
+              </div>
+            </DialogContent>
+          </Dialog>
+        </div>
         
         {/* Calculate Button */}
         <div className="flex justify-center mt-2">
@@ -487,4 +513,3 @@ const BodyFatCalculator: React.FC = () => {
     </Card>;
 };
 export default BodyFatCalculator;
-
