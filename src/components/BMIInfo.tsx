@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 const BMIInfo = () => {
   return (
-    <Card className="w-full max-w-md mx-auto shadow-lg hover:shadow-xl transition-shadow duration-300 border-t-4 border-health-primary">
+    <Card className="w-full max-w-md mx-auto shadow-lg hover:shadow-xl transition-shadow duration-300">
       <CardHeader className="text-white rounded-t-lg bg-gradient-to-r from-gray-800 to-gray-700 mx-0 my-0 py-[22px]">
         <CardTitle className="text-xl font-bold flex items-center gap-2">
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-info text-health-light">
