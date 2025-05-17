@@ -111,8 +111,10 @@ const Consultation = () => {
       <header className="py-10 text-white bg-gradient-to-r from-health-primary to-health-purple relative overflow-hidden">
         <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1581091226825-a6a2a5aee158')] bg-cover bg-center opacity-15"></div>
         <div className="container mx-auto px-4 relative z-10">
-          <h1 className="text-3xl md:text-5xl font-bold text-center mb-3 animate-fade-in bg-gradient-to-r from-gray-600 to-gray-800 px-4 py-2 rounded-lg inline-block mx-auto">
-            <span className="text-health-light">Free</span> Health Consultation
+          <h1 className="text-3xl md:text-5xl font-bold text-center mb-3 text-white">
+            <span className="bg-gradient-to-r from-gray-600 to-gray-800 px-4 py-2 rounded-lg inline-block">
+              <span className="text-health-light">Free</span> Health Consultation
+            </span>
           </h1>
           <p className="text-center text-lg text-health-light opacity-90 max-w-2xl mx-auto">
             Connect with our expert health coaches who will guide you through your personal wellness journey
