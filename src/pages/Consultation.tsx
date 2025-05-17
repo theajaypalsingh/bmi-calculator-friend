@@ -109,7 +109,7 @@ const Consultation = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-health-light pb-16">
       <header className="py-10 text-white bg-gradient-to-r from-health-primary to-health-purple relative overflow-hidden">
-        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1721322800607-8c38375eef04')] bg-cover bg-center opacity-15"></div>
+        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1585435557343-3b092031a831?q=80&w=1470')] bg-cover bg-center opacity-15"></div>
         <div className="container mx-auto px-4 relative z-10">
           <h1 className="text-3xl md:text-5xl font-bold text-center mb-3 text-white">
             <span className="bg-gradient-to-r from-gray-600 to-gray-800 px-4 py-2 rounded-lg inline-block">
