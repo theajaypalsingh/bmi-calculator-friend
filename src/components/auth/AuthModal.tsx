@@ -30,6 +30,7 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
   const [captchaToken, setCaptchaToken] = useState("");
   const captchaContainerRef = useRef<HTMLDivElement>(null);
   const captchaWidgetId = useRef<string | null>(null);
+  const captchaScriptLoaded = useRef<boolean>(false);
   
   const { user, signInWithOtp } = useAuth();
 
@@ -42,8 +43,14 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
 
   // Initialize Turnstile
   useEffect(() => {
+    // Reset state when modal opens
+    if (isOpen && !showOTP) {
+      setCaptchaToken("");
+    }
+    
     // Load Turnstile script if not already loaded
     if (!document.getElementById('turnstile-script') && isOpen && !showOTP) {
+      captchaScriptLoaded.current = false;
       const script = document.createElement('script');
       script.id = 'turnstile-script';
       script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
@@ -52,7 +59,9 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
       
       // Callback when script is loaded
       window.onloadTurnstileCallback = () => {
-        if (captchaContainerRef.current && window.turnstile) {
+        captchaScriptLoaded.current = true;
+        if (captchaContainerRef.current && window.turnstile && isOpen && !showOTP) {
+          console.log("Turnstile script loaded, rendering captcha");
           renderCaptcha();
         }
       };
@@ -61,7 +70,10 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
       document.head.appendChild(script);
     } else if (isOpen && !showOTP && window.turnstile) {
       // If script is already loaded, render captcha
-      renderCaptcha();
+      console.log("Turnstile already available, rendering captcha");
+      setTimeout(() => {
+        renderCaptcha();
+      }, 300); // Small delay to ensure DOM is ready
     }
 
     // Reset captcha when dialog closes
@@ -75,21 +87,32 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
   // Function to render the captcha
   const renderCaptcha = () => {
     if (captchaContainerRef.current && window.turnstile) {
+      console.log("Rendering captcha in container");
+      
       // Reset any existing widget
       if (captchaWidgetId.current) {
+        console.log("Resetting existing captcha widget");
         window.turnstile.reset(captchaWidgetId.current);
+        setCaptchaToken("");
       }
       
       // Render new widget
-      captchaWidgetId.current = window.turnstile.render(captchaContainerRef.current, {
-        sitekey: '0x4AAAAAAAMQBljiQn2VdT3W',  // Replace with your Turnstile site key
-        callback: (token: string) => {
-          console.log("Captcha verified:", token);
-          setCaptchaToken(token);
-        },
-        'theme': 'light',
-        'refresh-expired': 'auto'
-      });
+      try {
+        captchaWidgetId.current = window.turnstile.render(captchaContainerRef.current, {
+          sitekey: '0x4AAAAAAAMQBljiQn2VdT3W',  // Using the provided site key
+          callback: (token: string) => {
+            console.log("Captcha verified:", token.substring(0, 10) + "...");
+            setCaptchaToken(token);
+          },
+          'theme': 'light',
+          'refresh-expired': 'auto'
+        });
+        console.log("Captcha widget rendered with ID:", captchaWidgetId.current);
+      } catch (error) {
+        console.error("Error rendering captcha:", error);
+      }
+    } else {
+      console.warn("Cannot render captcha - container or turnstile not available");
     }
   };
 
@@ -118,6 +141,7 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
     
     try {
       console.log("Sending OTP to email:", email);
+      console.log("With captcha token:", captchaToken.substring(0, 10) + "...");
       
       const { error } = await signInWithOtp(email, captchaToken);
       
@@ -203,7 +227,14 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
             
             {/* Captcha Container */}
             <div className="flex justify-center my-4">
-              <div ref={captchaContainerRef}></div>
+              <div 
+                ref={captchaContainerRef} 
+                className="min-h-[65px] flex items-center justify-center"
+              >
+                {!window.turnstile && (
+                  <div className="text-sm text-muted-foreground">Loading captcha...</div>
+                )}
+              </div>
             </div>
             
             <Button 

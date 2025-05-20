@@ -35,6 +35,7 @@ const OTPVerification = ({ email, captchaToken: initialCaptchaToken, onVerificat
   useEffect(() => {
     // If turnstile is already loaded, render the captcha
     if (window.turnstile && captchaContainerRef.current) {
+      console.log("Rendering resend captcha");
       renderCaptcha();
     }
 
@@ -54,15 +55,22 @@ const OTPVerification = ({ email, captchaToken: initialCaptchaToken, onVerificat
       }
       
       // Render new widget
-      captchaWidgetId.current = window.turnstile.render(captchaContainerRef.current, {
-        sitekey: '0x4AAAAAAAMQBljiQn2VdT3W',  // Replace with your Turnstile site key
-        callback: (token: string) => {
-          console.log("Resend captcha verified:", token);
-          setNewCaptchaToken(token);
-        },
-        'theme': 'light',
-        'refresh-expired': 'auto'
-      });
+      try {
+        captchaWidgetId.current = window.turnstile.render(captchaContainerRef.current, {
+          sitekey: '0x4AAAAAAAMQBljiQn2VdT3W',  // Using the provided site key
+          callback: (token: string) => {
+            console.log("Resend captcha verified:", token.substring(0, 10) + "...");
+            setNewCaptchaToken(token);
+          },
+          'theme': 'light',
+          'refresh-expired': 'auto'
+        });
+        console.log("Resend captcha widget rendered with ID:", captchaWidgetId.current);
+      } catch (error) {
+        console.error("Error rendering resend captcha:", error);
+      }
+    } else {
+      console.warn("Cannot render resend captcha - container or turnstile not available");
     }
   };
 
@@ -79,6 +87,7 @@ const OTPVerification = ({ email, captchaToken: initialCaptchaToken, onVerificat
     setIsResending(true);
     try {
       console.log("Resending OTP to email:", email);
+      console.log("With captcha token:", newCaptchaToken.substring(0, 10) + "...");
       
       const { error } = await signInWithOtp(email, newCaptchaToken);
       
@@ -218,7 +227,14 @@ const OTPVerification = ({ email, captchaToken: initialCaptchaToken, onVerificat
         
         {/* Captcha Container for Resend */}
         <div className="flex justify-center my-4">
-          <div ref={captchaContainerRef}></div>
+          <div 
+            ref={captchaContainerRef} 
+            className="min-h-[65px] flex items-center justify-center"
+          >
+            {!window.turnstile && (
+              <div className="text-sm text-muted-foreground">Loading captcha...</div>
+            )}
+          </div>
         </div>
         
         <Button

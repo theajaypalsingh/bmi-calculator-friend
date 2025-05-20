@@ -50,10 +50,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setUser(data.session?.user ?? null);
   };
 
-  // Updated to include the captcha token
   const signInWithOtp = async (email: string, captchaToken: string) => {
     const redirectTo = `${window.location.origin}`;
     console.log('Sending OTP to:', email);
+    console.log('Using captcha token:', captchaToken ? 'Token provided' : 'No token provided');
+    
+    if (!captchaToken) {
+      console.error("No captcha token provided");
+      return { error: new Error("Captcha verification required") };
+    }
     
     try {
       // Include captcha token in the request
