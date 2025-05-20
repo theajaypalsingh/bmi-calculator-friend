@@ -73,17 +73,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const signInWithOtp = async (email: string) => {
-    // Get the current URL (without hash or search params)
-    const url = new URL(window.location.href);
-    const baseUrl = `${url.protocol}//${url.host}`;
-    console.log('Current base URL for redirect:', baseUrl);
+    // Get the current origin (protocol + hostname + port)
+    const origin = window.location.origin;
+    console.log('Using redirect URL:', origin);
     
     try {
       const { error } = await supabase.auth.signInWithOtp({
         email,
         options: {
           shouldCreateUser: true,
-          emailRedirectTo: baseUrl
+          emailRedirectTo: origin
         }
       });
       
