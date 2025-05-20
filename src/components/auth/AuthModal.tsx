@@ -43,8 +43,15 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
   useEffect(() => {
     if (!isOpen) return;
     
-    // Add Turnstile script if it doesn't exist
+    // Check if Turnstile script already exists or is loaded
+    if (window.turnstile) {
+      console.log("Turnstile already loaded in window");
+      setIsTurnstileLoaded(true);
+      return;
+    }
+    
     if (!document.querySelector('script[src*="turnstile"]')) {
+      console.log("Adding Turnstile script");
       const script = document.createElement('script');
       script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js";
       script.async = true;
@@ -58,55 +65,64 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
       };
       document.head.appendChild(script);
     } else {
+      console.log("Turnstile script already in DOM");
       setIsTurnstileLoaded(true);
     }
   }, [isOpen]);
 
   // Render Turnstile widget when script is loaded
   useEffect(() => {
-    if (!isOpen || !captchaRef.current || !isTurnstileLoaded || showOTP) return;
+    if (!isOpen || !captchaRef.current || showOTP) return;
+    
+    console.log("isTurnstileLoaded:", isTurnstileLoaded);
+    console.log("window.turnstile available:", typeof window.turnstile !== 'undefined');
+    
+    // If turnstile is not loaded yet, check again after a delay
+    if (!isTurnstileLoaded || typeof window.turnstile === 'undefined') {
+      console.log("Turnstile not fully loaded yet, will check again");
+      const checkAgain = setTimeout(() => {
+        if (typeof window.turnstile !== 'undefined') {
+          console.log("Turnstile now available in delayed check");
+          setIsTurnstileLoaded(true);
+        }
+      }, 500);
+      
+      return () => clearTimeout(checkAgain);
+    }
     
     console.log("Attempting to render Turnstile widget");
     
     try {
       // Reset any existing widget
       if (widgetId && window.turnstile) {
+        console.log("Resetting existing widget:", widgetId);
         window.turnstile.reset(widgetId);
       }
       
-      // Render new widget if turnstile is available
-      if (window.turnstile) {
-        const id = window.turnstile.render(captchaRef.current, {
-          sitekey: "0x4AAAAAAACvyDzP2OvELbuz", // Supabase's sitekey for Turnstile
-          callback: (token: string) => {
-            console.log("CAPTCHA token received:", token.substring(0, 10) + "...");
-            setTurnstileToken(token);
-          },
-          "expired-callback": () => {
-            console.log("CAPTCHA token expired");
-            setTurnstileToken(null);
-          },
-          "error-callback": () => {
-            console.log("CAPTCHA error occurred");
-            setTurnstileToken(null);
-          }
-        });
-        
-        console.log("Turnstile widget rendered with ID:", id);
-        setWidgetId(id);
-      } else {
-        console.error("Turnstile not available yet");
-        // Try again after a short delay
-        const timeout = setTimeout(() => {
-          setIsTurnstileLoaded(window.turnstile !== undefined);
-        }, 1000);
-        
-        return () => clearTimeout(timeout);
-      }
+      // Render new widget
+      console.log("Rendering new Turnstile widget");
+      const id = window.turnstile.render(captchaRef.current, {
+        sitekey: "0x4AAAAAAACvyDzP2OvELbuz", // Supabase's sitekey for Turnstile
+        callback: (token: string) => {
+          console.log("CAPTCHA token received:", token.substring(0, 10) + "...");
+          setTurnstileToken(token);
+        },
+        "expired-callback": () => {
+          console.log("CAPTCHA token expired");
+          setTurnstileToken(null);
+        },
+        "error-callback": (error: any) => {
+          console.log("CAPTCHA error occurred:", error);
+          setTurnstileToken(null);
+        }
+      });
+      
+      console.log("Turnstile widget rendered with ID:", id);
+      setWidgetId(id);
     } catch (error) {
       console.error("Error rendering Turnstile widget:", error);
     }
-  }, [isOpen, captchaRef.current, showOTP, widgetId, isTurnstileLoaded]);
+  }, [isOpen, captchaRef.current, showOTP, isTurnstileLoaded]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -179,7 +195,13 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
     onClose();
   };
 
+  // Debug info for button state
   const isValidEmail = email.trim() && email.includes('@');
+  const canSubmit = isValidEmail && turnstileToken !== null;
+  
+  console.log("Email valid:", isValidEmail);
+  console.log("CAPTCHA token:", turnstileToken ? "Present" : "Not present");
+  console.log("Button can submit:", canSubmit);
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -215,14 +237,20 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
             </div>
             
             {/* Turnstile CAPTCHA container */}
-            <div className="flex justify-center">
+            <div className="flex justify-center mb-2">
               <div ref={captchaRef} className="turnstile-container"></div>
+            </div>
+            
+            {/* Debug info (temporary) */}
+            <div className="text-xs text-gray-500">
+              <p>Email valid: {isValidEmail ? "Yes" : "No"}</p>
+              <p>CAPTCHA completed: {turnstileToken ? "Yes" : "No"}</p>
             </div>
             
             <Button 
               type="submit" 
               className="w-full" 
-              disabled={isSubmitting || !turnstileToken || !isValidEmail}
+              disabled={!canSubmit || isSubmitting}
             >
               {isSubmitting ? "Sending..." : "Send OTP"}
             </Button>
