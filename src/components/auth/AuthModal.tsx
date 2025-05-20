@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { useAuth } from "@/context/AuthContext";
 import { toast } from "@/hooks/use-toast";
 import OTPVerification from "./OTPVerification";
+import { supabase } from "@/integrations/supabase/client";
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -17,7 +18,7 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showOTP, setShowOTP] = useState(false);
   
-  const { signIn, user } = useAuth();
+  const { user } = useAuth();
 
   // If user is already logged in, close the modal
   if (user && isOpen) {
@@ -40,14 +41,32 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
     setIsSubmitting(true);
     
     try {
-      const { error } = await signIn(email);
+      // Create auth URL with current origin for redirection
+      const redirectTo = `${window.location.origin}`;
+      
+      // Sign in with OTP via email
+      const { error } = await supabase.auth.signInWithOtp({
+        email,
+        options: {
+          shouldCreateUser: true,
+          emailRedirectTo: redirectTo,
+        }
+      });
       
       if (error) {
-        toast({
-          title: "Error",
-          description: error.message || "Failed to send OTP",
-          variant: "destructive",
-        });
+        if (error.message.includes('captcha')) {
+          toast({
+            title: "CAPTCHA Required",
+            description: "Please enable CAPTCHA in your Supabase Authentication settings or try again later.",
+            variant: "destructive",
+          });
+        } else {
+          toast({
+            title: "Error",
+            description: error.message || "Failed to send OTP",
+            variant: "destructive",
+          });
+        }
         setIsSubmitting(false);
         return;
       }
@@ -115,6 +134,9 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
             <p className="text-center text-sm text-muted-foreground">
               We'll send you a verification code to sign in instantly.
             </p>
+            <div className="text-center text-sm text-amber-600">
+              Note: If you're experiencing issues with verification, please check your spam folder for the OTP email.
+            </div>
           </form>
         )}
       </DialogContent>

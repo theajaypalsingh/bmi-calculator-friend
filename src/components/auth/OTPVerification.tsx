@@ -15,20 +15,40 @@ const OTPVerification = ({ email, onVerificationComplete }: OTPVerificationProps
   const [otp, setOtp] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isResending, setIsResending] = useState(false);
-  const { signIn, refreshSession } = useAuth();
+  const { refreshSession } = useAuth();
 
   const handleResend = async () => {
     setIsResending(true);
     try {
-      const { error } = await signIn(email);
+      // Create auth URL with current origin for redirection
+      const redirectTo = `${window.location.origin}`;
+      
+      // Resend OTP
+      const { error } = await supabase.auth.signInWithOtp({
+        email,
+        options: {
+          shouldCreateUser: true,
+          emailRedirectTo: redirectTo,
+        }
+      });
+      
       if (error) {
-        toast({
-          title: "Error",
-          description: error.message || "Failed to resend OTP",
-          variant: "destructive",
-        });
+        if (error.message.includes('captcha')) {
+          toast({
+            title: "CAPTCHA Required",
+            description: "Please enable CAPTCHA in your Supabase Authentication settings or try again later.",
+            variant: "destructive",
+          });
+        } else {
+          toast({
+            title: "Error",
+            description: error.message || "Failed to resend OTP",
+            variant: "destructive",
+          });
+        }
         return;
       }
+      
       toast({
         title: "Success",
         description: "Check your email for the new OTP code",
@@ -114,7 +134,7 @@ const OTPVerification = ({ email, onVerificationComplete }: OTPVerificationProps
           onChange={setOtp}
           render={({ slots }) => (
             <InputOTPGroup>
-              {slots.map((slot, index) => (
+              {slots && slots.map((slot, index) => (
                 <InputOTPSlot key={index} {...slot} index={index} />
               ))}
             </InputOTPGroup>
@@ -139,6 +159,10 @@ const OTPVerification = ({ email, onVerificationComplete }: OTPVerificationProps
         >
           {isResending ? "Sending..." : "Resend Code"}
         </Button>
+      </div>
+      
+      <div className="text-center text-sm text-amber-600">
+        Note: If you don't receive the email, please check your spam folder.
       </div>
     </div>
   );
