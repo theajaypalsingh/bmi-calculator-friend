@@ -32,10 +32,11 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
   const { user, signInWithOtp } = useAuth();
 
   // If user is already logged in, close the modal
-  if (user && isOpen) {
-    onClose();
-    return null;
-  }
+  useEffect(() => {
+    if (user && isOpen) {
+      onClose();
+    }
+  }, [user, isOpen, onClose]);
 
   // Load Turnstile script
   useEffect(() => {
@@ -66,11 +67,19 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
         
         // Render new widget
         const id = window.turnstile.render(captchaRef.current, {
-          sitekey: "0x4AAAAAAACvyDzP2OvELbuz", // Use Supabase's actual sitekey for Turnstile
+          sitekey: "0x4AAAAAAACvyDzP2OvELbuz", // Supabase's sitekey for Turnstile
           callback: (token: string) => {
             console.log("CAPTCHA token received");
             setTurnstileToken(token);
           },
+          "expired-callback": () => {
+            console.log("CAPTCHA token expired");
+            setTurnstileToken(null);
+          },
+          "error-callback": () => {
+            console.log("CAPTCHA error occurred");
+            setTurnstileToken(null);
+          }
         });
         
         setWidgetId(id);
@@ -78,7 +87,7 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
     }, 100);
 
     return () => clearInterval(interval);
-  }, [isOpen, captchaRef.current, showOTP]);
+  }, [isOpen, captchaRef.current, showOTP, widgetId]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -150,6 +159,8 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
     onClose();
   };
 
+  const isValidEmail = email.trim() && email.includes('@');
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[425px]">
@@ -191,7 +202,7 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
             <Button 
               type="submit" 
               className="w-full" 
-              disabled={isSubmitting || !turnstileToken}
+              disabled={isSubmitting || !turnstileToken || !isValidEmail}
             >
               {isSubmitting ? "Sending..." : "Send OTP"}
             </Button>

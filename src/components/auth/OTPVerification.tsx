@@ -47,11 +47,19 @@ const OTPVerification = ({ email, onVerificationComplete }: OTPVerificationProps
         
         // Render new widget with Supabase's sitekey
         const id = window.turnstile.render(captchaRef.current, {
-          sitekey: "0x4AAAAAAACvyDzP2OvELbuz", // Use Supabase's actual sitekey for Turnstile
+          sitekey: "0x4AAAAAAACvyDzP2OvELbuz", // Supabase's sitekey for Turnstile
           callback: (token: string) => {
             console.log("CAPTCHA token received for resend");
             setTurnstileToken(token);
           },
+          "expired-callback": () => {
+            console.log("CAPTCHA token expired");
+            setTurnstileToken(null);
+          },
+          "error-callback": () => {
+            console.log("CAPTCHA error occurred");
+            setTurnstileToken(null);
+          }
         });
         
         setWidgetId(id);
@@ -59,7 +67,7 @@ const OTPVerification = ({ email, onVerificationComplete }: OTPVerificationProps
     }, 100);
 
     return () => clearInterval(interval);
-  }, [captchaRef.current]);
+  }, [captchaRef.current, widgetId]);
 
   const handleResend = async () => {
     if (!turnstileToken) {
