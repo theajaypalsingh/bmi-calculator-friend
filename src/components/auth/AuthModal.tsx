@@ -6,7 +6,6 @@ import { Input } from "@/components/ui/input";
 import { useAuth } from "@/context/AuthContext";
 import { toast } from "@/hooks/use-toast";
 import OTPVerification from "./OTPVerification";
-import { supabase } from "@/integrations/supabase/client";
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -30,7 +29,7 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
   const [widgetId, setWidgetId] = useState<string | null>(null);
   const captchaRef = useRef<HTMLDivElement>(null);
   
-  const { user } = useAuth();
+  const { user, signInWithOtp } = useAuth();
 
   // If user is already logged in, close the modal
   if (user && isOpen) {
@@ -67,8 +66,9 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
         
         // Render new widget
         const id = window.turnstile.render(captchaRef.current, {
-          sitekey: "1x00000000000000000000AA", // This is a placeholder - Supabase handles the actual sitekey
+          sitekey: "0x4AAAAAAACvyDzP2OvELbuz", // Use Supabase's actual sitekey for Turnstile
           callback: (token: string) => {
+            console.log("CAPTCHA token received");
             setTurnstileToken(token);
           },
         });
@@ -104,18 +104,7 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
     setIsSubmitting(true);
     
     try {
-      // Create auth URL with current origin for redirection
-      const redirectTo = `${window.location.origin}`;
-      
-      // Sign in with OTP via email, including the CAPTCHA token
-      const { error } = await supabase.auth.signInWithOtp({
-        email,
-        options: {
-          shouldCreateUser: true,
-          emailRedirectTo: redirectTo,
-          captchaToken: turnstileToken
-        }
-      });
+      const { error } = await signInWithOtp(email, turnstileToken);
       
       if (error) {
         toast({

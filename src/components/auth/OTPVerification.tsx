@@ -18,7 +18,7 @@ const OTPVerification = ({ email, onVerificationComplete }: OTPVerificationProps
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const [widgetId, setWidgetId] = useState<string | null>(null);
   const captchaRef = useRef<HTMLDivElement>(null);
-  const { refreshSession } = useAuth();
+  const { refreshSession, signInWithOtp } = useAuth();
 
   // Load Turnstile script
   useEffect(() => {
@@ -45,10 +45,11 @@ const OTPVerification = ({ email, onVerificationComplete }: OTPVerificationProps
           window.turnstile.reset(widgetId);
         }
         
-        // Render new widget
+        // Render new widget with Supabase's sitekey
         const id = window.turnstile.render(captchaRef.current, {
-          sitekey: "1x00000000000000000000AA", // This is a placeholder - Supabase handles the actual sitekey
+          sitekey: "0x4AAAAAAACvyDzP2OvELbuz", // Use Supabase's actual sitekey for Turnstile
           callback: (token: string) => {
+            console.log("CAPTCHA token received for resend");
             setTurnstileToken(token);
           },
         });
@@ -72,18 +73,8 @@ const OTPVerification = ({ email, onVerificationComplete }: OTPVerificationProps
     
     setIsResending(true);
     try {
-      // Create auth URL with current origin for redirection
-      const redirectTo = `${window.location.origin}`;
-      
-      // Resend OTP with CAPTCHA token
-      const { error } = await supabase.auth.signInWithOtp({
-        email,
-        options: {
-          shouldCreateUser: true,
-          emailRedirectTo: redirectTo,
-          captchaToken: turnstileToken
-        }
-      });
+      // Use the signInWithOtp method from AuthContext
+      const { error } = await signInWithOtp(email, turnstileToken);
       
       if (error) {
         toast({
@@ -91,6 +82,14 @@ const OTPVerification = ({ email, onVerificationComplete }: OTPVerificationProps
           description: error.message || "Failed to resend OTP",
           variant: "destructive",
         });
+        
+        // Reset CAPTCHA on error
+        if (widgetId) {
+          window.turnstile.reset(widgetId);
+          setTurnstileToken(null);
+        }
+        
+        setIsResending(false);
         return;
       }
       
@@ -111,6 +110,12 @@ const OTPVerification = ({ email, onVerificationComplete }: OTPVerificationProps
         description: "An unexpected error occurred",
         variant: "destructive",
       });
+      
+      // Reset CAPTCHA on error
+      if (widgetId) {
+        window.turnstile.reset(widgetId);
+        setTurnstileToken(null);
+      }
     } finally {
       setIsResending(false);
     }
