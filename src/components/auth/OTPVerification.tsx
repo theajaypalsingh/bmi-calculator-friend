@@ -70,6 +70,7 @@ const OTPVerification = ({ email, onVerificationComplete }: OTPVerificationProps
           description: error.message || "Invalid OTP code",
           variant: "destructive",
         });
+        setIsSubmitting(false);
         return;
       }
 

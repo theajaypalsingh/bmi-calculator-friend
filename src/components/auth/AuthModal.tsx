@@ -22,6 +22,7 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
   // If user is already logged in, close the modal
   if (user && isOpen) {
     onClose();
+    return null;
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -47,6 +48,7 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
           description: error.message || "Failed to send OTP",
           variant: "destructive",
         });
+        setIsSubmitting(false);
         return;
       }
       
