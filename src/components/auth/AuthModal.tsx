@@ -41,11 +41,10 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
     setIsSubmitting(true);
     
     try {
-      // We'll use a dummy token since the Turnstile implementation is causing issues
-      const dummyToken = "bypass_captcha_for_development";
-      console.log("Sending OTP with dummy token");
+      // No captcha tokens needed anymore - simplified flow
+      console.log("Sending OTP to email:", email);
       
-      const { error } = await signInWithOtp(email, dummyToken);
+      const { error } = await signInWithOtp(email);
       
       if (error) {
         toast({

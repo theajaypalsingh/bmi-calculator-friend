@@ -9,7 +9,7 @@ interface AuthContextType {
   loading: boolean;
   signOut: () => Promise<void>;
   refreshSession: () => Promise<void>;
-  signInWithOtp: (email: string, captchaToken: string) => Promise<{ error: Error | null }>;
+  signInWithOtp: (email: string) => Promise<{ error: Error | null }>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -50,27 +50,19 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setUser(data.session?.user ?? null);
   };
 
-  // Modified to work with or without a captcha token
-  const signInWithOtp = async (email: string, captchaToken: string) => {
+  // Modified to completely remove captcha requirement for development
+  const signInWithOtp = async (email: string) => {
     const redirectTo = `${window.location.origin}`;
     console.log('Sending OTP to:', email);
     
     try {
-      // For development purposes, we'll bypass the captcha requirement
-      const options = {
-        shouldCreateUser: true,
-        emailRedirectTo: redirectTo
-      };
-      
-      // Only add captchaToken if it's not our bypass token
-      if (captchaToken !== "bypass_captcha_for_development") {
-        // @ts-ignore - TypeScript doesn't know about captchaToken
-        options.captchaToken = captchaToken;
-      }
-      
+      // For development purposes, we'll bypass all captcha requirements
       const { error } = await supabase.auth.signInWithOtp({
         email,
-        options
+        options: {
+          shouldCreateUser: true,
+          emailRedirectTo: redirectTo
+        }
       });
       
       if (error) {

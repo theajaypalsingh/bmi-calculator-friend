@@ -1,5 +1,5 @@
 
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/AuthContext";
 import { toast } from "@/hooks/use-toast";
@@ -15,74 +15,15 @@ const OTPVerification = ({ email, onVerificationComplete }: OTPVerificationProps
   const [otp, setOtp] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isResending, setIsResending] = useState(false);
-  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
-  const [widgetId, setWidgetId] = useState<string | null>(null);
-  const captchaRef = useRef<HTMLDivElement>(null);
   const { refreshSession, signInWithOtp } = useAuth();
 
-  // Load Turnstile script
-  useEffect(() => {
-    // Add Turnstile script if it doesn't exist
-    if (!document.querySelector('script[src*="turnstile"]')) {
-      const script = document.createElement('script');
-      script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js";
-      script.async = true;
-      script.defer = true;
-      document.head.appendChild(script);
-    }
-  }, []);
-
-  // Render Turnstile widget when script is loaded
-  useEffect(() => {
-    if (!captchaRef.current) return;
-
-    const interval = setInterval(() => {
-      if (window.turnstile && captchaRef.current) {
-        clearInterval(interval);
-        
-        // Reset any existing widget
-        if (widgetId) {
-          window.turnstile.reset(widgetId);
-        }
-        
-        // Render new widget with Supabase's sitekey
-        const id = window.turnstile.render(captchaRef.current, {
-          sitekey: "0x4AAAAAAACvyDzP2OvELbuz", // Supabase's sitekey for Turnstile
-          callback: (token: string) => {
-            console.log("CAPTCHA token received for resend");
-            setTurnstileToken(token);
-          },
-          "expired-callback": () => {
-            console.log("CAPTCHA token expired");
-            setTurnstileToken(null);
-          },
-          "error-callback": () => {
-            console.log("CAPTCHA error occurred");
-            setTurnstileToken(null);
-          }
-        });
-        
-        setWidgetId(id);
-      }
-    }, 100);
-
-    return () => clearInterval(interval);
-  }, [captchaRef.current, widgetId]);
-
   const handleResend = async () => {
-    if (!turnstileToken) {
-      toast({
-        title: "CAPTCHA Required",
-        description: "Please complete the CAPTCHA verification to resend the code",
-        variant: "destructive",
-      });
-      return;
-    }
-    
     setIsResending(true);
     try {
-      // Use the signInWithOtp method from AuthContext
-      const { error } = await signInWithOtp(email, turnstileToken);
+      // Simplified resend process without captcha
+      console.log("Resending OTP to email:", email);
+      
+      const { error } = await signInWithOtp(email);
       
       if (error) {
         toast({
@@ -90,21 +31,8 @@ const OTPVerification = ({ email, onVerificationComplete }: OTPVerificationProps
           description: error.message || "Failed to resend OTP",
           variant: "destructive",
         });
-        
-        // Reset CAPTCHA on error
-        if (widgetId) {
-          window.turnstile.reset(widgetId);
-          setTurnstileToken(null);
-        }
-        
         setIsResending(false);
         return;
-      }
-      
-      // Reset the CAPTCHA after successful request
-      if (widgetId) {
-        window.turnstile.reset(widgetId);
-        setTurnstileToken(null);
       }
       
       toast({
@@ -118,12 +46,6 @@ const OTPVerification = ({ email, onVerificationComplete }: OTPVerificationProps
         description: "An unexpected error occurred",
         variant: "destructive",
       });
-      
-      // Reset CAPTCHA on error
-      if (widgetId) {
-        window.turnstile.reset(widgetId);
-        setTurnstileToken(null);
-      }
     } finally {
       setIsResending(false);
     }
@@ -216,18 +138,13 @@ const OTPVerification = ({ email, onVerificationComplete }: OTPVerificationProps
       
       <div className="space-y-4">
         <p className="text-center text-sm text-muted-foreground">
-          Didn't receive the code? Complete the CAPTCHA below to resend.
+          Didn't receive the code? You can request another one.
         </p>
-        
-        {/* Turnstile CAPTCHA container for resend */}
-        <div className="flex justify-center">
-          <div ref={captchaRef} className="turnstile-container"></div>
-        </div>
         
         <Button
           variant="outline"
           onClick={handleResend}
-          disabled={isResending || !turnstileToken}
+          disabled={isResending}
           className="w-full"
         >
           {isResending ? "Sending..." : "Resend Code"}
