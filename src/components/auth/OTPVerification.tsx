@@ -35,8 +35,9 @@ const OTPVerification = ({ email, onVerificationComplete }: OTPVerificationProps
       }
       
       toast({
-        title: "Success",
-        description: "Check your email for the new OTP code",
+        title: "Magic Link Resent",
+        description: "Check your email for the new login link and OTP code",
+        variant: "success",
       });
     } catch (error) {
       console.error("Resend OTP error:", error);
@@ -106,10 +107,13 @@ const OTPVerification = ({ email, onVerificationComplete }: OTPVerificationProps
   return (
     <div className="space-y-4 pt-4">
       <p className="text-center">
-        We've sent a verification code to <strong>{email}</strong>.
+        We've sent a verification email to <strong>{email}</strong>.
       </p>
       <p className="text-center text-sm text-muted-foreground">
-        Check your email and enter the 6-digit code below.
+        Check your email for the magic link to sign in instantly.
+      </p>
+      <p className="text-center text-sm font-medium">
+        Or enter the 6-digit code below:
       </p>
       
       <div className="flex justify-center">
@@ -120,7 +124,7 @@ const OTPVerification = ({ email, onVerificationComplete }: OTPVerificationProps
           render={({ slots }) => (
             <InputOTPGroup>
               {slots && slots.map((slot, index) => (
-                <InputOTPSlot key={index} {...slot} index={index} />
+                <InputOTPSlot key={index} {...slot} />
               ))}
             </InputOTPGroup>
           )}
@@ -137,7 +141,7 @@ const OTPVerification = ({ email, onVerificationComplete }: OTPVerificationProps
       
       <div className="space-y-4">
         <p className="text-center text-sm text-muted-foreground">
-          Didn't receive the code? You can request another one.
+          Didn't receive the email? You can request another one.
         </p>
         
         <Button
@@ -146,7 +150,7 @@ const OTPVerification = ({ email, onVerificationComplete }: OTPVerificationProps
           disabled={isResending}
           className="w-full"
         >
-          {isResending ? "Sending..." : "Resend Code"}
+          {isResending ? "Sending..." : "Resend Magic Link"}
         </Button>
       </div>
       

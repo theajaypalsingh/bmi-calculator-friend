@@ -29,7 +29,29 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }
     );
 
-    // THEN check for existing session
+    // Handle URL hash for magic link authentication
+    const handleHashParams = async () => {
+      const hash = window.location.hash;
+      if (hash && hash.includes('access_token')) {
+        // Clear the hash to prevent issues on page refresh
+        window.location.hash = '';
+        
+        // Get session - Supabase should automatically process the hash params
+        const { data, error } = await supabase.auth.getSession();
+        
+        if (error) {
+          console.error("Error processing authentication:", error);
+        } else if (data?.session) {
+          console.log("Successfully authenticated via magic link");
+          setSession(data.session);
+          setUser(data.session.user);
+        }
+      }
+    };
+
+    // Process hash params AND check for existing session
+    handleHashParams();
+    
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
@@ -51,15 +73,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const signInWithOtp = async (email: string) => {
-    const redirectTo = `${window.location.origin}`;
-    console.log('Sending OTP to:', email);
+    // Get the current URL (without hash or search params)
+    const url = new URL(window.location.href);
+    const baseUrl = `${url.protocol}//${url.host}`;
+    console.log('Current base URL for redirect:', baseUrl);
     
     try {
       const { error } = await supabase.auth.signInWithOtp({
         email,
         options: {
           shouldCreateUser: true,
-          emailRedirectTo: redirectTo
+          emailRedirectTo: baseUrl
         }
       });
       

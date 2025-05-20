@@ -57,8 +57,9 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
       
       setShowOTP(true);
       toast({
-        title: "OTP Sent",
-        description: "Check your email for the verification code",
+        title: "Magic Link Sent",
+        description: "Check your email for the login link. You can also use the OTP sent to your email.",
+        variant: "success",
       });
     } catch (error) {
       console.error("Sign in error:", error);
@@ -88,8 +89,8 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
           </DialogTitle>
           <DialogDescription>
             {showOTP 
-              ? "Enter the 6-digit code sent to your email"
-              : "We'll send you a verification code to your email"
+              ? "Check your email for the magic link or enter the 6-digit code sent to your email"
+              : "We'll send you a verification link and code to your email"
             }
           </DialogDescription>
         </DialogHeader>
@@ -117,13 +118,13 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
               className="w-full" 
               disabled={!isValidEmail || isSubmitting}
             >
-              {isSubmitting ? "Sending..." : "Send OTP"}
+              {isSubmitting ? "Sending..." : "Send Magic Link"}
             </Button>
             <p className="text-center text-sm text-muted-foreground">
-              We'll send you a verification code to sign in instantly.
+              We'll send you a magic link and verification code to sign in instantly.
             </p>
             <div className="text-center text-sm text-amber-600">
-              Note: If you're experiencing issues with verification, please check your spam folder for the OTP email.
+              Note: If you're experiencing issues with verification, please check your spam folder for the email.
             </div>
           </form>
         )}
