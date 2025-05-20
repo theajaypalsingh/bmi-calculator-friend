@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/AuthContext";
 import { toast } from "@/hooks/use-toast";
@@ -15,38 +15,89 @@ const OTPVerification = ({ email, onVerificationComplete }: OTPVerificationProps
   const [otp, setOtp] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isResending, setIsResending] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  const [widgetId, setWidgetId] = useState<string | null>(null);
+  const captchaRef = useRef<HTMLDivElement>(null);
   const { refreshSession } = useAuth();
 
+  // Load Turnstile script
+  useEffect(() => {
+    // Add Turnstile script if it doesn't exist
+    if (!document.querySelector('script[src*="turnstile"]')) {
+      const script = document.createElement('script');
+      script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js";
+      script.async = true;
+      script.defer = true;
+      document.head.appendChild(script);
+    }
+  }, []);
+
+  // Render Turnstile widget when script is loaded
+  useEffect(() => {
+    if (!captchaRef.current) return;
+
+    const interval = setInterval(() => {
+      if (window.turnstile && captchaRef.current) {
+        clearInterval(interval);
+        
+        // Reset any existing widget
+        if (widgetId) {
+          window.turnstile.reset(widgetId);
+        }
+        
+        // Render new widget
+        const id = window.turnstile.render(captchaRef.current, {
+          sitekey: "1x00000000000000000000AA", // This is a placeholder - Supabase handles the actual sitekey
+          callback: (token: string) => {
+            setTurnstileToken(token);
+          },
+        });
+        
+        setWidgetId(id);
+      }
+    }, 100);
+
+    return () => clearInterval(interval);
+  }, [captchaRef.current]);
+
   const handleResend = async () => {
+    if (!turnstileToken) {
+      toast({
+        title: "CAPTCHA Required",
+        description: "Please complete the CAPTCHA verification to resend the code",
+        variant: "destructive",
+      });
+      return;
+    }
+    
     setIsResending(true);
     try {
       // Create auth URL with current origin for redirection
       const redirectTo = `${window.location.origin}`;
       
-      // Resend OTP
+      // Resend OTP with CAPTCHA token
       const { error } = await supabase.auth.signInWithOtp({
         email,
         options: {
           shouldCreateUser: true,
           emailRedirectTo: redirectTo,
+          captchaToken: turnstileToken
         }
       });
       
       if (error) {
-        if (error.message.includes('captcha')) {
-          toast({
-            title: "CAPTCHA Required",
-            description: "Please enable CAPTCHA in your Supabase Authentication settings or try again later.",
-            variant: "destructive",
-          });
-        } else {
-          toast({
-            title: "Error",
-            description: error.message || "Failed to resend OTP",
-            variant: "destructive",
-          });
-        }
+        toast({
+          title: "Error",
+          description: error.message || "Failed to resend OTP",
+          variant: "destructive",
+        });
         return;
+      }
+      
+      // Reset the CAPTCHA after successful request
+      if (widgetId) {
+        window.turnstile.reset(widgetId);
+        setTurnstileToken(null);
       }
       
       toast({
@@ -142,19 +193,28 @@ const OTPVerification = ({ email, onVerificationComplete }: OTPVerificationProps
         />
       </div>
 
-      <div className="flex flex-col gap-2">
-        <Button
-          onClick={handleVerify}
-          disabled={isSubmitting || otp.length !== 6}
-          className="w-full"
-        >
-          {isSubmitting ? "Verifying..." : "Verify & Sign In"}
-        </Button>
+      <Button
+        onClick={handleVerify}
+        disabled={isSubmitting || otp.length !== 6}
+        className="w-full"
+      >
+        {isSubmitting ? "Verifying..." : "Verify & Sign In"}
+      </Button>
+      
+      <div className="space-y-4">
+        <p className="text-center text-sm text-muted-foreground">
+          Didn't receive the code? Complete the CAPTCHA below to resend.
+        </p>
+        
+        {/* Turnstile CAPTCHA container for resend */}
+        <div className="flex justify-center">
+          <div ref={captchaRef} className="turnstile-container"></div>
+        </div>
         
         <Button
           variant="outline"
           onClick={handleResend}
-          disabled={isResending}
+          disabled={isResending || !turnstileToken}
           className="w-full"
         >
           {isResending ? "Sending..." : "Resend Code"}

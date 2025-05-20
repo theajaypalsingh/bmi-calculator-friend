@@ -3,12 +3,14 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { Session, User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 
+// Update the options type to include captchaToken
 interface AuthContextType {
   user: User | null;
   session: Session | null;
   loading: boolean;
   signOut: () => Promise<void>;
   refreshSession: () => Promise<void>;
+  signInWithOtp: (email: string, captchaToken: string) => Promise<{ error: Error | null }>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -49,8 +51,36 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setUser(data.session?.user ?? null);
   };
 
+  // Add a helper function to sign in with OTP and handle CAPTCHA
+  const signInWithOtp = async (email: string, captchaToken: string) => {
+    const redirectTo = `${window.location.origin}`;
+    
+    try {
+      const { error } = await supabase.auth.signInWithOtp({
+        email,
+        options: {
+          shouldCreateUser: true,
+          emailRedirectTo: redirectTo,
+          captchaToken
+        }
+      });
+      
+      return { error: error };
+    } catch (error) {
+      console.error("Sign in error:", error);
+      return { error: error as Error };
+    }
+  };
+
   return (
-    <AuthContext.Provider value={{ user, session, loading, signOut, refreshSession }}>
+    <AuthContext.Provider value={{ 
+      user, 
+      session, 
+      loading, 
+      signOut, 
+      refreshSession,
+      signInWithOtp
+    }}>
       {children}
     </AuthContext.Provider>
   );

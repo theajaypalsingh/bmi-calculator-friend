@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,10 +13,22 @@ interface AuthModalProps {
   onClose: () => void;
 }
 
+declare global {
+  interface Window {
+    turnstile: {
+      render: (container: string | HTMLElement, config: any) => string;
+      reset: (widgetId: string) => void;
+    };
+  }
+}
+
 const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
   const [email, setEmail] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showOTP, setShowOTP] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  const [widgetId, setWidgetId] = useState<string | null>(null);
+  const captchaRef = useRef<HTMLDivElement>(null);
   
   const { user } = useAuth();
 
@@ -25,6 +37,48 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
     onClose();
     return null;
   }
+
+  // Load Turnstile script
+  useEffect(() => {
+    if (!isOpen) return;
+    
+    // Add Turnstile script if it doesn't exist
+    if (!document.querySelector('script[src*="turnstile"]')) {
+      const script = document.createElement('script');
+      script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js";
+      script.async = true;
+      script.defer = true;
+      document.head.appendChild(script);
+    }
+  }, [isOpen]);
+
+  // Render Turnstile widget when script is loaded
+  useEffect(() => {
+    if (!isOpen || !captchaRef.current || showOTP) return;
+
+    const interval = setInterval(() => {
+      if (window.turnstile && captchaRef.current) {
+        clearInterval(interval);
+        
+        // Reset any existing widget
+        if (widgetId) {
+          window.turnstile.reset(widgetId);
+        }
+        
+        // Render new widget
+        const id = window.turnstile.render(captchaRef.current, {
+          sitekey: "1x00000000000000000000AA", // This is a placeholder - Supabase handles the actual sitekey
+          callback: (token: string) => {
+            setTurnstileToken(token);
+          },
+        });
+        
+        setWidgetId(id);
+      }
+    }, 100);
+
+    return () => clearInterval(interval);
+  }, [isOpen, captchaRef.current, showOTP]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,35 +92,44 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
       return;
     }
     
+    if (!turnstileToken) {
+      toast({
+        title: "CAPTCHA Required",
+        description: "Please complete the CAPTCHA verification",
+        variant: "destructive",
+      });
+      return;
+    }
+    
     setIsSubmitting(true);
     
     try {
       // Create auth URL with current origin for redirection
       const redirectTo = `${window.location.origin}`;
       
-      // Sign in with OTP via email
+      // Sign in with OTP via email, including the CAPTCHA token
       const { error } = await supabase.auth.signInWithOtp({
         email,
         options: {
           shouldCreateUser: true,
           emailRedirectTo: redirectTo,
+          captchaToken: turnstileToken
         }
       });
       
       if (error) {
-        if (error.message.includes('captcha')) {
-          toast({
-            title: "CAPTCHA Required",
-            description: "Please enable CAPTCHA in your Supabase Authentication settings or try again later.",
-            variant: "destructive",
-          });
-        } else {
-          toast({
-            title: "Error",
-            description: error.message || "Failed to send OTP",
-            variant: "destructive",
-          });
+        toast({
+          title: "Error",
+          description: error.message || "Failed to send OTP",
+          variant: "destructive",
+        });
+        
+        // Reset CAPTCHA on error
+        if (widgetId) {
+          window.turnstile.reset(widgetId);
+          setTurnstileToken(null);
         }
+        
         setIsSubmitting(false);
         return;
       }
@@ -83,6 +146,12 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
         description: "An unexpected error occurred",
         variant: "destructive",
       });
+      
+      // Reset CAPTCHA on error
+      if (widgetId) {
+        window.turnstile.reset(widgetId);
+        setTurnstileToken(null);
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -124,10 +193,16 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
                 disabled={isSubmitting}
               />
             </div>
+            
+            {/* Turnstile CAPTCHA container */}
+            <div className="flex justify-center">
+              <div ref={captchaRef} className="turnstile-container"></div>
+            </div>
+            
             <Button 
               type="submit" 
               className="w-full" 
-              disabled={isSubmitting}
+              disabled={isSubmitting || !turnstileToken}
             >
               {isSubmitting ? "Sending..." : "Send OTP"}
             </Button>
