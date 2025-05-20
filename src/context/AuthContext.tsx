@@ -50,13 +50,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setUser(data.session?.user ?? null);
   };
 
-  // Modified to completely remove captcha requirement for development
+  // Simplified method that only uses email, no captcha
   const signInWithOtp = async (email: string) => {
     const redirectTo = `${window.location.origin}`;
     console.log('Sending OTP to:', email);
     
     try {
-      // For development purposes, we'll bypass all captcha requirements
+      // Direct API call without captcha
       const { error } = await supabase.auth.signInWithOtp({
         email,
         options: {
