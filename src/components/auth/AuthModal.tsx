@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/context/AuthContext";
@@ -17,7 +17,12 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showOTP, setShowOTP] = useState(false);
   
-  const { signIn } = useAuth();
+  const { signIn, user } = useAuth();
+
+  // If user is already logged in, close the modal
+  if (user && isOpen) {
+    onClose();
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -39,7 +44,7 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
       if (error) {
         toast({
           title: "Error",
-          description: error.message || "Failed to sign in",
+          description: error.message || "Failed to send OTP",
           variant: "destructive",
         });
         return;
@@ -47,8 +52,8 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
       
       setShowOTP(true);
       toast({
-        title: "Success",
-        description: "Check your email for the login link",
+        title: "OTP Sent",
+        description: "Check your email for the verification code",
       });
     } catch (error) {
       console.error("Sign in error:", error);
@@ -62,17 +67,30 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
     }
   };
 
+  const handleVerificationComplete = () => {
+    onClose();
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>
-            {showOTP ? "Check Your Email" : "Sign In / Sign Up"}
+            {showOTP ? "Enter Verification Code" : "Sign In / Sign Up"}
           </DialogTitle>
+          <DialogDescription>
+            {showOTP 
+              ? "Enter the 6-digit code sent to your email"
+              : "We'll send you a verification code to your email"
+            }
+          </DialogDescription>
         </DialogHeader>
         
         {showOTP ? (
-          <OTPVerification email={email} />
+          <OTPVerification 
+            email={email} 
+            onVerificationComplete={handleVerificationComplete}
+          />
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4 pt-4">
             <div className="space-y-2">
@@ -90,10 +108,10 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
               className="w-full" 
               disabled={isSubmitting}
             >
-              {isSubmitting ? "Sending..." : "Continue with Email"}
+              {isSubmitting ? "Sending..." : "Send OTP"}
             </Button>
             <p className="text-center text-sm text-muted-foreground">
-              We'll send you a magic link to sign in instantly.
+              We'll send you a verification code to sign in instantly.
             </p>
           </form>
         )}
