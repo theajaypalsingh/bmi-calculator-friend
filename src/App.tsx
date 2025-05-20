@@ -15,6 +15,10 @@ import HealthScore from "./pages/HealthScore";
 import Consultation from "./pages/Consultation";
 import BodyFat from "./pages/BodyFat";
 import BMRCalculator from "./pages/BMRCalculator";
+import { AuthProvider } from "./context/AuthContext";
+import Dashboard from "./pages/dashboard/Dashboard";
+import ProfilePage from "./pages/dashboard/Profile";
+import ReportsPage from "./pages/dashboard/Reports";
 
 const queryClient = new QueryClient();
 
@@ -34,30 +38,38 @@ const ScrollToTop = () => {
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <div className="flex flex-col min-h-screen overflow-hidden">
-          <ScrollToTop />
-          <Navigation />
-          <div className="flex-grow flex flex-col pt-16"> {/* Added padding-top equal to navbar height */}
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/dietary-tips" element={<DietaryTips />} />
-              <Route path="/step-count" element={<StepCount />} />
-              <Route path="/health-score" element={<HealthScore />} />
-              <Route path="/consultation" element={<Consultation />} />
-              <Route path="/body-fat" element={<BodyFat />} />
-              <Route path="/bmr-calculator" element={<BMRCalculator />} />
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
+    <AuthProvider>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <div className="flex flex-col min-h-screen overflow-hidden">
+            <ScrollToTop />
+            <Navigation />
+            <div className="flex-grow flex flex-col pt-16"> {/* Added padding-top equal to navbar height */}
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/dietary-tips" element={<DietaryTips />} />
+                <Route path="/step-count" element={<StepCount />} />
+                <Route path="/health-score" element={<HealthScore />} />
+                <Route path="/consultation" element={<Consultation />} />
+                <Route path="/body-fat" element={<BodyFat />} />
+                <Route path="/bmr-calculator" element={<BMRCalculator />} />
+                
+                {/* Dashboard Routes */}
+                <Route path="/dashboard" element={<Dashboard><ReportsPage /></Dashboard>} />
+                <Route path="/dashboard/reports" element={<Dashboard><ReportsPage /></Dashboard>} />
+                <Route path="/dashboard/profile" element={<Dashboard><ProfilePage /></Dashboard>} />
+                
+                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </div>
+            <Footer />
           </div>
-          <Footer />
-        </div>
-      </BrowserRouter>
-    </TooltipProvider>
+        </BrowserRouter>
+      </TooltipProvider>
+    </AuthProvider>
   </QueryClientProvider>
 );
 
