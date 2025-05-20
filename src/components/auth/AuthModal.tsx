@@ -1,11 +1,22 @@
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/context/AuthContext";
 import { toast } from "@/hooks/use-toast";
 import OTPVerification from "./OTPVerification";
+
+// Declare turnstile types
+declare global {
+  interface Window {
+    turnstile: {
+      render: (container: string | HTMLElement, options: any) => string;
+      reset: (widgetId: string) => void;
+    };
+    onloadTurnstileCallback: () => void;
+  }
+}
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -16,6 +27,9 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
   const [email, setEmail] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showOTP, setShowOTP] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState("");
+  const captchaContainerRef = useRef<HTMLDivElement>(null);
+  const captchaWidgetId = useRef<string | null>(null);
   
   const { user, signInWithOtp } = useAuth();
 
@@ -25,6 +39,59 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
       onClose();
     }
   }, [user, isOpen, onClose]);
+
+  // Initialize Turnstile
+  useEffect(() => {
+    // Load Turnstile script if not already loaded
+    if (!document.getElementById('turnstile-script') && isOpen && !showOTP) {
+      const script = document.createElement('script');
+      script.id = 'turnstile-script';
+      script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
+      script.async = true;
+      script.defer = true;
+      
+      // Callback when script is loaded
+      window.onloadTurnstileCallback = () => {
+        if (captchaContainerRef.current && window.turnstile) {
+          renderCaptcha();
+        }
+      };
+      
+      script.onload = window.onloadTurnstileCallback;
+      document.head.appendChild(script);
+    } else if (isOpen && !showOTP && window.turnstile) {
+      // If script is already loaded, render captcha
+      renderCaptcha();
+    }
+
+    // Reset captcha when dialog closes
+    return () => {
+      if (captchaWidgetId.current && window.turnstile) {
+        window.turnstile.reset(captchaWidgetId.current);
+      }
+    };
+  }, [isOpen, showOTP]);
+
+  // Function to render the captcha
+  const renderCaptcha = () => {
+    if (captchaContainerRef.current && window.turnstile) {
+      // Reset any existing widget
+      if (captchaWidgetId.current) {
+        window.turnstile.reset(captchaWidgetId.current);
+      }
+      
+      // Render new widget
+      captchaWidgetId.current = window.turnstile.render(captchaContainerRef.current, {
+        sitekey: '0x4AAAAAAAMQBljiQn2VdT3W',  // Replace with your Turnstile site key
+        callback: (token: string) => {
+          console.log("Captcha verified:", token);
+          setCaptchaToken(token);
+        },
+        'theme': 'light',
+        'refresh-expired': 'auto'
+      });
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,13 +105,21 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
       return;
     }
     
+    if (!captchaToken) {
+      toast({
+        title: "Captcha Required",
+        description: "Please complete the captcha verification",
+        variant: "destructive",
+      });
+      return;
+    }
+    
     setIsSubmitting(true);
     
     try {
-      // No captcha tokens needed anymore - simplified flow
       console.log("Sending OTP to email:", email);
       
-      const { error } = await signInWithOtp(email);
+      const { error } = await signInWithOtp(email, captchaToken);
       
       if (error) {
         toast({
@@ -53,6 +128,12 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
           variant: "destructive",
         });
         setIsSubmitting(false);
+        
+        // Reset captcha on error
+        if (captchaWidgetId.current && window.turnstile) {
+          window.turnstile.reset(captchaWidgetId.current);
+          setCaptchaToken("");
+        }
         return;
       }
       
@@ -68,6 +149,12 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
         description: "An unexpected error occurred",
         variant: "destructive",
       });
+      
+      // Reset captcha on error
+      if (captchaWidgetId.current && window.turnstile) {
+        window.turnstile.reset(captchaWidgetId.current);
+        setCaptchaToken("");
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -98,6 +185,7 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
         {showOTP ? (
           <OTPVerification 
             email={email} 
+            captchaToken={captchaToken}
             onVerificationComplete={handleVerificationComplete}
           />
         ) : (
@@ -113,10 +201,15 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
               />
             </div>
             
+            {/* Captcha Container */}
+            <div className="flex justify-center my-4">
+              <div ref={captchaContainerRef}></div>
+            </div>
+            
             <Button 
               type="submit" 
               className="w-full" 
-              disabled={!isValidEmail || isSubmitting}
+              disabled={!isValidEmail || !captchaToken || isSubmitting}
             >
               {isSubmitting ? "Sending..." : "Send OTP"}
             </Button>

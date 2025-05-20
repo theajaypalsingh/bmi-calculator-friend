@@ -9,7 +9,7 @@ interface AuthContextType {
   loading: boolean;
   signOut: () => Promise<void>;
   refreshSession: () => Promise<void>;
-  signInWithOtp: (email: string) => Promise<{ error: Error | null }>;
+  signInWithOtp: (email: string, captchaToken: string) => Promise<{ error: Error | null }>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -50,18 +50,19 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setUser(data.session?.user ?? null);
   };
 
-  // Simplified method that only uses email, no captcha
-  const signInWithOtp = async (email: string) => {
+  // Updated to include the captcha token
+  const signInWithOtp = async (email: string, captchaToken: string) => {
     const redirectTo = `${window.location.origin}`;
     console.log('Sending OTP to:', email);
     
     try {
-      // Direct API call without captcha
+      // Include captcha token in the request
       const { error } = await supabase.auth.signInWithOtp({
         email,
         options: {
           shouldCreateUser: true,
-          emailRedirectTo: redirectTo
+          emailRedirectTo: redirectTo,
+          captchaToken // Include the captcha token
         }
       });
       
