@@ -9,7 +9,7 @@ interface AuthContextType {
   loading: boolean;
   signOut: () => Promise<void>;
   refreshSession: () => Promise<void>;
-  signInWithOtp: (email: string, captchaToken: string) => Promise<{ error: Error | null }>;
+  signInWithOtp: (email: string) => Promise<{ error: Error | null }>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -50,24 +50,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setUser(data.session?.user ?? null);
   };
 
-  const signInWithOtp = async (email: string, captchaToken: string) => {
+  const signInWithOtp = async (email: string) => {
     const redirectTo = `${window.location.origin}`;
     console.log('Sending OTP to:', email);
-    console.log('Using captcha token:', captchaToken ? 'Token provided' : 'No token provided');
-    
-    if (!captchaToken) {
-      console.error("No captcha token provided");
-      return { error: new Error("Captcha verification required") };
-    }
     
     try {
-      // Include captcha token in the request
       const { error } = await supabase.auth.signInWithOtp({
         email,
         options: {
           shouldCreateUser: true,
-          emailRedirectTo: redirectTo,
-          captchaToken // Include the captcha token
+          emailRedirectTo: redirectTo
         }
       });
       
