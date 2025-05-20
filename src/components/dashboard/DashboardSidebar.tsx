@@ -22,7 +22,7 @@ import {
 import { useIsMobile } from "@/hooks/use-mobile";
 
 const DashboardSidebar = () => {
-  const { collapsed } = useSidebar();
+  const sidebar = useSidebar();
   const { signOut, user } = useAuth();
   const location = useLocation();
   const isMobile = useIsMobile();
@@ -58,24 +58,24 @@ const DashboardSidebar = () => {
 
   return (
     <Sidebar
-      className={`${collapsed ? "w-14" : "w-64"} transition-all duration-300 ease-in-out border-r bg-gray-50`}
-      collapsible
+      className={`${sidebar.state === "collapsed" ? "w-14" : "w-64"} transition-all duration-300 ease-in-out border-r bg-gray-50`}
+      collapsible="icon"
     >
       <SidebarTrigger className="m-2 self-end" />
 
       <SidebarContent>
         {user && (
-          <div className={`px-3 py-2 mb-4 ${collapsed ? "text-center" : ""}`}>
+          <div className={`px-3 py-2 mb-4 ${sidebar.state === "collapsed" ? "text-center" : ""}`}>
             <div className="text-sm font-medium text-gray-500">
-              {!collapsed && "Welcome,"}
+              {sidebar.state !== "collapsed" && "Welcome,"}
             </div>
             <div className="font-semibold truncate">
-              {collapsed ? user.email?.charAt(0).toUpperCase() : user.email}
+              {sidebar.state === "collapsed" ? user.email?.charAt(0).toUpperCase() : user.email}
             </div>
           </div>
         )}
 
-        <SidebarGroup defaultOpen={true}>
+        <SidebarGroup>
           <SidebarGroupLabel className="text-gray-500">Dashboard</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
@@ -84,7 +84,7 @@ const DashboardSidebar = () => {
                   <SidebarMenuButton asChild>
                     <NavLink to={link.url} end className={getNavCls}>
                       <link.icon className="mr-2 h-4 w-4" />
-                      {!collapsed && <span>{link.title}</span>}
+                      {sidebar.state !== "collapsed" && <span>{link.title}</span>}
                     </NavLink>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -92,7 +92,7 @@ const DashboardSidebar = () => {
               <SidebarMenuItem>
                 <SidebarMenuButton onClick={handleSignOut} className="w-full text-left hover:bg-sidebar-accent/50">
                   <LogOut className="mr-2 h-4 w-4" />
-                  {!collapsed && <span>Sign Out</span>}
+                  {sidebar.state !== "collapsed" && <span>Sign Out</span>}
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>

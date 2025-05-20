@@ -13,7 +13,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const isMobile = useIsMobile();
 
   return (
-    <SidebarProvider collapsedWidth={56} defaultCollapsed={isMobile}>
+    <SidebarProvider defaultOpen={!isMobile}>
       <div className="flex min-h-screen w-full">
         <DashboardSidebar />
         <div className="flex-1 overflow-auto">

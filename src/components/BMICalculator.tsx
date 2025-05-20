@@ -5,7 +5,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { calculateBMI, getBMICategory } from "@/utils/bmiCalculator";
 import BMIResultBar from "./BMIResultBar";
 import { toast } from "@/hooks/use-toast";
@@ -20,6 +19,7 @@ const BMICalculator = () => {
   const [measurementSystem, setMeasurementSystem] = useState<"metric" | "imperial">("metric");
   const [bmi, setBmi] = useState<number | null>(null);
   const [category, setCategory] = useState<string>("");
+  const [visible, setVisible] = useState(false);
   const { saveHealthRecord } = useHealthRecords();
   const { user } = useAuth();
 
@@ -40,6 +40,7 @@ const BMICalculator = () => {
       
       setBmi(bmiValue);
       setCategory(bmiCategory);
+      setVisible(true);
       
       // Save to database if user is logged in
       if (user) {
@@ -138,7 +139,12 @@ const BMICalculator = () => {
                 <p className="text-lg font-medium">{category}</p>
               </div>
               
-              <BMIResultBar bmi={bmi} />
+              <BMIResultBar 
+                bmi={bmi} 
+                category={category}
+                visible={visible}
+                heightInCm={heightUnit === "cm" ? height : height * 30.48} // Convert ft to cm if needed
+              />
               
               {!user && (
                 <div className="bg-blue-50 p-3 rounded-md text-sm text-blue-800">
