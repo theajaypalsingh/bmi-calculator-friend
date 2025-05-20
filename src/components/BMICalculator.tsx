@@ -178,9 +178,11 @@ const BMICalculator = () => {
             </div>
           </div>
 
-          <Button onClick={handleCalculate} size="lg" className="w-3/4 mx-auto text-white bg-red-800 hover:bg-red-700">
-            Calculate BMI
-          </Button>
+          <div className="flex justify-center">
+            <Button onClick={handleCalculate} size="lg" className="w-3/4 text-white bg-red-800 hover:bg-red-700">
+              Calculate BMI
+            </Button>
+          </div>
 
           {error && <div className="bg-red-50 text-red-800 p-3 rounded-md text-center">
               {error}
