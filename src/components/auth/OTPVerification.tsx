@@ -123,8 +123,8 @@ const OTPVerification = ({ email, onVerificationComplete }: OTPVerificationProps
           onChange={setOtp}
           render={({ slots }) => (
             <InputOTPGroup>
-              {slots && slots.map((slot, index) => (
-                <InputOTPSlot key={index} {...slot} />
+              {slots.map((slot, i) => (
+                <InputOTPSlot key={i} {...slot} index={i} />
               ))}
             </InputOTPGroup>
           )}
