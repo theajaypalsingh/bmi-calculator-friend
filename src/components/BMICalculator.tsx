@@ -35,7 +35,23 @@ const BMICalculator = () => {
 
   const handleCalculate = () => {
     if (height && weight) {
-      const bmiValue = calculateBMI(height, weight, heightUnit, weightUnit);
+      // Convert height and weight to the appropriate units for BMI calculation
+      let heightInMeters: number;
+      let weightInKg: number;
+      
+      if (heightUnit === "cm") {
+        heightInMeters = height / 100; // Convert cm to meters
+      } else {
+        heightInMeters = height * 0.3048; // Convert feet to meters
+      }
+      
+      if (weightUnit === "kg") {
+        weightInKg = weight;
+      } else {
+        weightInKg = weight * 0.453592; // Convert lbs to kg
+      }
+      
+      const bmiValue = calculateBMI(weightInKg, heightInMeters);
       const bmiCategory = getBMICategory(bmiValue);
       
       setBmi(bmiValue);
