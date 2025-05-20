@@ -1,4 +1,3 @@
-
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -73,7 +72,8 @@ const Navigation = () => {
                       setAuthModalOpen(true);
                       setIsOpen(false);
                     }}
-                    className="mt-2 bg-health-light text-white hover:bg-health-light/90"
+                    className="mt-2 text-gray-300 hover:bg-gray-700 hover:text-white"
+                    variant="ghost"
                   >
                     Sign In / Sign Up
                   </Button>
@@ -126,7 +126,8 @@ const Navigation = () => {
               ) : (
                 <Button 
                   onClick={() => setAuthModalOpen(true)}
-                  className="bg-health-light text-white hover:bg-health-light/90"
+                  className="text-gray-300 hover:bg-gray-700 hover:text-white"
+                  variant="ghost"
                   size="sm"
                 >
                   Sign In / Sign Up
