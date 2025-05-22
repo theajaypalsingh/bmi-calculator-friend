@@ -86,13 +86,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       // Add more detailed logging
       console.log('Sending OTP to email:', email, 'with redirect to:', origin);
       
+      // Use the correct options format for Supabase v2
       const { error } = await supabase.auth.signInWithOtp({
         email,
         options: {
           shouldCreateUser: true,
           emailRedirectTo: origin,
-          // Add explicit OTP options to ensure both OTP and magic link work
-          emailOtpEnabled: true
+          // Don't use emailOtpEnabled as it's not in the type definition
+          // Instead, rely on the default behavior which should send both
+          // magic link and OTP in the email
         }
       });
       

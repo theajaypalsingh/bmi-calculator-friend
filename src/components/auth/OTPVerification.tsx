@@ -168,7 +168,7 @@ const OTPVerification = ({ email, onVerificationComplete }: OTPVerificationProps
       </div>
       
       <div className="text-center text-sm text-amber-600">
-        Note: If you don't receive the email, please check your spam folder.
+        Note: If you don't receive the email or it's missing the OTP code, please check your spam folder.
       </div>
     </div>
   );
