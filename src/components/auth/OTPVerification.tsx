@@ -30,7 +30,6 @@ const OTPVerification = ({ email, onVerificationComplete }: OTPVerificationProps
           description: error.message || "Failed to resend OTP",
           variant: "destructive",
         });
-        setIsResending(false);
         return;
       }
       
@@ -63,12 +62,16 @@ const OTPVerification = ({ email, onVerificationComplete }: OTPVerificationProps
 
     setIsSubmitting(true);
     try {
+      console.log("Verifying OTP for email:", email, "with code:", otp);
+      
       // Verify the OTP token
-      const { error } = await supabase.auth.verifyOtp({
+      const { data, error } = await supabase.auth.verifyOtp({
         email,
         token: otp,
         type: "email"
       });
+
+      console.log("OTP verification response:", { data, error });
 
       if (error) {
         toast({
@@ -76,21 +79,31 @@ const OTPVerification = ({ email, onVerificationComplete }: OTPVerificationProps
           description: error.message || "Invalid OTP code",
           variant: "destructive",
         });
-        setIsSubmitting(false);
         return;
       }
 
-      // Refresh the session after successful verification
-      await refreshSession();
-      
-      toast({
-        title: "Success",
-        description: "You have been successfully logged in",
-        variant: "success",
-      });
+      if (data?.user) {
+        console.log("OTP verification successful, user:", data.user.email);
+        
+        // Refresh the session after successful verification
+        await refreshSession();
+        
+        toast({
+          title: "Success",
+          description: "You have been successfully logged in",
+          variant: "success",
+        });
 
-      if (onVerificationComplete) {
-        onVerificationComplete();
+        if (onVerificationComplete) {
+          onVerificationComplete();
+        }
+      } else {
+        console.warn("OTP verification returned no user");
+        toast({
+          title: "Verification Issue",
+          description: "Verification succeeded but no user was returned",
+          variant: "warning",
+        });
       }
     } catch (error) {
       console.error("OTP verification error:", error);

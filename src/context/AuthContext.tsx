@@ -31,21 +31,26 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     // Handle URL hash for magic link authentication
     const handleHashParams = async () => {
-      const hash = window.location.hash;
-      if (hash && hash.includes('access_token')) {
-        // Clear the hash to prevent issues on page refresh
-        window.location.hash = '';
-        
-        // Get session - Supabase should automatically process the hash params
-        const { data, error } = await supabase.auth.getSession();
-        
-        if (error) {
-          console.error("Error processing authentication:", error);
-        } else if (data?.session) {
-          console.log("Successfully authenticated via magic link");
-          setSession(data.session);
-          setUser(data.session.user);
+      try {
+        const hash = window.location.hash;
+        if (hash && hash.includes('access_token')) {
+          console.log('Found access token in URL hash, processing authentication...');
+          // Clear the hash to prevent issues on page refresh
+          window.location.hash = '';
+          
+          // Get session - Supabase should automatically process the hash params
+          const { data, error } = await supabase.auth.getSession();
+          
+          if (error) {
+            console.error("Error processing authentication:", error);
+          } else if (data?.session) {
+            console.log("Successfully authenticated via magic link");
+            setSession(data.session);
+            setUser(data.session.user);
+          }
         }
+      } catch (err) {
+        console.error("Error handling hash params:", err);
       }
     };
 
@@ -78,16 +83,23 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     console.log('Using redirect URL:', origin);
     
     try {
+      // Add more detailed logging
+      console.log('Sending OTP to email:', email, 'with redirect to:', origin);
+      
       const { error } = await supabase.auth.signInWithOtp({
         email,
         options: {
           shouldCreateUser: true,
-          emailRedirectTo: origin
+          emailRedirectTo: origin,
+          // Add explicit OTP options to ensure both OTP and magic link work
+          emailOtpEnabled: true
         }
       });
       
       if (error) {
         console.error("Sign in error:", error.message);
+      } else {
+        console.log("OTP request sent successfully to:", email);
       }
       
       return { error: error || null };
