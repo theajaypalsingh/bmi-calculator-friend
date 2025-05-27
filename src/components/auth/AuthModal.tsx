@@ -26,7 +26,16 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
     }
   }, [user, isOpen, onClose]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  // Reset state when modal closes
+  useEffect(() => {
+    if (!isOpen) {
+      setEmail("");
+      setShowOTP(false);
+      setIsSubmitting(false);
+    }
+  }, [isOpen]);
+
+  const handleSendOTP = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!email.trim() || !email.includes('@')) {
@@ -57,12 +66,12 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
       
       setShowOTP(true);
       toast({
-        title: "Magic Link Sent",
-        description: "Check your email for the login link. You can also use the OTP sent to your email.",
+        title: "OTP Sent",
+        description: "Please check your email for the 6-digit OTP code",
         variant: "success",
       });
     } catch (error) {
-      console.error("Sign in error:", error);
+      console.error("Send OTP error:", error);
       toast({
         title: "Error",
         description: "An unexpected error occurred",
@@ -77,6 +86,11 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
     onClose();
   };
 
+  const handleBackToEmail = () => {
+    setShowOTP(false);
+    setEmail("");
+  };
+
   // Email validation
   const isValidEmail = email.trim() && email.includes('@');
 
@@ -85,12 +99,12 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>
-            {showOTP ? "Enter Verification Code" : "Sign In / Sign Up"}
+            {showOTP ? "Enter Verification Code" : "Sign In"}
           </DialogTitle>
           <DialogDescription>
             {showOTP 
-              ? "Check your email for the magic link or enter the 6-digit code sent to your email"
-              : "We'll send you a verification link and code to your email"
+              ? "Enter the 6-digit OTP sent to your email"
+              : "Enter your email address to receive an OTP"
             }
           </DialogDescription>
         </DialogHeader>
@@ -99,9 +113,10 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
           <OTPVerification 
             email={email} 
             onVerificationComplete={handleVerificationComplete}
+            onBackToEmail={handleBackToEmail}
           />
         ) : (
-          <form onSubmit={handleSubmit} className="space-y-4 pt-4">
+          <form onSubmit={handleSendOTP} className="space-y-4 pt-4">
             <div className="space-y-2">
               <Input
                 type="email"
@@ -118,14 +133,8 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
               className="w-full" 
               disabled={!isValidEmail || isSubmitting}
             >
-              {isSubmitting ? "Sending..." : "Send Magic Link"}
+              {isSubmitting ? "Sending OTP..." : "Send OTP"}
             </Button>
-            <p className="text-center text-sm text-muted-foreground">
-              We'll send you a magic link and verification code to sign in instantly.
-            </p>
-            <div className="text-center text-sm text-amber-600">
-              Note: If you're experiencing issues with verification, please check your spam folder for the email.
-            </div>
           </form>
         )}
       </DialogContent>

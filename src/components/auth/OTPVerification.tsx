@@ -1,24 +1,38 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/AuthContext";
 import { toast } from "@/hooks/use-toast";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 import { supabase } from "@/integrations/supabase/client";
+import { useNavigate } from "react-router-dom";
+import { Timer } from "lucide-react";
 
 interface OTPVerificationProps {
   email: string;
   onVerificationComplete?: () => void;
+  onBackToEmail?: () => void;
 }
 
-const OTPVerification = ({ email, onVerificationComplete }: OTPVerificationProps) => {
+const OTPVerification = ({ email, onVerificationComplete, onBackToEmail }: OTPVerificationProps) => {
   const [otp, setOtp] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isResending, setIsResending] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(30);
+  const [isExpired, setIsExpired] = useState(false);
   const { refreshSession, signInWithOtp } = useAuth();
+  const navigate = useNavigate();
 
-  const handleResend = async () => {
-    setIsResending(true);
+  // 30-second countdown timer
+  useEffect(() => {
+    if (timeLeft > 0) {
+      const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
+      return () => clearTimeout(timer);
+    } else {
+      setIsExpired(true);
+    }
+  }, [timeLeft]);
+
+  const handleResendOTP = async () => {
     try {
       console.log("Resending OTP to email:", email);
       
@@ -33,9 +47,14 @@ const OTPVerification = ({ email, onVerificationComplete }: OTPVerificationProps
         return;
       }
       
+      // Reset timer and expired state
+      setTimeLeft(30);
+      setIsExpired(false);
+      setOtp("");
+      
       toast({
-        title: "Magic Link Resent",
-        description: "Check your email for the new login link and OTP code",
+        title: "OTP Resent",
+        description: "A new OTP has been sent to your email",
         variant: "success",
       });
     } catch (error) {
@@ -45,8 +64,6 @@ const OTPVerification = ({ email, onVerificationComplete }: OTPVerificationProps
         description: "An unexpected error occurred",
         variant: "destructive",
       });
-    } finally {
-      setIsResending(false);
     }
   };
 
@@ -55,6 +72,15 @@ const OTPVerification = ({ email, onVerificationComplete }: OTPVerificationProps
       toast({
         title: "Invalid OTP",
         description: "Please enter a valid 6-digit OTP",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (isExpired) {
+      toast({
+        title: "OTP Expired",
+        description: "The OTP has expired. Please request a new one.",
         variant: "destructive",
       });
       return;
@@ -75,10 +101,11 @@ const OTPVerification = ({ email, onVerificationComplete }: OTPVerificationProps
 
       if (error) {
         toast({
-          title: "Verification Failed",
-          description: error.message || "Invalid OTP code",
+          title: "OTP Incorrect",
+          description: "Please enter correct OTP",
           variant: "destructive",
         });
+        setOtp(""); // Clear the OTP field
         return;
       }
 
@@ -93,6 +120,9 @@ const OTPVerification = ({ email, onVerificationComplete }: OTPVerificationProps
           description: "You have been successfully logged in",
           variant: "success",
         });
+
+        // Redirect to dashboard
+        navigate("/dashboard");
 
         if (onVerificationComplete) {
           onVerificationComplete();
@@ -117,16 +147,14 @@ const OTPVerification = ({ email, onVerificationComplete }: OTPVerificationProps
     }
   };
 
+  const formatTime = (seconds: number) => {
+    return `00:${seconds.toString().padStart(2, '0')}`;
+  };
+
   return (
     <div className="space-y-4 pt-4">
       <p className="text-center">
-        We've sent a verification email to <strong>{email}</strong>.
-      </p>
-      <p className="text-center text-sm text-muted-foreground">
-        Check your email for the magic link to sign in instantly.
-      </p>
-      <p className="text-center text-sm font-medium">
-        Or enter the 6-digit code below:
+        Enter the 6-digit OTP sent to <strong>{email}</strong>
       </p>
       
       <div className="flex justify-center">
@@ -144,31 +172,40 @@ const OTPVerification = ({ email, onVerificationComplete }: OTPVerificationProps
         />
       </div>
 
+      {/* Timer Display */}
+      <div className="flex items-center justify-center space-x-2">
+        <Timer className="h-4 w-4" />
+        <span className={`text-sm font-medium ${isExpired ? 'text-red-500' : 'text-gray-600'}`}>
+          {isExpired ? "OTP Expired" : `OTP expires in ${formatTime(timeLeft)}`}
+        </span>
+      </div>
+
       <Button
         onClick={handleVerify}
-        disabled={isSubmitting || otp.length !== 6}
+        disabled={isSubmitting || otp.length !== 6 || isExpired}
         className="w-full"
       >
         {isSubmitting ? "Verifying..." : "Verify & Sign In"}
       </Button>
       
-      <div className="space-y-4">
-        <p className="text-center text-sm text-muted-foreground">
-          Didn't receive the email? You can request another one.
-        </p>
+      <div className="space-y-2">
+        {isExpired && (
+          <Button
+            variant="outline"
+            onClick={handleResendOTP}
+            className="w-full"
+          >
+            Resend OTP
+          </Button>
+        )}
         
         <Button
-          variant="outline"
-          onClick={handleResend}
-          disabled={isResending}
-          className="w-full"
+          variant="ghost"
+          onClick={onBackToEmail}
+          className="w-full text-sm"
         >
-          {isResending ? "Sending..." : "Resend Magic Link"}
+          Change Email Address
         </Button>
-      </div>
-      
-      <div className="text-center text-sm text-amber-600">
-        Note: If you don't receive the email or it's missing the OTP code, please check your spam folder.
       </div>
     </div>
   );
