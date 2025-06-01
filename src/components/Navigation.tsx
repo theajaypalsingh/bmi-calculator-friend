@@ -1,3 +1,4 @@
+
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -100,12 +101,14 @@ const Navigation = () => {
       <div className="bg-gray-800 text-white w-full fixed top-0 z-50">
         <div className="bg-gray-950 w-full">
           <div className="flex items-center justify-between h-16 px-8">
-            <nav className="flex space-x-4">
-              {links.map(link => (
-                <Link key={link.href} to={link.href} className={cn("px-3 py-2 rounded-md text-sm font-medium", location.pathname === link.href ? "bg-gray-700 text-white" : "text-gray-300 hover:bg-gray-700 hover:text-white")}>
-                  {link.label}
-                </Link>
-              ))}
+            <nav className="flex-1 flex justify-center">
+              <div className="flex space-x-4">
+                {links.map(link => (
+                  <Link key={link.href} to={link.href} className={cn("px-3 py-2 rounded-md text-sm font-medium", location.pathname === link.href ? "bg-gray-700 text-white" : "text-gray-300 hover:bg-gray-700 hover:text-white")}>
+                    {link.label}
+                  </Link>
+                ))}
+              </div>
             </nav>
             
             <div>
