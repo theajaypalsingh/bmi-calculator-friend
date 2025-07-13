@@ -29,6 +29,9 @@ const Navigation = () => {
     href: "/bmr-calculator",
     label: "BMR Calculator"
   }, {
+    href: "/blood-reports",
+    label: "Check Blood Reports"
+  }, {
     href: "/consultation",
     label: "Consultation"
   }];
