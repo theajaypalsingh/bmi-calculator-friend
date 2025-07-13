@@ -43,11 +43,17 @@ const Navigation = () => {
         <div className="px-4">
           <div className="flex justify-between items-center py-3">
             <div>
-              {user && (
+              {user ? (
                 <Link to="/dashboard/profile">
                   <Button variant="ghost" size="sm" className="text-white hover:bg-gray-700">
                     <User size={16} className="mr-1" />
                     {user.email?.split('@')[0] || 'Account'}
+                  </Button>
+                </Link>
+              ) : (
+                <Link to="/auth">
+                  <Button variant="outline" size="sm" className="text-white border-white hover:bg-white hover:text-gray-800">
+                    Sign In
                   </Button>
                 </Link>
               )}
@@ -97,7 +103,7 @@ const Navigation = () => {
           </nav>
           
           <div>
-            {user && (
+            {user ? (
               <div className="flex items-center space-x-2">
                 <Link to="/dashboard/reports">
                   <Button variant="ghost" size="sm" className="text-white hover:bg-gray-700">
@@ -111,6 +117,12 @@ const Navigation = () => {
                   </Button>
                 </Link>
               </div>
+            ) : (
+              <Link to="/auth">
+                <Button variant="outline" size="sm" className="text-white border-white hover:bg-white hover:text-gray-800">
+                  Sign In
+                </Button>
+              </Link>
             )}
           </div>
         </div>

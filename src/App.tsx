@@ -16,6 +16,7 @@ import Consultation from "./pages/Consultation";
 import BodyFat from "./pages/BodyFat";
 import BMRCalculator from "./pages/BMRCalculator";
 import BloodReports from "./pages/BloodReports";
+import Auth from "./pages/Auth";
 import { AuthProvider } from "./context/AuthContext";
 import Dashboard from "./pages/dashboard/Dashboard";
 import ProfilePage from "./pages/dashboard/Profile";
@@ -57,6 +58,7 @@ const App = () => (
                 <Route path="/body-fat" element={<BodyFat />} />
                 <Route path="/bmr-calculator" element={<BMRCalculator />} />
                 <Route path="/blood-reports" element={<BloodReports />} />
+                <Route path="/auth" element={<Auth />} />
                 
                 {/* Dashboard Routes */}
                 <Route path="/dashboard" element={<Dashboard><ReportsPage /></Dashboard>} />

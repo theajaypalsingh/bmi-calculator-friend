@@ -202,6 +202,11 @@ const BloodReports = () => {
               Please sign in to access blood report analysis.
             </CardDescription>
           </CardHeader>
+          <CardContent>
+            <Button asChild className="w-full">
+              <a href="/auth">Sign In / Sign Up</a>
+            </Button>
+          </CardContent>
         </Card>
       </div>
     );
