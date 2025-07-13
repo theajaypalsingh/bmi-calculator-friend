@@ -52,8 +52,8 @@ const Auth = () => {
         }
       } else {
         toast({
-          title: "Check your email",
-          description: "We sent you a confirmation link to complete your registration.",
+          title: "Account created successfully!",
+          description: "If email confirmation is enabled, check your email for a confirmation link. Otherwise, you can sign in immediately.",
         });
       }
     } catch (error: any) {
