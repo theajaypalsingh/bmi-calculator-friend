@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -44,7 +45,7 @@ const Auth = () => {
         if (error.message.includes("already registered")) {
           toast({
             title: "Account exists",
-            description: "This email is already registered. Please sign in instead.",
+            description: "This email is already registered. Please sign in instead or contact support if you're having trouble accessing your account.",
             variant: "destructive",
           });
         } else {
@@ -53,8 +54,11 @@ const Auth = () => {
       } else {
         toast({
           title: "Account created successfully!",
-          description: "If email confirmation is enabled, check your email for a confirmation link. Otherwise, you can sign in immediately.",
+          description: "Your account has been created. You can now sign in with your credentials.",
         });
+        // Clear the form
+        setEmail("");
+        setPassword("");
       }
     } catch (error: any) {
       toast({
@@ -80,8 +84,14 @@ const Auth = () => {
       if (error) {
         if (error.message.includes("Invalid login credentials")) {
           toast({
-            title: "Invalid credentials",
-            description: "Please check your email and password and try again.",
+            title: "Sign in failed",
+            description: "Invalid email or password. If you just signed up, please make sure you're using the correct credentials. If the problem persists, try signing up again or contact support.",
+            variant: "destructive",
+          });
+        } else if (error.message.includes("Email not confirmed")) {
+          toast({
+            title: "Email not confirmed",
+            description: "Please check your email and click the confirmation link before signing in. If you didn't receive an email, contact support.",
             variant: "destructive",
           });
         } else {
